@@ -1,5 +1,18 @@
 # SmartTemp-RL
 
+## Run simulation
+
+to install required libraries:
+```shell
+pip install -r requirements.txt
+```
+
+to run simultaion prototype:
+```shell
+python3 gui.py
+```
+
+## Architecture overview
 1. **Temperature Update Rule**:
    The temperature in the room approaches the outside temperature over time, influenced by the insulation quality.
 
