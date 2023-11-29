@@ -54,12 +54,9 @@ class SmartHomeTempControlEnv(gym.Env):
 
         self.execute_action(action)
 
-        self. update_temperature()
+        self.update_temperature()
 
-        # Update people presence
-        self.update_people_presence()
-
-        # Calculate reward
+        # TODO: Calculate reward for people being home or not + hvac usage penalty
         reward = -abs(self.current_temperature - self.user_preference)
 
         done = False
