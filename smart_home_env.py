@@ -115,14 +115,12 @@ class SmartHomeTempControlEnv(gym.Env):
             self.cooling_meter = max(0, self.cooling_meter - self.meter_step/2)
 
     def update_temperature(self):
-        print(f"Current temp: {self.current_temperature}")
         outside_temp_change = (self.outside_temperature - self.current_temperature) * self.insulation_factor * self.time_factor
-        print(f"Outside temp change: {outside_temp_change}")
         hvac_temp_change = (self.heating_meter/10 * self.heater_at_max - self.cooling_meter/10 * self.cooler_at_max) * self.hvac_efficiency * self.time_factor
-        print(f"HVAC temp change: {hvac_temp_change}")
         total_temp_change = outside_temp_change + hvac_temp_change
-        print(f"Total temp change: {total_temp_change}")
-        self.current_temperature += total_temp_change
+        new_temerature = self.current_temperature + total_temp_change
+        print(f"TEMPERATURE: {new_temerature} = current {self.current_temperature} + outside {outside_temp_change} + hvac {hvac_temp_change}")
+        self.current_temperature = new_temerature
 
     def parse_time(self, time_str):
         hour, minute = map(int, time_str.split(':'))
