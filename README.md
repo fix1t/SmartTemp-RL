@@ -47,3 +47,30 @@ python3 gui.py
 
 7. **Heating/Cooling Effects**:
    Apply a predefined amount of temperature change when heating or cooling is turned on, with a delay factor to simulate system response time.
+
+## Daily Schedule and Random Events
+
+### Weekly Schedule
+The simulation incorporates a detailed weekly schedule for each family member (father, mother, child), including their daily routines from Monday to Sunday. This schedule includes specific leave and return times on weekdays, with a variance to account for unpredictability in their routine. On weekends, it is assumed they are at home.
+
+```json
+{
+    "weekly_schedule": {
+        "Monday": {
+            "father": {"leave": "08:00", "return": "18:00", "variance": 60},
+            ... // Rest of the people.
+        },
+        // Rest of the week.
+    },
+    "random_home_day_chance": 0.05, // 5% chance someone stays home or has an irregular schedule
+    "random_event": {
+        "sick-day": 0.05,           // 5% chance someone stays home sick
+        "vacation": 0.05,           // 5% chance someone stays home on vacation
+        ... // Others..
+    },
+    "random_event_max_duration": 180 // Implies only to early/late leave/arrival
+}
+```
+
+### Random Events
+The simulation also includes a probability model for random events that can affect the daily routine of the family members. These events include sick days, vacation days, early or late returns, early or late departures, out-of-town trips, and holidays. Each event has a specified probability and a maximum duration, adding an element of unpredictability and realism to the simulation.
