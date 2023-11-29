@@ -81,21 +81,6 @@ class SmartHomeTempControlEnv(gym.Env):
     def close(self):
         pass
 
-    def update_people_presence(self):
-        for person, schedule in CONFIG['people'].items():
-            if random.random() < CONFIG['random_home_day_chance']:
-                self.people_presence[person] = random.choice([True, False])
-                continue
-
-            leave_time = self.parse_time(schedule['leave'])
-            return_time = self.parse_time(schedule['return']) if isinstance(schedule['return'], str) else self.parse_weekday_return_time(schedule['return'])
-
-            # Add randomness to the schedule
-            leave_time += timedelta(minutes=random.randint(-schedule['variance'], schedule['variance']))
-            return_time += timedelta(minutes=random.randint(-schedule['variance'], schedule['variance']))
-
-            self.people_presence[person] = not (leave_time <= self.current_time < return_time)
-
     def update_time(self):
         self.current_time += timedelta(minutes=1)
         today = self.current_time.strftime('%A')
@@ -122,8 +107,7 @@ class SmartHomeTempControlEnv(gym.Env):
                 daily_schedule[person]['return'] = return_time.strftime('%H:%M')
 
             # Check for random events
-            # if random.random() < self.random_event_chance:
-            if person == 'father':
+            if random.random() < self.random_event_chance:
                 random_event_pick = random.random()
                 starting_chance = 0
 
@@ -184,10 +168,6 @@ class SmartHomeTempControlEnv(gym.Env):
     def parse_time(self, time_str):
         hour, minute = map(int, time_str.split(':'))
         return self.current_time.replace(hour=hour, minute=minute)
-
-    def parse_weekday_return_time(self, return_times):
-        weekday = self.current_time.strftime('%a')
-        return self.parse_time(return_times.get(weekday, '15:00'))  # default return time if not specified
 
 simulation = SmartHomeTempControlEnv()
 print(simulation.schedule)
