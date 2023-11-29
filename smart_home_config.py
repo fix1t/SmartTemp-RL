@@ -1,11 +1,14 @@
 CONFIG = {
-    'starting_temperature': 22, # degrees Celsius
+    'starting_temperature': 20, # degrees Celsius
     'outside_temperature': 10,  # degrees Celsius
     'user_preference': 22,      # degrees Celsius
     'insulation_quality': 0.5,  # coefficient ranging from 0 (no insulation) to 1 (perfect insulation)
-    'hvac_efficiency': 1,     # maximum temperature change per time step
-    'time_factor': 1/60,         # dilutes the outside temperature's influence to represent a set-length simulation
-    'heat_delay': 0.1,          # how fast the heating meter fills up
+    'heater_at_max': 80,        # maximum temperature output of the heater
+    'cooler_at_max': 15,        # minimal temperature output of the cooler
+    'hvac_efficiency': 0.3,     # how much of the heater/cooler's output is actually used
+    'time_factor': 1/60,        # dilutes the outside temperature's influence to represent a step-length simulation
+    'meter_step': 0.5,          # how fast the meter fills up
+
     "weekly_schedule": {
         "Monday": {
             "father": {"leave": "08:00", "return": "18:00", "variance": 60},
@@ -43,7 +46,7 @@ CONFIG = {
             "child": {"at_home": "true"}
         }
     },
-    'random_home_day_chance': 0.05, # 5% chance someone stays home or has an irregular schedule
+    'random_event_chance': 0.05, # 5% chance someone stays home or has an irregular schedule
     'random_event': {
         'sick-day': 0.05,           # 5% chance someone stays home sick
         'vacation': 0.05,           # 5% chance someone stays home on vacation
@@ -54,5 +57,5 @@ CONFIG = {
         'out-of-town': 0.05,        # 5% chance someone is out of town
         'holiday': 0.05,            # 5% chance it's a holiday
     },
-    'random_event_max_duration': 180,
+    'random_event_max_duration': 180, # Implies only to early/late leave/arrival
 }
