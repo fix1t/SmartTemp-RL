@@ -1,0 +1,21 @@
+# Top-most EditorConfig file
+root = true
+
+# Set the default charset to UTF-8
+[*]
+charset = utf-8
+
+# Indentation settings
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.js]
+indent_style = space
+indent_size = 2
+
+[*.{js,py}]
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
+

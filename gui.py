@@ -23,7 +23,7 @@ class Graph:
         self.temp_history = [env.reset()[0]] * (width // 2)  # Initialize with starting temperature
         self.font = pygame.font.Font('freesansbold.ttf', 24)
         self.gridline_count = 10
-        self.max_temp_value = 50 
+        self.max_temp_value = 50
         self.min_temp_value = 0
         self.optimal_temp_value = env.user_preference
 
@@ -49,7 +49,7 @@ class Graph:
             from_y = self.y + self.height - (from_temp_normalized * self.height)
             to_y = self.y + self.height - (to_temp_normalized * self.height)
             pygame.draw.line(self.screen, GREEN, (from_x, from_y), (to_x, to_y), 3)
-        
+
         # Draw optimal temperature line
         optimal_temp_normalized = (self.optimal_temp_value - self.min_temp_value) / (self.max_temp_value - self.min_temp_value)
         optimal_temp_y = self.y + self.height - (optimal_temp_normalized * self.height)
@@ -75,7 +75,7 @@ class ControlPanel:
 
         self.y = y
         self.x = x
-        
+
         self.heater_meter_x = x
         self.cooler_meter_x = x + self.meter_width + margin
 
@@ -97,7 +97,7 @@ class ControlPanel:
         # Display current temperature
         current_temp = self.env.current_temperature
         temp_text = self.font.render(f"Temp: {current_temp:.1f}°C", True, BLACK)
-        
+
         self.screen.blit(temp_text, (self.x, self.y + 30))
 
     def handle_event(self, event):

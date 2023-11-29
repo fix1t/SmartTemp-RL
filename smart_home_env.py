@@ -22,7 +22,7 @@ class SmartHomeTempControlEnv(gym.Env):
         super(SmartHomeTempControlEnv, self).__init__()
         self.action_space = spaces.Discrete(3)  # 0: Heat Up, 1: Cool Down, 2: Do Nothing
         self.observation_space = spaces.Box(low=np.array([0]), high=np.array([50]), dtype=np.float32) # Current temperature
-        
+
         # Define initial conditions
         self.user_preference = CONFIG['user_preference']
         self.current_temperature = CONFIG['starting_temperature']
@@ -65,11 +65,9 @@ class SmartHomeTempControlEnv(gym.Env):
         print(f"Total temp change: {total_temp_change}")
         self.current_temperature += total_temp_change
 
-
         # Calculate reward
         reward = -abs(self.current_temperature - self.user_preference)
-        
-        
+
         done = False
         info = {}
 
