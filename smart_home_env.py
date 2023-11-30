@@ -48,6 +48,12 @@ class SmartHomeTempControlEnv(gym.Env):
         self.cooling_meter = 0.0
         self.max_meter = 10.0
 
+        # History
+        self.temperature_history = []
+        self.heating_meter_history = []
+        self.cooling_meter_history = []
+        self.time_history = []
+
     def step(self, action):
         assert self.action_space.contains(action), "Invalid Action"
         self.update_time()
@@ -62,6 +68,11 @@ class SmartHomeTempControlEnv(gym.Env):
         done = False
         info = {}
 
+        self.temperature_history.append(self.current_temperature)
+        self.heating_meter_history.append(self.heating_meter)
+        self.cooling_meter_history.append(self.cooling_meter)
+        self.time_history.append(self.current_time.strftime('%Y-%m-%d %H:%M:%S'))
+
         return np.array([self.current_temperature]).astype(np.float32), reward, done, info
 
     def reset(self):
@@ -69,6 +80,13 @@ class SmartHomeTempControlEnv(gym.Env):
         self.outside_temperature = CONFIG['outside_temperature']
         self.heating_meter = 0.0
         self.cooling_meter = 0.0
+        self.current_time = datetime(2020, 1, 1, 0, 0)
+        self.current_day = self.current_time.strftime('%A')
+        self.schedule = self.set_schedule()
+        self.temperature_history = []
+        self.heating_meter_history = []
+        self.cooling_meter_history = []
+        self.time_history = []
         return np.array([self.current_temperature]).astype(np.float32)
 
     def render(self, mode='console'):
@@ -104,7 +122,8 @@ class SmartHomeTempControlEnv(gym.Env):
                 daily_schedule[person]['return'] = return_time.strftime('%H:%M')
 
             # Check for random events
-            if random.random() < self.random_event_chance:
+            # if random.random() < self.random_event_chance:
+            if False:
                 random_event_pick = random.random()
                 starting_chance = 0
 
@@ -166,5 +185,5 @@ class SmartHomeTempControlEnv(gym.Env):
         hour, minute = map(int, time_str.split(':'))
         return self.current_time.replace(hour=hour, minute=minute)
 
-simulation = SmartHomeTempControlEnv()
-print(simulation.schedule)
+    def get_latest_data(self):
+        return self.time_history, self.temperature_history, self.heating_meter_history, self.cooling_meter_history
