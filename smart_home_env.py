@@ -31,9 +31,9 @@ class SmartHomeTempControlEnv(gym.Env):
         self.random_event_chance = config['random_event_chance']
         self.random_event_max_duration = config['random_event_max_duration']
         self.people_presence = {
-            "father": True,
-            "mother": True,
-            "child": True,
+            "father": False,
+            "mother": False,
+            "child": False,
         }
 
         # Initial time 1/1/2020 00:00
@@ -137,7 +137,6 @@ class SmartHomeTempControlEnv(gym.Env):
                         self.apply_random_event(event, person, daily_schedule)
                         break
                     starting_chance += chance
-        print(daily_schedule)
         return daily_schedule
 
     def apply_random_event(self, event, person, daily_schedule):
@@ -186,12 +185,9 @@ class SmartHomeTempControlEnv(gym.Env):
         self.current_temperature = new_temerature
 
     def update_people_presence(self):
-        print(f"schedule: {self.schedule['father']}")
         for person in self.schedule:
-            print(person)
             persons_schedule = self.schedule[person]
             if 'at_home' in persons_schedule:
-                print(f"PERSONS SCHEDULE: {persons_schedule}")
                 if persons_schedule['at_home']:
                     self.people_presence[person] = True
                 else:
@@ -200,10 +196,9 @@ class SmartHomeTempControlEnv(gym.Env):
                 leave_time = self.parse_time(persons_schedule['leave'])
                 return_time = self.parse_time(persons_schedule['return'])
                 if leave_time <= self.current_time <= return_time:
-                    self.people_presence[person] = True
-                else:
                     self.people_presence[person] = False
-        print(f"PEOPLE PRESENCE: {self.people_presence}")
+                else:
+                    self.people_presence[person] = True
 
     def parse_time(self, time_str):
         hour, minute = map(int, time_str.split(':'))
@@ -218,7 +213,3 @@ class SmartHomeTempControlEnv(gym.Env):
     def get_occupancy_data(self):
         return self.time_history, self.people_presence
 
-simulation = SmartHomeTempControlEnv()
-simulation.reset()
-
-simulation.step(0)
