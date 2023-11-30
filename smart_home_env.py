@@ -50,6 +50,7 @@ class SmartHomeTempControlEnv(gym.Env):
 
         # History
         self.temperature_history = []
+        self.outside_temperature_history = []
         self.heating_meter_history = []
         self.cooling_meter_history = []
         self.occupancy_history = []
@@ -76,6 +77,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.cooling_meter_history.append(self.cooling_meter)
         self.time_history.append(self.current_time.strftime('%Y-%m-%d %H:%M:%S'))
         self.occupancy_history.append(sum(self.people_presence.values()))
+        self.outside_temperature_history.append(self.outside_temperature)
 
         return np.array([self.current_temperature]).astype(np.float32), reward, done, info
 
@@ -205,11 +207,11 @@ class SmartHomeTempControlEnv(gym.Env):
         return self.current_time.replace(hour=hour, minute=minute)
 
     def get_temperature_data(self):
-        return self.time_history, self.temperature_history, self.heating_meter_history, self.cooling_meter_history
+        return self.time_history, self.temperature_history, self.outside_temperature_history
 
     def get_control_data(self):
         return self.time_history, self.heating_meter_history, self.cooling_meter_history
 
     def get_occupancy_data(self):
-        return self.time_history, self.people_presence
+        return self.time_history, self.occupancy_history
 
