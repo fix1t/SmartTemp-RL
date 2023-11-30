@@ -33,7 +33,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.people_presence = {
             "father": True,
             "mother": True,
-            "child": True
+            "child": True,
         }
 
         # Initial time 1/1/2020 00:00
@@ -41,7 +41,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.current_day = self.current_time.strftime('%A')
 
         # Schedule for the current day with random events and noise applied
-        self.schedule = self.set_schedule()
+        self.schedule = self.generate_schedule()
 
         # Heating and Cooling meters
         self.heating_meter = 0.0
@@ -52,6 +52,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.temperature_history = []
         self.heating_meter_history = []
         self.cooling_meter_history = []
+        self.occupancy_history = []
         self.time_history = []
 
     def step(self, action):
@@ -61,6 +62,8 @@ class SmartHomeTempControlEnv(gym.Env):
         self.execute_action(action)
 
         self.update_temperature()
+
+        self.update_people_presence()
 
         # TODO: Calculate reward for people being home or not + hvac usage penalty
         reward = -abs(self.current_temperature - self.user_preference)
@@ -72,6 +75,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.heating_meter_history.append(self.heating_meter)
         self.cooling_meter_history.append(self.cooling_meter)
         self.time_history.append(self.current_time.strftime('%Y-%m-%d %H:%M:%S'))
+        self.occupancy_history.append(sum(self.people_presence.values()))
 
         return np.array([self.current_temperature]).astype(np.float32), reward, done, info
 
@@ -82,7 +86,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.cooling_meter = 0.0
         self.current_time = datetime(2020, 1, 1, 0, 0)
         self.current_day = self.current_time.strftime('%A')
-        self.schedule = self.set_schedule()
+        self.schedule = self.generate_schedule()
         self.temperature_history = []
         self.heating_meter_history = []
         self.cooling_meter_history = []
@@ -101,9 +105,9 @@ class SmartHomeTempControlEnv(gym.Env):
         today = self.current_time.strftime('%A')
         if self.current_day != today:
             self.current_day = today
-            self.set_schedule()
+            self.schedule = self.generate_schedule()
 
-    def set_schedule(self):
+    def generate_schedule(self):
         daily_schedule = self.weekly_schedule[self.current_day]
 
         # Apply variance to the schedule
@@ -133,7 +137,7 @@ class SmartHomeTempControlEnv(gym.Env):
                         self.apply_random_event(event, person, daily_schedule)
                         break
                     starting_chance += chance
-
+        print(daily_schedule)
         return daily_schedule
 
     def apply_random_event(self, event, person, daily_schedule):
@@ -181,9 +185,40 @@ class SmartHomeTempControlEnv(gym.Env):
         print(f"TEMPERATURE: {new_temerature} = current {self.current_temperature} + outside {outside_temp_change} + hvac {hvac_temp_change}")
         self.current_temperature = new_temerature
 
+    def update_people_presence(self):
+        print(f"schedule: {self.schedule['father']}")
+        for person in self.schedule:
+            print(person)
+            persons_schedule = self.schedule[person]
+            if 'at_home' in persons_schedule:
+                print(f"PERSONS SCHEDULE: {persons_schedule}")
+                if persons_schedule['at_home']:
+                    self.people_presence[person] = True
+                else:
+                    self.people_presence[person] = False
+            else:
+                leave_time = self.parse_time(persons_schedule['leave'])
+                return_time = self.parse_time(persons_schedule['return'])
+                if leave_time <= self.current_time <= return_time:
+                    self.people_presence[person] = True
+                else:
+                    self.people_presence[person] = False
+        print(f"PEOPLE PRESENCE: {self.people_presence}")
+
     def parse_time(self, time_str):
         hour, minute = map(int, time_str.split(':'))
         return self.current_time.replace(hour=hour, minute=minute)
 
-    def get_latest_data(self):
+    def get_temperature_data(self):
         return self.time_history, self.temperature_history, self.heating_meter_history, self.cooling_meter_history
+
+    def get_control_data(self):
+        return self.time_history, self.heating_meter_history, self.cooling_meter_history
+
+    def get_occupancy_data(self):
+        return self.time_history, self.people_presence
+
+simulation = SmartHomeTempControlEnv()
+simulation.reset()
+
+simulation.step(0)
