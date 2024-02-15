@@ -2,12 +2,12 @@ CONFIG = {
     'starting_temperature': 20, # degrees Celsius
     'outside_temperature': 10,  # degrees Celsius
     'user_preference': 22,      # degrees Celsius
-    'insulation_quality': 0.5,  # coefficient ranging from 0 (no insulation) to 1 (perfect insulation)
-    'heater_at_max': 80,        # maximum temperature output of the heater
-    'cooler_at_max': 15,        # minimal temperature output of the cooler
-    'hvac_efficiency': 0.3,     # how much of the heater/cooler's output is actually used
+    'insulation_quality': 0.1,  # coefficient ranging from 0 (perfect insulation) to 1 (no insulation)
+    'heater_at_max': 40,        # maximum temperature output of the heater
+    'cooler_at_max': 5,        # minimal temperature output of the cooler
+    'hvac_efficiency': 0.05,     # how much of the heater/cooler's output is actually used
     'time_factor': 1/60,        # dilutes the outside temperature's influence to represent a step-length simulation
-    'meter_step': 0.5,          # how fast the meter fills up
+    'meter_step': 0.25,          # how fast the meter fills up
 
     "weekly_schedule": {
         "Monday": {
@@ -46,7 +46,7 @@ CONFIG = {
             "child": {"at_home": "true"}
         }
     },
-    'random_event_chance': 0.05, # 5% chance someone stays home or has an irregular schedule
+    'random_event_chance': 0.1, # 5% chance someone stays home or has an irregular schedule
     'random_event': {
         'sick-day': 0.05,           # 5% chance someone stays home sick
         'vacation': 0.05,           # 5% chance someone stays home on vacation

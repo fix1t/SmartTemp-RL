@@ -36,9 +36,10 @@ def update_temperature_graph(n):
     fig.add_trace(go.Scatter(x=time_data, y=outside_temp, name='Outside Temperature', mode='lines+markers'))
 
     fig.update_layout(
-        xaxis=dict(type='date', title='Time'),
-        yaxis=dict(title='Temperature (°C)'),
-        title='Temperature Over Time'
+        xaxis=dict(type='date', title='Time', autorange=True),
+        yaxis=dict(title='Temperature (°C)', autorange=True),
+        title='Temperature Over Time',
+        margin=dict(l=40, r=40, t=40, b=40),
     )
 
     return fig
@@ -50,13 +51,14 @@ def update_control_graph(n):
     time_data, heating, cooling = simulation.get_control_data()
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=time_data, y=heating, name='Heating Meter', mode='lines+markers'))
     fig.add_trace(go.Scatter(x=time_data, y=cooling, name='Cooling Meter', mode='lines+markers'))
+    fig.add_trace(go.Scatter(x=time_data, y=heating, name='Heating Meter', mode='lines+markers'))
 
     fig.update_layout(
-        xaxis=dict(type='date', title='Time'),
-        yaxis=dict(title='Meter Reading'),
-        title='Heating and Cooling Controls Over Time'
+        xaxis=dict(type='date', title='Time', autorange=True),
+        yaxis=dict(title='Meter Reading', autorange=True),
+        title='Heating and Cooling Controls Over Time',
+        margin=dict(l=40, r=40, t=40, b=40),
     )
 
     return fig
@@ -65,24 +67,28 @@ def update_control_graph(n):
 @app.callback(Output('occupancy-graph', 'figure'),
               [Input('graph-update', 'n_intervals')])
 def update_occupancy_graph(n):
-    time_data, occupancy = simulation.get_occupancy_data()
+    time_data, people_presence_data = simulation.get_occupancy_data()
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=time_data, y=occupancy, name='Occupancy', mode='lines+markers'))
+
+    # Iterate through each person and add traces to the figure
+    for person, presence_data in people_presence_data.items():
+        fig.add_trace(go.Scatter(x=time_data, y=presence_data, name=person, mode='lines+markers'))
 
     fig.update_layout(
-        xaxis=dict(type='date', title='Time'),
-        yaxis=dict(title='Occupancy'),
-        title='Occupancy Over Time'
+        xaxis=dict(type='date', title='Time', autorange=True),
+        yaxis=dict(title='At home', autorange=True),
+        title='People At Home Over Time',
+        margin=dict(l=40, r=40, t=40, b=40),
     )
 
     return fig
 
 def run_simulation():
-    for _ in range(10000):  # Run for 10000 steps
+    for _ in range(100000):  # Run for 10000 steps
         action = simulation.action_space.sample()
         simulation.step(action)
-        time.sleep(1)
+        time.sleep(0.01)
 
 
 if __name__ == '__main__':

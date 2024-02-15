@@ -53,7 +53,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.outside_temperature_history = []
         self.heating_meter_history = []
         self.cooling_meter_history = []
-        self.occupancy_history = []
+        self.people_presence_history = {}
         self.time_history = []
 
     def step(self, action):
@@ -66,18 +66,14 @@ class SmartHomeTempControlEnv(gym.Env):
 
         self.update_people_presence()
 
+        self.append_to_history()
+
         # TODO: Calculate reward for people being home or not + hvac usage penalty
         reward = -abs(self.current_temperature - self.user_preference)
 
         done = False
         info = {}
 
-        self.temperature_history.append(self.current_temperature)
-        self.heating_meter_history.append(self.heating_meter)
-        self.cooling_meter_history.append(self.cooling_meter)
-        self.time_history.append(self.current_time.strftime('%Y-%m-%d %H:%M:%S'))
-        self.occupancy_history.append(sum(self.people_presence.values()))
-        self.outside_temperature_history.append(self.outside_temperature)
 
         return np.array([self.current_temperature]).astype(np.float32), reward, done, info
 
@@ -128,8 +124,7 @@ class SmartHomeTempControlEnv(gym.Env):
                 daily_schedule[person]['return'] = return_time.strftime('%H:%M')
 
             # Check for random events
-            # if random.random() < self.random_event_chance:
-            if False:
+            if random.random() < self.random_event_chance:
                 random_event_pick = random.random()
                 starting_chance = 0
 
@@ -180,7 +175,7 @@ class SmartHomeTempControlEnv(gym.Env):
 
     def update_temperature(self):
         outside_temp_change = (self.outside_temperature - self.current_temperature) * self.insulation_factor * self.time_factor
-        hvac_temp_change = (self.heating_meter/10 * self.heater_at_max - self.cooling_meter/10 * self.cooler_at_max) * self.hvac_efficiency * self.time_factor
+        hvac_temp_change = (self.heating_meter/10 * self.heater_at_max - (20 - self.cooling_meter)/10 * self.cooler_at_max) * self.hvac_efficiency * self.time_factor
         total_temp_change = outside_temp_change + hvac_temp_change
         new_temerature = self.current_temperature + total_temp_change
         print(f"TEMPERATURE: {new_temerature} = current {self.current_temperature} + outside {outside_temp_change} + hvac {hvac_temp_change}")
@@ -206,6 +201,17 @@ class SmartHomeTempControlEnv(gym.Env):
         hour, minute = map(int, time_str.split(':'))
         return self.current_time.replace(hour=hour, minute=minute)
 
+    def append_to_history(self):
+        self.temperature_history.append(self.current_temperature)
+        self.heating_meter_history.append(self.heating_meter)
+        self.cooling_meter_history.append(self.cooling_meter)
+        self.time_history.append(self.current_time.strftime('%Y-%m-%d %H:%M:%S'))
+        self.outside_temperature_history.append(self.outside_temperature)
+        for person in self.people_presence:
+            if person not in self.people_presence_history:
+                self.people_presence_history[person] = []
+            self.people_presence_history[person].append(self.people_presence[person])
+
     def get_temperature_data(self):
         return self.time_history, self.temperature_history, self.outside_temperature_history
 
@@ -213,5 +219,5 @@ class SmartHomeTempControlEnv(gym.Env):
         return self.time_history, self.heating_meter_history, self.cooling_meter_history
 
     def get_occupancy_data(self):
-        return self.time_history, self.occupancy_history
+        return self.time_history, self.people_presence_history
 
