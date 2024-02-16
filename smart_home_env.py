@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import random
 
 from smart_home_config import CONFIG
+from CSVLineReader import CSVLineReader
 
 class SmartHomeTempControlEnv(gym.Env):
     metadata = {'render.modes': ['console']}
@@ -12,18 +13,23 @@ class SmartHomeTempControlEnv(gym.Env):
     def __init__(self, config=CONFIG):
         super(SmartHomeTempControlEnv, self).__init__()
         self.action_space = spaces.Discrete(3)  # 0: Heat Up, 1: Cool Down, 2: Do Nothing
-        self.observation_space = spaces.Box(low=np.array([0]), high=np.array([50]), dtype=np.float32) # Current temperature
+
+        #TODO: Define observation space - Current temperature and outside temperature (for now)!!
+        self.observation_space = spaces.Box(low=np.array([0]), high=np.array([50]), dtype=np.float32)
 
         # Define initial conditions
         self.user_preference = config['user_preference']
         self.current_temperature = config['starting_temperature']
-        self.outside_temperature = config['outside_temperature']
         self.insulation_factor = config['insulation_quality']
         self.time_factor = config['time_factor']
         self.heater_at_max = config['heater_at_max']
         self.cooler_at_max = config['cooler_at_max']
         self.hvac_efficiency = config['hvac_efficiency']
         self.meter_step = config['meter_step']
+
+        # Define outside temperature
+        self.outside_temperature_reader = CSVLineReader('temperature_data/basel_10_years_hourly.csv')
+        self.current_outside_temperature = self.update_current_outside_temperature()
 
         # Define weekly schedule
         self.weekly_schedule = config['weekly_schedule']
@@ -48,7 +54,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.cooling_meter = 0.0
         self.max_meter = 10.0
 
-        # History
+        # History for plotting
         self.temperature_history = []
         self.outside_temperature_history = []
         self.heating_meter_history = []
@@ -78,13 +84,19 @@ class SmartHomeTempControlEnv(gym.Env):
         return np.array([self.current_temperature]).astype(np.float32), reward, done, info
 
     def reset(self):
+        self.outside_temperature_reader.reset_to_beginning()
         self.current_temperature = CONFIG['starting_temperature']
-        self.outside_temperature = CONFIG['outside_temperature']
+        self.current_outside_temperature = self.outside_temperature_reader.get_next_line()
+        self.step_counter = 0
+
         self.heating_meter = 0.0
         self.cooling_meter = 0.0
+
         self.current_time = datetime(2020, 1, 1, 0, 0)
         self.current_day = self.current_time.strftime('%A')
+
         self.schedule = self.generate_schedule()
+
         self.temperature_history = []
         self.heating_meter_history = []
         self.cooling_meter_history = []
@@ -174,9 +186,9 @@ class SmartHomeTempControlEnv(gym.Env):
             self.cooling_meter = max(0, self.cooling_meter - self.meter_step/2)
 
     def update_temperature(self):
-        outside_temp_change = (self.outside_temperature - self.current_temperature) * self.insulation_factor * self.time_factor
+        outside_temp_change = (self.current_outside_temperature - self.current_temperature) * (1 - self.insulation_factor) * self.time_factor
         hvac_temp_change = (self.heating_meter/10 * self.heater_at_max - (20 - self.cooling_meter)/10 * self.cooler_at_max) * self.hvac_efficiency * self.time_factor
-        total_temp_change = outside_temp_change + hvac_temp_change
+        total_temp_change = outside_temp_change # + hvac_temp_change
         new_temerature = self.current_temperature + total_temp_change
         print(f"TEMPERATURE: {new_temerature} = current {self.current_temperature} + outside {outside_temp_change} + hvac {hvac_temp_change}")
         self.current_temperature = new_temerature
@@ -197,6 +209,18 @@ class SmartHomeTempControlEnv(gym.Env):
                 else:
                     self.people_presence[person] = True
 
+    # The outside temperature linearly changes in between the records (hourly data)
+    # Each hour the outside temperature is updated
+    def update_current_outside_temperature(self):
+        if self.step_counter * self.time_factor >= 1:
+            self.current_outside_temperature = self.outside_temperature_next
+            self.outside_temperature_next = self.outside_temperature_reader.get_next_line()
+            self.outside_temperature_step_diff = (self.outside_temperature_next - self.current_outside_temperature) * self.time_factor
+            self.step_counter = 0
+        else:
+            self.current_outside_temperature += self.outside_temperature_step_diff
+            self.step_counter += 1
+
     def parse_time(self, time_str):
         hour, minute = map(int, time_str.split(':'))
         return self.current_time.replace(hour=hour, minute=minute)
@@ -206,7 +230,7 @@ class SmartHomeTempControlEnv(gym.Env):
         self.heating_meter_history.append(self.heating_meter)
         self.cooling_meter_history.append(self.cooling_meter)
         self.time_history.append(self.current_time.strftime('%Y-%m-%d %H:%M:%S'))
-        self.outside_temperature_history.append(self.outside_temperature)
+        self.outside_temperature_history.append(self.current_outside_temperature)
         for person in self.people_presence:
             if person not in self.people_presence_history:
                 self.people_presence_history[person] = []
