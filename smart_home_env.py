@@ -29,7 +29,14 @@ class SmartHomeTempControlEnv(gym.Env):
 
         # Define outside temperature
         self.outside_temperature_reader = CSVLineReader('temperature_data/basel_10_years_hourly.csv')
-        self.current_outside_temperature = self.update_current_outside_temperature()
+        self.step_counter = 0
+        try:
+            self.current_outside_temperature = float(self.outside_temperature_reader.get_next_line()[1])
+            self.outside_temperature_next = float(self.outside_temperature_reader.get_next_line()[1])
+        except ValueError:
+            self.current_outside_temperature = 0
+            print("[ERROR] INITIALIZATION - The string does not represent a valid floating-point number.")
+        self.outside_temperature_step_diff = (self.outside_temperature_next - self.current_outside_temperature) * self.time_factor
 
         # Define weekly schedule
         self.weekly_schedule = config['weekly_schedule']
@@ -43,6 +50,7 @@ class SmartHomeTempControlEnv(gym.Env):
         }
 
         # Initial time 1/1/2020 00:00
+        # TODO: Get this from outside temperature source
         self.current_time = datetime(2020, 1, 1, 0, 0)
         self.current_day = self.current_time.strftime('%A')
 
@@ -86,7 +94,13 @@ class SmartHomeTempControlEnv(gym.Env):
     def reset(self):
         self.outside_temperature_reader.reset_to_beginning()
         self.current_temperature = CONFIG['starting_temperature']
-        self.current_outside_temperature = self.outside_temperature_reader.get_next_line()
+        try:
+            self.current_outside_temperature = float(self.outside_temperature_reader.get_next_line()[1])
+            self.outside_temperature_next = float(self.outside_temperature_reader.get_next_line()[1])
+        except ValueError:
+            self.current_outside_temperature = 0
+            print("[ERROR]  The string does not represent a valid floating-point number.")
+        self.outside_temperature_step_diff = (self.outside_temperature_next - self.current_outside_temperature) * self.time_factor
         self.step_counter = 0
 
         self.heating_meter = 0.0
@@ -192,6 +206,7 @@ class SmartHomeTempControlEnv(gym.Env):
         new_temerature = self.current_temperature + total_temp_change
         print(f"TEMPERATURE: {new_temerature} = current {self.current_temperature} + outside {outside_temp_change} + hvac {hvac_temp_change}")
         self.current_temperature = new_temerature
+        self.update_current_outside_temperature()
 
     def update_people_presence(self):
         for person in self.schedule:
@@ -214,7 +229,11 @@ class SmartHomeTempControlEnv(gym.Env):
     def update_current_outside_temperature(self):
         if self.step_counter * self.time_factor >= 1:
             self.current_outside_temperature = self.outside_temperature_next
-            self.outside_temperature_next = self.outside_temperature_reader.get_next_line()
+            try:
+                self.outside_temperature_next = float(self.outside_temperature_reader.get_next_line()[1])
+            except ValueError:
+                self.outside_temperature_next = 0
+                print("[ERROR] The string does not represent a valid floating-point number. In update_current_outside_temperature()")
             self.outside_temperature_step_diff = (self.outside_temperature_next - self.current_outside_temperature) * self.time_factor
             self.step_counter = 0
         else:
