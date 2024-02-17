@@ -9,18 +9,12 @@ Updates the outside temperature over time
 """
 class TemperatureManager:
     def __init__(self ):
-        self.cur_temp = ConfigurationManager().get_config("starting_temperature")       # inside temperature
+        self.cur_temp = ConfigurationManager().get_temp_config("starting_temperature")       # inside temperature
 
 
         self.out_temp_reader = CSVLineReader("temperature_data/basel_10_years_hourly.csv")
-        temp_data = self.out_temp_reader.get_next_line()
-        if temp_data is None:
-            print("[ERROR] The file is empty. In TemperatureManager()")
-            return
 
-        self.time = temp_data[0]                                                        # starting time of the simulation
-
-        self.out_temp = self.temp_data[1]                                               # outside temperature
+        self.out_temp = self.out_temp_reader.get_next_line()[1]                     # outside temperature
         self.out_temp_next = self.out_temp_reader.get_next_line()[1]
         self.out_temp_step_diff = self.out_temp_next - self.out_temp
 
@@ -34,32 +28,34 @@ class TemperatureManager:
     Updates outside temperature, next temperature, diff and the step counter
     """
     def out_temp_update(self):
-        record_step = ConfigurationManager().get_config("outside_temperature_record_step")
+        record_step = ConfigurationManager().get_settings_config("outside_temperature_record_step")
 
         if self.step_counter >= record_step:
+
             # get next outside temperature
-            try:
-                self.out_temp_next = float(self.out_temp_reader.get_next_line()[1])
-            except ValueError:
-                self.out_temp_next = 0
-                Logger().error("The outside temperature is not a number.")
+            self.out_temp_next = self.out_temp_reader.get_next_line()[1]
+            if self.out_temp_next is None:
+                self.out_temp_reader.reset_to_beginning()
+                self.out_temp_next = self.out_temp_reader.get_next_line()[1]
+                Logger().warning("Out of data. Resseting to the beginning of the file.")
+
             self.out_temp_step_diff = (self.out_temp_next - self.out_temp) * self.time_factor
             self.step_counter -= record_step
 
         self.out_temp += self.out_temp_step_diff
-        self.step_counter += ConfigurationManager().get_config("minutes_per_step")
+        self.step_counter += ConfigurationManager().get_settings_config("minutes_per_step")
 
     """
     Updates the temperature based on the outside temperature and the HVAC system
     """
     def update_temp(self, heating_meter):
-        INSULATION = ConfigurationManager().get_config("insulation_quality")
-        MINUTES_PER_STEP = ConfigurationManager().get_config("minutes_per_step")
+        INSULATION = ConfigurationManager().get_temp_config("insulation_quality")
+        MINUTES_PER_STEP = ConfigurationManager().get_settings_config("minutes_per_step")
         HOUR_MINUTES = 60
         TIME_FACTOR = MINUTES_PER_STEP / HOUR_MINUTES
-        HEATER_AT_MAX = ConfigurationManager().get_config("heater_at_max")
-        HEATING_METER_AT_MAX = ConfigurationManager().get_config("heating_meter_at_max")
-        HVAC_EFFICIENCY = ConfigurationManager().get_config("hvac_efficiency")
+        HEATER_AT_MAX = ConfigurationManager().get_temp_config("heater_at_max")
+        HEATING_METER_AT_MAX = ConfigurationManager().get_temp_config("heating_meter_at_max")
+        HVAC_EFFICIENCY = ConfigurationManager().get_temp_config("hvac_efficiency")
 
         # Change due to outside temperature
         outside_temp_change = (self.out_temp - self.cur_temp) * (1 - INSULATION) * TIME_FACTOR

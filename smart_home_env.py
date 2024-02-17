@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import random
 
 from smart_home_config import CONFIG
-from CSVLineReader import CSVLineReader
+from csv_line_reader import CSVLineReader
 
 class SmartHomeTempControlEnv(gym.Env):
     metadata = {'render.modes': ['console']}
@@ -26,17 +26,6 @@ class SmartHomeTempControlEnv(gym.Env):
         self.cooler_at_max = config['cooler_at_max']
         self.hvac_efficiency = config['hvac_efficiency']
         self.meter_step = config['meter_step']
-
-        # Define outside temperature
-        self.outside_temperature_reader = CSVLineReader('temperature_data/basel_10_years_hourly.csv')
-        self.step_counter = 0
-        try:
-            self.current_outside_temperature = float(self.outside_temperature_reader.get_next_line()[1])
-            self.outside_temperature_next = float(self.outside_temperature_reader.get_next_line()[1])
-        except ValueError:
-            self.current_outside_temperature = 0
-            print("[ERROR] INITIALIZATION - The string does not represent a valid floating-point number.")
-        self.outside_temperature_step_diff = (self.outside_temperature_next - self.current_outside_temperature) * self.time_factor
 
         # Define weekly schedule
         self.weekly_schedule = config['weekly_schedule']
@@ -63,8 +52,6 @@ class SmartHomeTempControlEnv(gym.Env):
         self.max_meter = 10.0
 
         # History for plotting
-        self.temperature_history = []
-        self.outside_temperature_history = []
         self.heating_meter_history = []
         self.cooling_meter_history = []
         self.people_presence_history = {}
@@ -131,62 +118,7 @@ class SmartHomeTempControlEnv(gym.Env):
             self.current_day = today
             self.schedule = self.generate_schedule()
 
-    def generate_schedule(self):
-        daily_schedule = self.weekly_schedule[self.current_day]
 
-        # Apply variance to the schedule
-        for person, schedule in daily_schedule.items():
-            if 'leave' in schedule and 'return' in schedule:
-                leave_time = datetime.strptime(schedule['leave'], '%H:%M')
-                return_time = datetime.strptime(schedule['return'], '%H:%M')
-                variance = schedule['variance']
-
-                # Apply variance
-                leave_time += timedelta(minutes=random.randint(-variance, variance))
-                return_time += timedelta(minutes=random.randint(-variance, variance))
-
-                # Update the schedule
-                daily_schedule[person]['leave'] = leave_time.strftime('%H:%M')
-                daily_schedule[person]['return'] = return_time.strftime('%H:%M')
-
-            # Check for random events
-            if random.random() < self.random_event_chance:
-                random_event_pick = random.random()
-                starting_chance = 0
-
-                for event, chance in self.random_event.items():
-                    if random_event_pick < starting_chance + chance:
-                        print(f"Random event occured {event} for {person}.")
-                        self.apply_random_event(event, person, daily_schedule)
-                        break
-                    starting_chance += chance
-        return daily_schedule
-
-    def apply_random_event(self, event, person, daily_schedule):
-        if event == 'sick-day':
-            daily_schedule[person]['at_home'] = True
-        elif event == 'vacation':
-            daily_schedule[person]['at_home'] = True
-        elif event == 'early-return':
-            return_time = self.parse_time(daily_schedule[person]['return'])
-            return_time -= timedelta(minutes=random.randint(0, self.random_event_max_duration))
-            daily_schedule[person]['return'] = return_time.strftime('%H:%M')
-        elif event == 'late-return':
-            return_time = self.parse_time(daily_schedule[person]['return'])
-            return_time += timedelta(minutes=random.randint(0, self.random_event_max_duration))
-            daily_schedule[person]['return'] = return_time.strftime('%H:%M')
-        elif event == 'early-leave':
-            leave_time = self.parse_time(daily_schedule[person]['leave'])
-            leave_time -= timedelta(minutes=random.randint(0, self.random_event_max_duration))
-            daily_schedule[person]['leave'] = leave_time.strftime('%H:%M')
-        elif event == 'late-leave':
-            leave_time = self.parse_time(daily_schedule[person]['leave'])
-            leave_time += timedelta(minutes=random.randint(0, self.random_event_max_duration))
-            daily_schedule[person]['leave'] = leave_time.strftime('%H:%M')
-        elif event == 'out-of-town':
-            daily_schedule[person]['at_home'] = False
-        elif event == 'holiday':
-            daily_schedule[person]['at_home'] = False
 
     def execute_action(self, action):
         if action == 0:  # Heat up
@@ -199,50 +131,6 @@ class SmartHomeTempControlEnv(gym.Env):
             self.heating_meter = max(0, self.heating_meter - self.meter_step/2)
             self.cooling_meter = max(0, self.cooling_meter - self.meter_step/2)
 
-    def update_temperature(self):
-        outside_temp_change = (self.current_outside_temperature - self.current_temperature) * (1 - self.insulation_factor) * self.time_factor
-        hvac_temp_change = (self.heating_meter/10 * self.heater_at_max - (20 - self.cooling_meter)/10 * self.cooler_at_max) * self.hvac_efficiency * self.time_factor
-        total_temp_change = outside_temp_change # + hvac_temp_change
-        new_temerature = self.current_temperature + total_temp_change
-        print(f"TEMPERATURE: {new_temerature} = current {self.current_temperature} + outside {outside_temp_change} + hvac {hvac_temp_change}")
-        self.current_temperature = new_temerature
-        self.update_current_outside_temperature()
-
-    def update_people_presence(self):
-        for person in self.schedule:
-            persons_schedule = self.schedule[person]
-            if 'at_home' in persons_schedule:
-                if persons_schedule['at_home']:
-                    self.people_presence[person] = True
-                else:
-                    self.people_presence[person] = False
-            else:
-                leave_time = self.parse_time(persons_schedule['leave'])
-                return_time = self.parse_time(persons_schedule['return'])
-                if leave_time <= self.current_time <= return_time:
-                    self.people_presence[person] = False
-                else:
-                    self.people_presence[person] = True
-
-    # The outside temperature linearly changes in between the records (hourly data)
-    # Each hour the outside temperature is updated
-    def update_current_outside_temperature(self):
-        if self.step_counter * self.time_factor >= 1:
-            self.current_outside_temperature = self.outside_temperature_next
-            try:
-                self.outside_temperature_next = float(self.outside_temperature_reader.get_next_line()[1])
-            except ValueError:
-                self.outside_temperature_next = 0
-                print("[ERROR] The string does not represent a valid floating-point number. In update_current_outside_temperature()")
-            self.outside_temperature_step_diff = (self.outside_temperature_next - self.current_outside_temperature) * self.time_factor
-            self.step_counter = 0
-        else:
-            self.current_outside_temperature += self.outside_temperature_step_diff
-            self.step_counter += 1
-
-    def parse_time(self, time_str):
-        hour, minute = map(int, time_str.split(':'))
-        return self.current_time.replace(hour=hour, minute=minute)
 
     def append_to_history(self):
         self.temperature_history.append(self.current_temperature)
@@ -259,6 +147,7 @@ class SmartHomeTempControlEnv(gym.Env):
         return self.time_history, self.temperature_history, self.outside_temperature_history
 
     def get_control_data(self):
+        #TODO get from temperature_manager
         return self.time_history, self.heating_meter_history, self.cooling_meter_history
 
     def get_occupancy_data(self):

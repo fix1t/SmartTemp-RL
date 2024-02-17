@@ -1,4 +1,5 @@
 import csv
+from logger_manager import Logger
 
 class CSVLineReader:
     def __init__(self, file_path):
@@ -20,13 +21,20 @@ class CSVLineReader:
 
     def get_next_line(self):
         try:
-            return next(self.generator)
+            row = next(self.generator)
+            # Convert the element at index 1 to float, if it exists and is convertible
+            if row and len(row) > 1:
+                try:
+                    row[1] = float(row[1])
+                except ValueError:
+                    Logger.error(f"Warning: Cannot convert to float: {row[1]}")
+            return row
         except StopIteration:
             self.file.close()
-            #TODO: handle EOF
             return None
 
+    """
+    Resets the reading cursor back to the beginning of the file.
+    """
     def reset_to_beginning(self):
-        # Resets the reading cursor back to the beginning of the file.
         self._reset()
-

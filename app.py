@@ -85,7 +85,7 @@ def update_occupancy_graph(n):
     return fig
 
 def run_simulation():
-    for _ in range(100000):  # Run for 10000 steps
+    for _ in range(24*60 * 30):
         action = simulation.action_space.sample()
         simulation.step(action)
         time.sleep(0.01)
