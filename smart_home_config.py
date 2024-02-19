@@ -10,7 +10,7 @@ CONFIG = {
     "temperature": {
         'starting_temperature': 20,                 # degrees Celsius
         'outside_temperature': 10,                  # degrees Celsius
-        'user_preference': 22,                      # degrees Celsius
+        'target_temperature': 22,                   # degrees Celsius
         'insulation_quality': 0.95,                 # coefficient ranging from 0 (no insulation) to 1 (perfect insulation)
         'heater_at_max': 40,                        # maximum temperature output of the heater
         'heating_meter_at_max': 10,                 # maximum heating meter reading
