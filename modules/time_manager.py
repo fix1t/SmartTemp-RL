@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 
-from configuration_manager import ConfigurationManager
+from modules.configuration_manager import ConfigurationManager
 
 class TimeManager:
     """

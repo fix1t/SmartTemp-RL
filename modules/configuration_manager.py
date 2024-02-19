@@ -12,7 +12,7 @@ class ConfigurationManager:
         return cls._instance
 
     def load_configuration(self):
-        from smart_home_config import CONFIG
+        from environment_configuration import CONFIG
         self.config = CONFIG
 
     def get_temp_config(self, key):

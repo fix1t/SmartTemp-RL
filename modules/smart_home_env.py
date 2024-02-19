@@ -4,10 +4,10 @@ import numpy as np
 from datetime import datetime, timedelta
 import random
 
-from occupancy_manager import OccupancyManager
-from temperature_manager import TemperatureManager
-from configuration_manager import ConfigurationManager
-from time_manager import TimeManager
+from modules.occupancy_manager import OccupancyManager
+from modules.temperature_manager import TemperatureManager
+from modules.configuration_manager import ConfigurationManager
+from modules.time_manager import TimeManager
 
 class SmartHomeTempControlEnv(gym.Env):
     metadata = {'render.modes': ['console']}

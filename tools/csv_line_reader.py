@@ -1,5 +1,5 @@
 import csv
-from logger_manager import Logger
+from tools.logger_manager import Logger
 
 class CSVLineReader:
     def __init__(self, file_path):

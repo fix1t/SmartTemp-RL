@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 import threading
 import time
 
-from smart_home_env import SmartHomeTempControlEnv
+from modules.smart_home_env import SmartHomeTempControlEnv
 
 simulation = SmartHomeTempControlEnv()
 simulation.reset()
