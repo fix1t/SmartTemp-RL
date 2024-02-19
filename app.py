@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 import threading
 import time
 
-from modules.smart_home_env import SmartHomeTempControlEnv
+from smart_home_env import SmartHomeTempControlEnv
 
 simulation = SmartHomeTempControlEnv()
 simulation.reset()
@@ -15,7 +15,7 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1("Smart Home Temperature Control Simulation"),
     dcc.Graph(id='temperature-graph', animate=True),
-    # dcc.Graph(id='control-graph', animate=True),
+    dcc.Graph(id='heating-system-graph', animate=True),
     dcc.Graph(id='occupancy-graph', animate=True),
     dcc.Interval(
         id='graph-update',
@@ -43,24 +43,23 @@ def update_temperature_graph(n):
 
     return fig
 
-# # Callback for updating the control graph
-# @app.callback(Output('control-graph', 'figure'),
-#               [Input('graph-update', 'n_intervals')])
-# def update_control_graph(n):
-#     time_data, heating, cooling = simulation.get_control_data()
+# Callback for updating the control graph
+@app.callback(Output('heating-system-graph', 'figure'),
+              [Input('graph-update', 'n_intervals')])
+def update_heating_system_graph(n):
+    time_data, heating = simulation.get_heating_data()
 
-#     fig = go.Figure()
-#     fig.add_trace(go.Scatter(x=time_data, y=cooling, name='Cooling Meter', mode='lines+markers'))
-#     fig.add_trace(go.Scatter(x=time_data, y=heating, name='Heating Meter', mode='lines+markers'))
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=time_data, y=heating, name='Heating Meter', mode='lines+markers'))
 
-#     fig.update_layout(
-#         xaxis=dict(type='date', title='Time', autorange=True),
-#         yaxis=dict(title='Meter Reading', autorange=True),
-#         title='Heating and Cooling Controls Over Time',
-#         margin=dict(l=40, r=40, t=40, b=40),
-#     )
+    fig.update_layout(
+        xaxis=dict(type='date', title='Time', autorange=True),
+        yaxis=dict(title='Meter Reading', autorange=True),
+        title='Heating Over Time',
+        margin=dict(l=40, r=40, t=40, b=40),
+    )
 
-#     return fig
+    return fig
 
 # Callback for updating the occupancy graph
 @app.callback(Output('occupancy-graph', 'figure'),

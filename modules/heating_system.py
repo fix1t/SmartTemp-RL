@@ -10,6 +10,7 @@ class HeatingSystem:
         self.T_base = T_base                # Base temperature for exponential calculation:
                                             #   shape of exponential curve (the lesser the value, the steeper the curve)
         self.T_max = T_max                  # Maximum comfortable temperature
+        self.H_history = [self.H_energy]    # History of heat energy
 
     def update_heat_energy(self, heating_on):
         """Update the HS's heat energy based on its current state."""
@@ -30,6 +31,17 @@ class HeatingSystem:
         # Adjust the temperature change calculation
         return self.H_efficiency * (math.exp(self.H_energy / self.T_base) - 1) * diminishing_factor
 
+    def get_heat_energy(self):
+        return self.H_energy
+
+    def get_heat_history(self):
+        return self.H_history
+
+    def step(self, action):
+        """Update the HS's heat energy based on the action taken."""
+        # assert action in [0, 1], "Invalid action"
+        self.update_heat_energy(action == 0)
+        self.H_history.append(self.H_energy)
 
 # Example usage
 if __name__ == "__main__":

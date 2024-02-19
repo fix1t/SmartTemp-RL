@@ -108,7 +108,7 @@ class OccupancyManager:
         hour, minute = map(int, time_str.split(':'))
         return TimeManager().get_current_time().replace(hour=hour, minute=minute)
 
-    def occupacy_step(self):
+    def step(self):
         """Update the occupancy based on the schedule and random events"""
         # Check if the day has changed - if so, generate new schedule
         if self.today != TimeManager().get_today():

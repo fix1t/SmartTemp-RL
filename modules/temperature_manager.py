@@ -49,7 +49,7 @@ class TemperatureManager:
         self.out_temp += self.out_temp_step_diff
         self.step_counter += ConfigurationManager().get_settings_config("minutes_per_step")
 
-    def update_temp(self, heating_meter):
+    def update_temp(self, heating_system):
         """
         Updates the temperature based on the outside temperature and the HVAC system
         """
@@ -57,15 +57,12 @@ class TemperatureManager:
         MINUTES_PER_STEP = ConfigurationManager().get_settings_config("minutes_per_step")
         HOUR_MINUTES = 60
         TIME_FACTOR = MINUTES_PER_STEP / HOUR_MINUTES
-        HEATER_AT_MAX = ConfigurationManager().get_temp_config("heater_at_max")
-        HEATING_METER_AT_MAX = ConfigurationManager().get_temp_config("heating_meter_at_max")
-        HVAC_EFFICIENCY = ConfigurationManager().get_temp_config("hvac_efficiency")
 
         # Change due to outside temperature
         outside_temp_change = (self.out_temp - self.cur_temp) * (1 - INSULATION) * TIME_FACTOR
         # Change due to HVAC system
         #TODO: heating only for now
-        hvac_temp_change = (heating_meter/HEATING_METER_AT_MAX * HEATER_AT_MAX) * HVAC_EFFICIENCY * TIME_FACTOR
+        hvac_temp_change = heating_system.get_temperature_change(self.cur_temp)
         new_temerature = self.cur_temp + (outside_temp_change + hvac_temp_change)
         Logger().info(f"{TimeManager().get_current_time()} : New temp {new_temerature} = current {self.cur_temp} + outside {outside_temp_change} + hvac {hvac_temp_change}")
         self.cur_temp = new_temerature
@@ -74,12 +71,12 @@ class TemperatureManager:
         self.temp_history.append(self.cur_temp)
         self.out_temp_history.append(self.out_temp)
 
-    def temperature_step(self, heating_meter_status):
+    def step(self, heating_system):
         """
         Abstraction of the temperature step in the simulation
         Updates the temperature, the outside temperature and the temperature history
         """
-        self.update_temp(heating_meter_status)
+        self.update_temp(heating_system)
         self.out_temp_update()
         self.append_temp_history()
 

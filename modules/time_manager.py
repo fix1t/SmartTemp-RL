@@ -34,6 +34,6 @@ class TimeManager:
     def get_time_history(self):
         return self.time_history
 
-    def time_step(self):
+    def step(self):
         self.update_time()
         return self.current_time
