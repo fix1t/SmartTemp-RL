@@ -1,3 +1,4 @@
+import os
 import logging
 from datetime import datetime
 
@@ -10,6 +11,10 @@ class Logger:
     @classmethod
     def get_logger(cls, level=logging.INFO):
         if cls._logger is None:
+            # Check if the logs folder exists, create it if it does not
+            if not os.path.exists('logs'):
+                os.makedirs('logs')
+
             # Format the current date and time
             current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             log_file = f'logs/{current_time}.log'  # time-dependent log file name
