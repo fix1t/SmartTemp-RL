@@ -13,7 +13,7 @@ CONFIG = {
         'target_temperature': 22,                   # degrees Celsius
         'insulation_quality': 0.95,                 # coefficient ranging from 0 (no insulation) to 1 (perfect insulation)
         'heater_at_max': 40,                        # maximum temperature output of the heater
-        'heating_meter_at_max': 10,                 # maximum heating meter reading
+        'heating_meter_at_max': 5,                 # maximum heating meter reading
         'cooler_at_max': 5,                         # minimal temperature output of the cooler
         'hvac_efficiency': 0.05,                    # how much of the heater/cooler's output is actually used
         'meter_step': 0.25,                         # how fast the meter fills up

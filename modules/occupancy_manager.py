@@ -26,7 +26,6 @@ class OccupancyManager:
         """Generate the schedule for the current day - apply variance and random events"""
         for person in self.people:
             Logger().info(f"Generating schedule for {person}")
-            print(person)
             self.generate_schedule_for_person(person)
 
 
@@ -137,4 +136,6 @@ class OccupancyManager:
     def get_occupancy_history(self):
         return self.people_presence_history
 
+    def is_occupied(self):
+        return any(self.people_presence.values())
 
