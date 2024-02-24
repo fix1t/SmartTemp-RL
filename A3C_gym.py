@@ -31,27 +31,24 @@ class A3C():
         self.network = Network(state_size ,action_size).to(self.device)  # Initialize the policy and value network
         self.optimizer = torch.optim.Adam(self.network.parameters(), lr=learning_rate)  # Define optimizer
 
-    def act(self, state):
+    def act(self, states):
         """
-        Chooses an action based on the current state using the policy network.
+        Chooses actions for a batch of states using the policy network.
 
         Parameters:
-            state (np.array): The current state of the environment.
+            states (np.array): The current states of the environments.
 
         Returns:
-            np.array: The chosen action.
+            np.array: The chosen actions for each state.
         """
-        if state.ndim == 3:
-            state = [state]
-        # Convert state to tensor and get action probabilities
-        state = torch.tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
-        print (state)
-        print (state.shape)
-        action_values, _ = self.network(state)
-        policy = F.softmax(action_values, dim=-1)
+        states = torch.tensor(states, dtype=torch.float32, device=self.device)
+        action_values, _ = self.network(states)
+        policy = F.softmax(action_values, dim=-1).cpu().detach().numpy()
 
-        # Sample action from the action distribution
-        return np.array([np.random.choice(len(p), p=p) for p in policy.detach().cpu().numpy()])
+        # Sample actions for each state in the batch
+        actions = [np.random.choice(self.action_size, p=policy[i]) for i in range(policy.shape[0])]
+        return np.array(actions)
+
 
     def step(self, state, action, reward, next_state, done):
         """
@@ -156,7 +153,7 @@ class EnvBatch:
   def reset(self):
     _states = []
     for env in self.envs:
-      _states.append(env.reset()[0])
+      _states.append(env.reset())
     return np.array(_states)
 
   def step(self, actions):
@@ -176,8 +173,12 @@ env_batch = EnvBatch(number_environments)
 batch_states = env_batch.reset()
 agent = A3C(state_size, action_size)
 
+print(batch_states)
+print(batch_states.shape)
+
 with tqdm.trange(0, 3001) as progress_bar:
   for i in progress_bar:
+
     batch_actions = agent.act(batch_states)
     batch_next_states, batch_rewards, batch_dones, _ = env_batch.step(batch_actions)
     batch_rewards *= 0.01
