@@ -1,19 +1,31 @@
 import csv
+import random
 from tools.logger_manager import Logger
 
 class CSVLineReader:
-    def __init__(self, file_path):
+    def __init__(self, file_path, start_from_random=False):
         self.file_path = file_path
-        self._reset()
+        self.start_from_random = start_from_random
+        self._reset(start_from_random=self.start_from_random)
 
-    def _reset(self):
-        # Close the file if it's already open
+    def _reset(self, start_from_random=False):
         if hasattr(self, 'file') and not self.file.closed:
             self.file.close()
-        # Open the file, setup the CSV reader and the generator
+
         self.file = open(self.file_path, 'r')
         self.csv_reader = csv.reader(self.file)
+
+        if start_from_random:
+            total_lines = self.get_number_of_lines()
+            random_line = random.randint(0, total_lines - 1)
+            for _ in range(random_line):
+                next(self.csv_reader)
+
         self.generator = self._create_generator()
+
+    def get_number_of_lines(self):
+        with open(self.file_path, 'r') as f:
+            return sum(1 for _ in f)
 
     def _create_generator(self):
         for row in self.csv_reader:
@@ -31,10 +43,25 @@ class CSVLineReader:
             return row
         except StopIteration:
             self.file.close()
-            return None
+            self._reset()  # Reset if we've reached the end
+            return next(self.generator)  # Return the first line after resetting
 
-    """
-    Resets the reading cursor back to the beginning of the file.
-    """
+
     def reset_to_beginning(self):
-        self._reset()
+        self._reset(start_from_random=False)
+
+if __name__ == '__main__':
+    # Example usage
+    file_path = 'data/basel_10_years_hourly.csv'
+    reader_random_start = CSVLineReader(file_path, start_from_random=True)
+
+    print("Reading a few lines from a random starting point:")
+    for _ in range(5):
+        line = reader_random_start.get_next_line()
+        print(line)
+
+    reader_random_start.reset_to_beginning()
+    print("\nResetting to the beginning and reading a few lines:")
+    for _ in range(5):
+        line = reader_random_start.get_next_line()
+        print(line)

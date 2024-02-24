@@ -13,7 +13,7 @@ class TemperatureManager:
         self.cur_temp = ConfigurationManager().get_temp_config("starting_temperature")       # inside temperature
 
 
-        self.out_temp_reader = CSVLineReader("temperature_data/basel_10_years_hourly.csv")
+        self.out_temp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=True)
 
         self.out_temp = self.out_temp_reader.get_next_line()[1]                     # outside temperature
         self.out_temp_next = self.out_temp_reader.get_next_line()[1]

@@ -35,7 +35,7 @@ print('Number of actions: ', number_actions)
 def save_agent(agent, score, number_of_episodes):
     if not os.path.exists('agents'):
         os.makedirs('agents')
-    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    current_time = datetime.now().strftime("%m-%d_%H-%M")
     filename = f'agents/{current_time}_{int(score)}_in_{number_of_episodes}_eps.pth'
     torch.save(agent.local_qnetwork.state_dict(), filename)
 
@@ -60,4 +60,5 @@ for episode in range(1, number_episodes + 1):
   if np.mean(scores_on_100_episodes) >= 200.0:
     print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
     break
+
 save_agent(agent, np.mean(scores_on_100_episodes), episode)

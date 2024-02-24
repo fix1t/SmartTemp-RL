@@ -5,6 +5,7 @@ CONFIG = {
         'minutes_per_step': 15,                     # how long a step is in minutes
         'outside_temperature_record_step': 60,      # how often the outside temperature is recorded in minutes
         'start_of_simulation': datetime(2013, 1, 1, 0, 0),# starting time of the simulation
+        'temperature_data_file': 'data/basel_10_years_hourly.csv',  # file with the temperature data
     },
 
     "temperature": {
