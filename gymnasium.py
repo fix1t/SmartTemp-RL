@@ -8,7 +8,7 @@ from agent.agent import Agent
 from smart_home_env import SmartHomeTempControlEnv
 from datetime import datetime
 
-number_episodes = 3000
+number_episodes = 2000
 maximum_number_timesteps_per_episode = 4 * 24 * 7
 epsilon_starting_value  = 1.0
 epsilon_ending_value  = 0.01
@@ -57,7 +57,7 @@ for episode in range(1, number_episodes + 1):
   print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)), end = "")
   if episode % 100 == 0:
     print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
-  if np.mean(scores_on_100_episodes) >= 100.0:
+  if np.mean(scores_on_100_episodes) >= 200.0:
     print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
     break
 save_agent(agent, np.mean(scores_on_100_episodes), episode)

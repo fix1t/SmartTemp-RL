@@ -103,6 +103,11 @@ class SmartHomeTempControlEnv(gym.Env):
             self.renderer = SimulationRenderer(self)
             self.renderer.run_server()
 
+    def simulate(self):
+        self.renderer = SimulationRenderer(self)
+        self.renderer.run_server()
+        self.renderer.run_random_simulation()
+
     def close(self):
         pass
 
@@ -121,6 +126,4 @@ class SmartHomeTempControlEnv(gym.Env):
 
 if __name__ == '__main__':
     env = SmartHomeTempControlEnv()
-    env.render('web')
-
-
+    env.simulate()
