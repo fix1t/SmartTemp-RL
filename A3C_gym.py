@@ -49,45 +49,57 @@ class A3C():
         actions = [np.random.choice(self.action_size, p=policy[i]) for i in range(policy.shape[0])]
         return np.array(actions)
 
-
     def step(self, state, action, reward, next_state, done):
         """
-        Performs a single step of training on the agent.
+        Performs a single step of training on the agent, updating both the policy (actor)
+        and the value (critic) networks based on the received batch of experiences.
 
         Parameters:
-            state (np.array): The current state.
-            action (int): The action taken.
-            reward (float): The reward received.
-            next_state (np.array): The next state.
-            done (bool): Whether the episode has ended.
+            state (np.array): The current states for a batch of environments.
+            action (np.array): The actions taken for each environment.
+            reward (np.array): The rewards received for each environment.
+            next_state (np.array): The next states for each environment.
+            done (np.array): The done flags indicating whether each environment has finished.
         """
-        # Convert parameters to tensors
+        batch_size = state.shape[0]  # Determine the batch size from the state shape
+        # Convert all inputs to PyTorch tensors and move to the specified device
         state = torch.tensor(state, dtype=torch.float32, device=self.device)
         next_state = torch.tensor(next_state, dtype=torch.float32, device=self.device)
         reward = torch.tensor(reward, dtype=torch.float32, device=self.device)
-        done = torch.tensor(done, dtype=torch.float32, device=self.device)
+        done = torch.tensor(done, dtype=torch.bool, device=self.device).to(dtype=torch.float32)
 
-        # Calculate loss and perform backpropagation
+        # Forward pass through the network for both current and next states
         action_values, state_value = self.network(state)
         _, next_state_value = self.network(next_state)
 
-        # Compute target and advantage
+        # Calculate the target value for each state using the Bellman equation
         target_state_value = reward + discount_factor * next_state_value * (1 - done)
+
+        # Calculate the advantage as the difference between target and predicted state values
         advantage = target_state_value - state_value
 
-        # Calculate policy and value loss
+        # Compute the log probabilities of the actions
         probs = F.softmax(action_values, dim=-1)
         logprobs = F.log_softmax(action_values, dim=-1)
-        entropy = -(probs * logprobs).sum(-1).mean()  # Entropy regularization
-        action_log_probs = logprobs.gather(1, action.unsqueeze(-1)).squeeze(-1)
-        actor_loss = -(action_log_probs * advantage.detach()).mean() - 0.001 * entropy
+
+        # Calculate the entropy to encourage exploration
+        entropy = -torch.sum(probs * logprobs, dim=-1)
+
+        # Select the log probabilities of the chosen actions
+        action = torch.tensor(action, dtype=torch.long, device=self.device)  # Ensure action tensor is correct
+        logp_actions = logprobs[np.arange(batch_size), action]
+
+        # Calculate the losses for both actor and critic components
+        actor_loss = -(logp_actions * advantage.detach()).mean() - 0.001 * entropy.mean()
         critic_loss = F.mse_loss(state_value, target_state_value.detach())
 
-        # Update network weights
+        # Combine the losses, perform backpropagation, and update the network weights
         total_loss = actor_loss + critic_loss
         self.optimizer.zero_grad()
         total_loss.backward()
         self.optimizer.step()
+
+
 
 class Network(nn.Module):
     """
@@ -131,7 +143,7 @@ class Network(nn.Module):
 def evaluate(agent, env, n_episodes = 1):
   episodes_rewards = []
   for _ in range(n_episodes):
-    state, _ = env.reset()
+    state  = env.reset()
     total_reward = 0
     while True:
       action = agent.act(state)
@@ -196,7 +208,7 @@ class EnvBatch:
         # new initial state as the next state, ensuring continuous interaction without manual resetting.
         for i in range(len(self.envs)):
             if dones[i]:
-                next_states[i] = self.envs[i].reset()[0]
+                next_states[i] = self.envs[i].reset()
 
         # Return the results as a tuple of arrays: next states, rewards, done flags, and info objects.
         # This format facilitates batch processing and integration with learning algorithms.
