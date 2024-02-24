@@ -146,22 +146,62 @@ def make_env():
   return SmartHomeTempControlEnv(start_from_random_day=True)
 
 class EnvBatch:
+    """
+    A class to manage a batch of environment instances.
 
-  def __init__(self, n_envs = number_environments):
-    self.envs = [make_env() for _ in range(n_envs)]
+    This class facilitates the simultaneous stepping and resetting of multiple environment instances,
+    allowing for efficient data collection from parallel interactions. This is especially useful
+    in algorithms that leverage multiple workers or agents exploring in parallel to speed up learning.
+    """
 
-  def reset(self):
-    _states = []
-    for env in self.envs:
-      _states.append(env.reset())
-    return np.array(_states)
+    def __init__(self, n_envs=number_environments):
+        """
+        Initializes the EnvBatch with a specified number of environment instances.
 
-  def step(self, actions):
-    next_states, rewards, dones, infos, _ = map(np.array, zip(*[env.step(a) for env, a in zip(self.envs, actions)]))
-    for i in range(len(self.envs)):
-      if dones[i]:
-        next_states[i] = self.envs[i].reset()[0]
-    return next_states, rewards, dones, infos
+        Parameters:
+            n_envs (int): The number of environment instances to manage.
+        """
+        # Creates a list of environment instances by calling make_env() for each one.
+        self.envs = [make_env() for _ in range(n_envs)]
+
+    def reset(self):
+        """
+        Resets all environments in the batch and returns their initial states.
+
+        Returns:
+            np.array: An array containing the initial state of each environment in the batch.
+        """
+        _states = []  # Initialize an empty list to hold the initial states of all environments.
+        for env in self.envs:
+            # Reset each environment to its initial state and append the state to the list.
+            _states.append(env.reset())
+        # Convert the list of states to a NumPy array for efficient processing and return it.
+        return np.array(_states)
+
+    def step(self, actions):
+        """
+        Performs a step in each environment using the given actions and returns the results.
+
+        Parameters:
+            actions (list or np.array): A list or array of actions, one for each environment in the batch.
+
+        Returns:
+            tuple: A tuple containing arrays of next states, rewards, done flags, and info objects for each environment.
+        """
+        # Step through each environment using the corresponding action. The zip function pairs each environment
+        # with its action, and the step function is called on each pair, producing a list of results.
+        next_states, rewards, dones, infos = map(np.array, zip(*[env.step(a) for env, a in zip(self.envs, actions)]))
+
+        # Check if any environment has finished (done == True). If so, reset that environment and use its
+        # new initial state as the next state, ensuring continuous interaction without manual resetting.
+        for i in range(len(self.envs)):
+            if dones[i]:
+                next_states[i] = self.envs[i].reset()[0]
+
+        # Return the results as a tuple of arrays: next states, rewards, done flags, and info objects.
+        # This format facilitates batch processing and integration with learning algorithms.
+        return next_states, rewards, dones, infos
+
 
 env = make_env()
 state_size = env.observation_space.shape[0]
