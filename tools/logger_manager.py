@@ -11,13 +11,14 @@ class Logger:
     @classmethod
     def get_logger(cls, level=logging.INFO):
         if cls._logger is None:
-            # Check if the logs folder exists, create it if it does not
-            if not os.path.exists('logs'):
-                os.makedirs('logs')
+            # Ensure the logs directory exists
+            log_dir = 'logs'
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
 
             # Format the current date and time
             current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            log_file = f'logs/{current_time}.log'  # time-dependent log file name
+            log_file = os.path.join(log_dir, f'{current_time}.log')
 
             # Configure logging
             cls._logger = logging.getLogger(__name__)
@@ -40,8 +41,23 @@ class Logger:
             cls._logger.addHandler(file_handler)
             cls._logger.addHandler(console_handler)
 
+            # Clean up old log files to keep only the 5 most recent
+            cls.cleanup_logs(log_dir)
+
         return cls._logger
 
+    @classmethod
+    def cleanup_logs(cls, log_dir, keep=5):
+        # Get all log files in the directory
+        files = [os.path.join(log_dir, f) for f in os.listdir(log_dir) if f.endswith('.log')]
+        # Sort files by modified time
+        files.sort(key=os.path.getmtime)
+
+        # Remove the oldest files, keeping only the `keep` most recent
+        for f in files[:-keep]:
+            os.remove(f)
+
+    # Logging methods
     def info(self, message):
         Logger.get_logger().info(message)
 
@@ -50,4 +66,3 @@ class Logger:
 
     def error(self, message, exc_info=False):
         Logger.get_logger().error(message, exc_info=exc_info)
-
