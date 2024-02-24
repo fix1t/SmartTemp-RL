@@ -6,9 +6,9 @@ class CSVLineReader:
     def __init__(self, file_path, start_from_random=False):
         self.file_path = file_path
         self.start_from_random = start_from_random
-        self._reset(start_from_random=self.start_from_random)
+        self.reset(start_from_random=self.start_from_random)
 
-    def _reset(self, start_from_random=False):
+    def reset(self, start_from_random=False):
         if hasattr(self, 'file') and not self.file.closed:
             self.file.close()
 
@@ -43,12 +43,8 @@ class CSVLineReader:
             return row
         except StopIteration:
             self.file.close()
-            self._reset()  # Reset if we've reached the end
+            self.reset()  # Reset if we've reached the end
             return next(self.generator)  # Return the first line after resetting
-
-
-    def reset_to_beginning(self):
-        self._reset(start_from_random=False)
 
 if __name__ == '__main__':
     # Example usage

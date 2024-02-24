@@ -21,17 +21,7 @@ class SmartHomeTempControlEnv(gym.Env):
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
         self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
 
-        self.out_tmp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=start_from_random_day)
-        starting_time, _ = self.out_tmp_reader.get_next_line()
-        # convert 20130101T0000 to format 2013-01-01 00:00:00
-        starting_time = datetime.strptime(starting_time, '%Y%m%dT%H%M')
-
-        TimeManager().reset_time_to(starting_time)
-        print(TimeManager().get_current_time())
-        print(TimeManager().get_today())
-        self.occupacy_manager = OccupancyManager()
-        self.temperature_manager = TemperatureManager(self.out_tmp_reader)
-        self.heating_system = HeatingSystem(H_acc=0.25, H_cool=0.05, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
+        self.reset(start_from_random_day)
 
 
     def step(self, action):
@@ -75,19 +65,15 @@ class SmartHomeTempControlEnv(gym.Env):
 
             return normalized_penalty
 
+    def reset(self, start_from_random_day=True):
+        self.out_tmp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=start_from_random_day)
+        starting_time, _ = self.out_tmp_reader.get_next_line()
+        starting_time = datetime.strptime(starting_time, '%Y%m%dT%H%M')
 
-        # if self.occupacy_manager.is_occupied():
-        #     if current_temperature < target_temperature + 0.5 and current_temperature > target_temperature - 0.5:
-        #         return 5
-        #     else:
-        #         return -abs(self.temperature_manager.get_current_temperature() - ConfigurationManager().get_temp_config("target_temperature"))
-        # else:
-        #     return self.heating_system.get_heat_energy() * -1
-
-    def reset(self):
-        self.current_time = ConfigurationManager().get_settings_config("start_of_simulation")
+        TimeManager().reset_time_to(starting_time)
         self.occupacy_manager = OccupancyManager()
-        self.temperature_manager = TemperatureManager()
+        self.temperature_manager = TemperatureManager(self.out_tmp_reader)
+        self.heating_system = HeatingSystem(H_acc=0.25, H_cool=0.05, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
         return self.observation()
 
     def observation(self):
@@ -98,10 +84,6 @@ class SmartHomeTempControlEnv(gym.Env):
         #TODO: Add occupancy
         return np.array([cur_temp, out_temp, heat_energy]).astype(np.float32)
 
-    # def render(self, mode='console'):
-    #     if mode == 'console':
-    #         print(f"{self.current_time} : {self.temperature_manager.get_current_temperature} *C")
-
     def render(self, mode='web'):
         if mode == 'web':
             # Check if the renderer already exists and the server is running
@@ -111,6 +93,8 @@ class SmartHomeTempControlEnv(gym.Env):
 
             self.renderer = SimulationRenderer(self)
             self.renderer.run_server()
+        elif mode == 'console':
+            print(f"{self.current_time} : {self.temperature_manager.get_current_temperature} *C")
 
     def simulate(self):
         self.renderer = SimulationRenderer(self)

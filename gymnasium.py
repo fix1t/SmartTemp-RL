@@ -22,7 +22,7 @@ print('Epsilon ending value: ', epsilon_ending_value)
 print('Epsilon decay value: ', epsilon_decay_value)
 print('Epsilon: ', epsilon)
 
-env = SmartHomeTempControlEnv()
+env = SmartHomeTempControlEnv(start_from_random_day=True)
 state_shape = env.observation_space.shape
 state_size = env.observation_space.shape[0]
 number_actions = env.action_space.n

@@ -59,6 +59,7 @@ class Logger:
 
     # Logging methods
     def info(self, message):
+        return
         Logger.get_logger().info(message)
 
     def warning(self, message):
