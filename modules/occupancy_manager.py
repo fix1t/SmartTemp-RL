@@ -25,6 +25,8 @@ class OccupancyManager:
     def generate_schedule(self):
         """Generate the schedule for the current day - apply variance and random events"""
         for person in self.people:
+            if person not in self.todays_schedule:
+                self.todays_schedule[person] = {}
             Logger().info(f"Generating schedule for {person}")
             self.generate_schedule_for_person(person)
 
@@ -33,7 +35,11 @@ class OccupancyManager:
     def generate_schedule_for_person(self, persons_name):
         """Generate the schedule for the current day for a specific person - apply variance and random events"""
         persons_schedule = ConfigurationManager().get_schedule_config('weekly_schedule')[self.today][persons_name]
-        Logger().info(f"People's schedule: {persons_schedule} for {persons_name}")
+        Logger().info(f"People's schedule: {persons_schedule} for {persons_name} on {self.today}")
+
+        if 'at_home' in persons_schedule:
+            self.todays_schedule[persons_name]['at_home'] = persons_schedule['at_home']
+            return
 
         variance = persons_schedule['variance']
         leave_time = datetime.strptime(persons_schedule['leave'], '%H:%M')

@@ -9,11 +9,11 @@ class TemperatureManager:
     Updates the temperature based on the outside temperature and the HVAC system
     Updates the outside temperature over time
     """
-    def __init__(self ):
+    def __init__(self, temperature_data_file_reader: CSVLineReader):
         self.cur_temp = ConfigurationManager().get_temp_config("starting_temperature")       # inside temperature
 
 
-        self.out_temp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=True)
+        self.out_temp_reader = temperature_data_file_reader
 
         self.out_temp = self.out_temp_reader.get_next_line()[1]                     # outside temperature
         self.out_temp_next = self.out_temp_reader.get_next_line()[1]

@@ -43,7 +43,6 @@ class Logger:
         return cls._logger
 
     def info(self, message):
-        return
         Logger.get_logger().info(message)
 
     def warning(self, message):

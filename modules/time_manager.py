@@ -16,12 +16,11 @@ class TimeManager:
 
     def load_configuration(self):
         self.current_time = ConfigurationManager().get_settings_config("start_of_simulation")
-        self.today = self.current_time.strftime("%A")
         self.time_history = []
         self.time_history.append(self.current_time)
 
     def get_today(self):
-        return self.today
+        return self.current_time.strftime("%A")
 
     def get_current_time(self):
         return self.current_time
@@ -36,4 +35,10 @@ class TimeManager:
 
     def step(self):
         self.update_time()
+        return self.current_time
+
+    def reset_time_to(self, time):
+        self.current_time = time
+        self.time_history = []
+        self.time_history.append(self.current_time)
         return self.current_time

@@ -1,6 +1,7 @@
 import gym
 from gym import spaces
 import numpy as np
+from datetime import datetime
 
 from modules.occupancy_manager import OccupancyManager
 from modules.temperature_manager import TemperatureManager
@@ -8,27 +9,35 @@ from modules.configuration_manager import ConfigurationManager
 from modules.time_manager import TimeManager
 from modules.heating_system import HeatingSystem
 from tools.renderer import SimulationRenderer
+from tools.csv_line_reader import CSVLineReader
 
 class SmartHomeTempControlEnv(gym.Env):
     metadata = {'render.modes': ['console']}
 
-    def __init__(self):
+    def __init__(self, start_from_random_day=True):
         super(SmartHomeTempControlEnv, self).__init__()
         self.action_space = spaces.Discrete(2)  # 0: Heat Up, 1: Do Nothing
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
         self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
 
-        self.timeManager = TimeManager()
+        self.out_tmp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=start_from_random_day)
+        starting_time, _ = self.out_tmp_reader.get_next_line()
+        # convert 20130101T0000 to format 2013-01-01 00:00:00
+        starting_time = datetime.strptime(starting_time, '%Y%m%dT%H%M')
+
+        TimeManager().reset_time_to(starting_time)
+        print(TimeManager().get_current_time())
+        print(TimeManager().get_today())
         self.occupacy_manager = OccupancyManager()
-        self.temperature_manager = TemperatureManager()
+        self.temperature_manager = TemperatureManager(self.out_tmp_reader)
         self.heating_system = HeatingSystem(H_acc=0.25, H_cool=0.05, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
 
 
     def step(self, action):
         assert self.action_space.contains(action), "Invalid Action"
 
-        self.timeManager.step()
+        TimeManager().step()
 
         self.heating_system.step(action)
 
@@ -112,16 +121,16 @@ class SmartHomeTempControlEnv(gym.Env):
         pass
 
     def get_temperature_data(self):
-        time = self.timeManager.get_time_history()
+        time = TimeManager().get_time_history()
         indoor_temp = self.temperature_manager.get_temperature_history()
         outside_temp = self.temperature_manager.get_outside_temperature_history()
         return time, indoor_temp, outside_temp
 
     def get_heating_data(self):
-        return self.timeManager.get_time_history(), self.heating_system.get_heat_history()
+        return TimeManager().get_time_history(), self.heating_system.get_heat_history()
 
     def get_occupancy_data(self):
-        return self.timeManager.get_time_history(), self.occupacy_manager.get_occupancy_history()
+        return TimeManager().get_time_history(), self.occupacy_manager.get_occupancy_history()
 
 
 if __name__ == '__main__':
