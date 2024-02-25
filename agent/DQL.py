@@ -6,14 +6,14 @@ import torch.nn.functional as F
 from agent.replay_memory import ReplayMemory  # Custom module for replay memory
 from agent.network import Network  # Custom module for the neural network
 
-# Hyperparameters for the DQN agent
+# Hyperparameters for the DQL agent
 learning_rate = 5e-4  # Learning rate for the optimizer
 minibatch_size = 100  # Size of the minibatch from replay memory for learning
 discount_factor = 0.99  # Discount factor for future rewards
 replay_buffer_size = int(1e5)  # Size of the replay buffer
 interpolation_parameter = 1e-3  # Used in soft update of target network
 
-class Agent():
+class DQL():
     def __init__(self, state_size, action_size):
         """
         Initializes the agent.

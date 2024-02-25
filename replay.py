@@ -1,7 +1,7 @@
 import sys
 import torch
 import time
-from agent.agent import Agent
+from agent.DQL import DQL
 from smart_home_env import SmartHomeTempControlEnv
 
 # Expected usage: python agent_replay.py <filename>
@@ -12,7 +12,7 @@ if len(sys.argv) != 2:
 env = SmartHomeTempControlEnv()
 state_size = env.observation_space.shape[0]
 number_actions = env.action_space.n
-agent = Agent(state_size, number_actions)
+agent = DQL(state_size, number_actions)
 
 filename = sys.argv[1]
 #TOOD: Verify if the file exists...

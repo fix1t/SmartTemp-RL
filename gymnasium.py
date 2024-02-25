@@ -4,7 +4,7 @@ import numpy as np
 import random
 from collections import deque
 import torch
-from agent.agent import Agent
+from agent.DQL import DQL
 from smart_home_env import SmartHomeTempControlEnv
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -27,7 +27,7 @@ env = SmartHomeTempControlEnv(start_from_random_day=True)
 state_shape = env.observation_space.shape
 state_size = env.observation_space.shape[0]
 number_actions = env.action_space.n
-agent = Agent(state_size, number_actions)
+agent = DQL(state_size, number_actions)
 print('State shape: ', state_shape)
 print('State size: ', state_size)
 print('Number of actions: ', number_actions)
