@@ -8,7 +8,7 @@ from agent.agent import Agent
 from smart_home_env import SmartHomeTempControlEnv
 from datetime import datetime
 
-number_episodes = 2000
+number_episodes = 1500
 maximum_number_timesteps_per_episode = 4 * 24 * 7
 epsilon_starting_value  = 1.0
 epsilon_ending_value  = 0.01
@@ -39,26 +39,31 @@ def save_agent(agent, score, number_of_episodes):
     filename = f'agents/{current_time}_{int(score)}_in_{number_of_episodes}_eps.pth'
     torch.save(agent.local_qnetwork.state_dict(), filename)
 
+try:
+    for episode in range(1, number_episodes + 1):
+        state = env.reset(start_from_random_day=True)
+        score = 0
+        for t in range(maximum_number_timesteps_per_episode):
+            action = agent.act(state, epsilon)
+            next_state, reward, done, _ = env.step(action)
+            agent.step(state, action, reward, next_state, done)
+            state = next_state
+            score += reward
+            if done:
+                break
+        scores_on_100_episodes.append(score)
+        epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
+        print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)), end="")
+        if episode % 100 == 0:
+            print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
+        if np.mean(scores_on_100_episodes) >= 0.0:
+            print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
+            break
+except KeyboardInterrupt:
+    print("\nTraining interrupted. Saving current agent...")
+finally:
+    save_agent(agent, np.mean(scores_on_100_episodes), episode)
+    print("Agent saved successfully.")
+    env.close()
+    print("Environment closed.")
 
-
-for episode in range(1, number_episodes + 1):
-  state = env.reset()
-  score = 0
-  for t in range(maximum_number_timesteps_per_episode):
-    action = agent.act(state, epsilon)
-    next_state, reward, done, _ = env.step(action)
-    agent.step(state, action, reward, next_state, done)
-    state = next_state
-    score += reward
-    if done:
-      break
-  scores_on_100_episodes.append(score)
-  epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
-  print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)), end = "")
-  if episode % 100 == 0:
-    print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
-  if np.mean(scores_on_100_episodes) >= 200.0:
-    print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
-    break
-
-save_agent(agent, np.mean(scores_on_100_episodes), episode)

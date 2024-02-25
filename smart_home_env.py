@@ -52,11 +52,16 @@ class SmartHomeTempControlEnv(gym.Env):
         # Calculate the absolute difference from the target temperature
         temperature_diff = abs(current_temperature - target_temperature)
 
-        # If within the comfort zone, provide a positive reward
+        # If within the comfort zone - provide a positive reward
         if temperature_diff <= comfort_zone:
             reward = 1 - (temperature_diff / comfort_zone)# Scales linearly within the comfort zone
-        # Outside the comfort zone, use a negative exponential penalty to provide a smooth gradient
+
         else:
+            if current_temperature > target_temperature and self.heating_system.get_heat_energy() > 1:
+                penalty = -np.exp(temperature_diff - comfort_zone)
+            else:
+                penalty = 0
+
             penalty = -np.exp(temperature_diff - comfort_zone)
             # Normalize penalty to a range or adjust scale as needed for your environment
             reward = max(penalty, -10)  # Example: caps the penalty to -10 for extreme temperature differences
@@ -77,7 +82,8 @@ class SmartHomeTempControlEnv(gym.Env):
         TimeManager().reset_time_to(starting_time)
         self.occupacy_manager = OccupancyManager()
         self.temperature_manager = TemperatureManager(self.out_tmp_reader)
-        self.heating_system = HeatingSystem(H_acc=0.25, H_cool=0.05, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
+        #TODO: Read from configuration
+        self.heating_system = HeatingSystem(H_acc=0.50, H_cool=0.25, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
         return self.observation()
 
     def observation(self):

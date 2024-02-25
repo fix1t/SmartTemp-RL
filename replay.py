@@ -21,19 +21,19 @@ filename = sys.argv[1]
 checkpoint = torch.load(filename)
 agent.local_qnetwork.load_state_dict(checkpoint)
 
-state = env.reset()
+state = env.reset(False)
 env.render()
 total_reward = 0
 done = False
 
 time_step = 0
-max_time_steps = 4*24*90  # 4 steps per hour, 24 hours per day, 90 days
+max_time_steps = 4*24*180
 
 while not done or time_step < max_time_steps:
     action = agent.act(state, epsilon=0)  # Using epsilon=0 for evaluation
     state, reward, done, _ = env.step(action)
     total_reward += reward
     # print("Action:", action, "Reward:", reward)
-    time.sleep(0.01)
+    time.sleep(0.001)
     time_step += 1
 print("Total reward:", total_reward)
