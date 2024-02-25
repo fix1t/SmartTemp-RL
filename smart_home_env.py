@@ -54,21 +54,25 @@ class SmartHomeTempControlEnv(gym.Env):
 
         # If within the comfort zone, provide a positive reward
         if temperature_diff <= comfort_zone:
-            return 1 - (temperature_diff / comfort_zone)  # Scales linearly within the comfort zone
-
+            reward = 1 - (temperature_diff / comfort_zone)# Scales linearly within the comfort zone
         # Outside the comfort zone, use a negative exponential penalty to provide a smooth gradient
         else:
             penalty = -np.exp(temperature_diff - comfort_zone)
-
             # Normalize penalty to a range or adjust scale as needed for your environment
-            normalized_penalty = max(penalty, -10)  # Example: caps the penalty to -10 for extreme temperature differences
+            reward = max(penalty, -10)  # Example: caps the penalty to -10 for extreme temperature differences
 
-            return normalized_penalty
+        self.total_reward += reward
+        self.reward_data.append(self.total_reward)
+        return reward
 
     def reset(self, start_from_random_day=True):
         self.out_tmp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=start_from_random_day)
         starting_time, _ = self.out_tmp_reader.get_next_line()
         starting_time = datetime.strptime(starting_time, '%Y%m%dT%H%M')
+
+        self.target_temperature = ConfigurationManager().get_temp_config("target_temperature")
+        self.total_reward = 0
+        self.reward_data = [0]
 
         TimeManager().reset_time_to(starting_time)
         self.occupacy_manager = OccupancyManager()
@@ -115,6 +119,9 @@ class SmartHomeTempControlEnv(gym.Env):
 
     def get_occupancy_data(self):
         return TimeManager().get_time_history(), self.occupacy_manager.get_occupancy_history()
+
+    def get_reward_data(self):
+        return TimeManager().get_time_history(), self.reward_data
 
 
 if __name__ == '__main__':

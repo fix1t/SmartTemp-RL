@@ -15,6 +15,7 @@ class SimulationRenderer:
     def setup_layout(self):
         self.app.layout = html.Div([
             html.H1("Smart Home Temperature Control Simulation"),
+            dcc.Graph(id='score-graph', animate=True),
             dcc.Graph(id='temperature-graph', animate=True),
             dcc.Graph(id='heating-system-graph', animate=True),
             dcc.Graph(id='occupancy-graph', animate=True),
@@ -26,15 +27,38 @@ class SimulationRenderer:
         ])
 
     def setup_callbacks(self):
+        # Score graph
+        @self.app.callback(Output('score-graph', 'figure'),
+                           [Input('graph-update', 'n_intervals')])
+        def update_score_graph(n):
+            time_data, rewards = self.simulation.get_reward_data()
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=time_data, y=rewards, mode='lines+markers'))
+
+            fig.update_layout(
+                xaxis=dict(type='date', title='Time', autorange=True),
+                yaxis=dict(title='Score', autorange=True),
+                title='Score Over Time',
+                margin=dict(l=40, r=40, t=40, b=40),
+            )
+
+            return fig
+
         # Temperature graph
         @self.app.callback(Output('temperature-graph', 'figure'),
                            [Input('graph-update', 'n_intervals')])
         def update_temperature_graph(n):
             time_data, temp, outside_temp = self.simulation.get_temperature_data()
 
+            # Calculate the target temperature trace
+            target_temp_trace = [self.simulation.target_temperature] * len(time_data)
+
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=time_data, y=temp, name='Indoor Temperature', mode='lines+markers'))
-            fig.add_trace(go.Scatter(x=time_data, y=outside_temp, name='Outside Temperature', mode='lines+markers'))
+            fig.add_trace(go.Scatter(x=time_data, y=temp, name='Indoor', mode='lines+markers'))
+            fig.add_trace(go.Scatter(x=time_data, y=outside_temp, name='Outdoor', mode='lines+markers'))
+            # Add the target temperature trace
+            fig.add_trace(go.Scatter(x=time_data, y=target_temp_trace, name='Target', mode='lines', line=dict(color='green', dash='dash')))
 
             fig.update_layout(
                 xaxis=dict(type='date', title='Time', autorange=True),
@@ -44,6 +68,7 @@ class SimulationRenderer:
             )
 
             return fig
+
 
         # Heating system graph
         @self.app.callback(Output('heating-system-graph', 'figure'),
