@@ -11,23 +11,24 @@ import tqdm
 # Define hyperparameters for the A3C agent
 learning_rate = 1e-4  # Learning rate for optimizer
 discount_factor = 0.99  # Discount factor for future rewards
-number_environments = 10  # Number of parallel environments (not used in this code snippet)
+number_environments = 12  # Number of parallel environments (not used in this code snippet)
 
 class A3C():
     """
     A class that represents the A3C agent. It includes methods for selecting actions,
     and updating the policy and value networks based on received rewards.
     """
-    def __init__(self, action_size):
+    def __init__(self, state_size ,action_size):
         """
         Initializes the A3C agent.
 
         Parameters:
+            state_size (int): The size of the state space.
             action_size (int): The size of the action space.
         """
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # Set device for training
         self.action_size = action_size  # Number of actions
-        self.network = Network(action_size).to(self.device)  # Initialize the policy and value network
+        self.network = Network(state_size ,action_size).to(self.device)  # Initialize the policy and value network
         self.optimizer = torch.optim.Adam(self.network.parameters(), lr=learning_rate)  # Define optimizer
 
     def act(self, state):
@@ -40,8 +41,12 @@ class A3C():
         Returns:
             np.array: The chosen action.
         """
+        if state.ndim == 3:
+            state = [state]
         # Convert state to tensor and get action probabilities
         state = torch.tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+        print (state)
+        print (state.shape)
         action_values, _ = self.network(state)
         policy = F.softmax(action_values, dim=-1)
 
@@ -91,17 +96,17 @@ class Network(nn.Module):
     """
     Neural network class for A3C agent adapted for vector input with additional hidden layers.
     """
-    def __init__(self, input_size, action_size):
+    def __init__(self, state_size, action_size):
         """
         Initializes the neural network for vector inputs with more complexity.
 
         Parameters:
-            input_size (int): The size of the input vector.
+            state_size (int): The size of the input vector.
             action_size (int): The size of the action space.
         """
         super(Network, self).__init__()
-        # Definitio of the fully connected layers
-        self.fc1 = nn.Linear(input_size, 256)  # First hidden layer
+        # Definition of the fully connected layers
+        self.fc1 = nn.Linear(state_size, 256)  # Adjusted to the correct state_size
         self.fc2 = nn.Linear(256, 128)  # Second hidden layer
         self.fc3 = nn.Linear(128, 64)   # Third hidden layer, for more complexity
 
@@ -162,9 +167,14 @@ class EnvBatch:
     return next_states, rewards, dones, infos
 
 env = make_env()
+state_size = env.observation_space.shape[0]
+action_size = env.action_space.n
+print('State size: ', state_size)
+print('Action size: ', action_size)
+
 env_batch = EnvBatch(number_environments)
 batch_states = env_batch.reset()
-agent = A3C(env_batch.envs[0].action_space.n)
+agent = A3C(state_size, action_size)
 
 with tqdm.trange(0, 3001) as progress_bar:
   for i in progress_bar:
