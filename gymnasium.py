@@ -7,6 +7,7 @@ import torch
 from agent.agent import Agent
 from smart_home_env import SmartHomeTempControlEnv
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 number_episodes = 1500
 maximum_number_timesteps_per_episode = 4 * 24 * 7
@@ -39,6 +40,16 @@ def save_agent(agent, score, number_of_episodes):
     filename = f'agents/{current_time}_{int(score)}_in_{number_of_episodes}_eps.pth'
     torch.save(agent.local_qnetwork.state_dict(), filename)
 
+def plot_scores(scores):
+    plt.figure(figsize=(10, 5))
+    plt.plot(scores)
+    plt.title('Scores over Episodes')
+    plt.xlabel('Episode')
+    plt.ylabel('Score')
+    plt.show()
+
+all_scores = [] # For plotting the scores over episodes
+
 try:
     for episode in range(1, number_episodes + 1):
         state = env.reset(start_from_random_day=True)
@@ -52,6 +63,7 @@ try:
             if done:
                 break
         scores_on_100_episodes.append(score)
+        all_scores.append(score)
         epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)), end="")
         if episode % 100 == 0:
@@ -66,4 +78,4 @@ finally:
     print("Agent saved successfully.")
     env.close()
     print("Environment closed.")
-
+    plot_scores(all_scores)
