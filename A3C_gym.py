@@ -41,13 +41,37 @@ class A3C():
         Returns:
             np.array: The chosen actions for each state.
         """
+        # states = torch.tensor(states, dtype=torch.float32, device=self.device)
+        # action_values, _ = self.network(states)
+
+        # print("Action values: ")
+        # print(action_values)
+        # print(action_values.shape)
+
+        # policy = F.softmax(action_values, dim=-1).cpu().detach().numpy()
+
+        # # Sample actions for each state in the batch
+        # print("Policy: ")
+        # print(policy)
+        # print(policy.shape)
+        # actions = [np.random.choice(self.action_size, p=policy[i]) for i in range(policy.shape[0])]
+        # return np.array(actions)
+        if states.ndim == 1:  # Handling a single stWate passed to act
+            states = np.atleast_2d(states)  # Convert to 2D array
+        print(f"States:{states.shape} {states}")
+        states = np.atleast_2d(states)
         states = torch.tensor(states, dtype=torch.float32, device=self.device)
         action_values, _ = self.network(states)
+        print(f"Action values:{action_values.shape} {action_values}")
         policy = F.softmax(action_values, dim=-1).cpu().detach().numpy()
-
+        print(f"Policy:{policy.shape} {policy}")
         # Sample actions for each state in the batch
-        actions = [np.random.choice(self.action_size, p=policy[i]) for i in range(policy.shape[0])]
-        return np.array(actions)
+        if policy.ndim == 1:  # Handling a single state passed to act
+            actions = np.random.choice(self.action_size, p=policy)
+        else:  # Handling a batch of states
+            actions = [np.random.choice(self.action_size, p=policy[i]) for i in range(policy.shape[0])]
+        print(f"Actions:{actions}")
+        return actions if policy.ndim > 1 else [actions]  # Ensure output is always a list of actions
 
     def step(self, state, action, reward, next_state, done):
         """
@@ -99,8 +123,6 @@ class A3C():
         total_loss.backward()
         self.optimizer.step()
 
-
-
 class Network(nn.Module):
     """
     Neural network class for A3C agent adapted for vector input with additional hidden layers.
@@ -147,7 +169,7 @@ def evaluate(agent, env, n_episodes = 1):
     total_reward = 0
     while True:
       action = agent.act(state)
-      state, reward, done, info, _ = env.step(action[0])
+      state, reward, done, _ = env.step(action[0])
       total_reward += reward
       if done:
         break
@@ -225,12 +247,13 @@ env_batch = EnvBatch(number_environments)
 batch_states = env_batch.reset()
 agent = A3C(state_size, action_size)
 
+print("Batch states: ")
 print(batch_states)
 print(batch_states.shape)
 
 with tqdm.trange(0, 3001) as progress_bar:
   for i in progress_bar:
-
+    print("...")
     batch_actions = agent.act(batch_states)
     batch_next_states, batch_rewards, batch_dones, _ = env_batch.step(batch_actions)
     batch_rewards *= 0.01

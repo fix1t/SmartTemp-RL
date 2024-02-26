@@ -1,7 +1,5 @@
-import gym
 import os
 import numpy as np
-import random
 from collections import deque
 import torch
 from agent.DQL import DQL
@@ -52,7 +50,7 @@ all_scores = [] # For plotting the scores over episodes
 
 try:
     for episode in range(1, number_episodes + 1):
-        state = env.reset(start_from_random_day=True)
+        state = env.reset(start_from_random_day=False)
         score = 0
         for t in range(maximum_number_timesteps_per_episode):
             action = agent.act(state, epsilon)
@@ -68,7 +66,7 @@ try:
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)), end="")
         if episode % 100 == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
-        if np.mean(scores_on_100_episodes) >= 0.0:
+        if np.mean(scores_on_100_episodes) >= 200.0:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
             break
 except KeyboardInterrupt:
