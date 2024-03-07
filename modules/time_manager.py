@@ -16,6 +16,7 @@ class TimeManager:
 
     def load_configuration(self):
         self.current_time = ConfigurationManager().get_settings_config("start_of_simulation")
+        self.final_time = None
         self.time_history = []
         self.time_history.append(self.current_time)
 
@@ -37,8 +38,12 @@ class TimeManager:
         self.update_time()
         return self.current_time
 
-    def reset_time_to(self, time):
+    def is_over(self):
+        return self.current_time >= self.final_time
+
+    def reset_time_to(self, time, run_for_days):
         self.current_time = time
+        self.final_time = time + timedelta(days=run_for_days)
         self.time_history = []
         self.time_history.append(self.current_time)
         return self.current_time

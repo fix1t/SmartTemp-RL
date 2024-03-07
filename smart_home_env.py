@@ -14,13 +14,14 @@ from tools.csv_line_reader import CSVLineReader
 class SmartHomeTempControlEnv(gym.Env):
     metadata = {'render.modes': ['console']}
 
-    def __init__(self, start_from_random_day=True):
+    def __init__(self, start_from_random_day=True, run_for_days=7):
         super(SmartHomeTempControlEnv, self).__init__()
         self.action_space = spaces.Discrete(2)  # 0: Heat Up, 1: Do Nothing
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
         self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
-
+        self.total_reward = 0
+        self.run_for_days = run_for_days
         self.reset(start_from_random_day)
 
 
@@ -40,13 +41,17 @@ class SmartHomeTempControlEnv(gym.Env):
         current_temperature = self.temperature_manager.get_current_temperature()
         reward = self.calculate_reward(current_temperature, target_temperature)
 
-        done = False
+        self.total_reward += reward
+
+        done = TimeManager().is_over()
+        truncated = False
         info = {}
 
-        return self.observation(), reward, done, info
+        # To comply with the gym API, the step function should return the following: observation, reward, terminated, info
+        return self.observation(), reward, done, truncated, info
 
     def calculate_reward(self, current_temperature, target_temperature):
-        # Define a temperature threshold within which we consider the temperature to be 'comfortable'
+        # Define a temperature threshold within which it is considered to be 'comfortable'
         comfort_zone = 0.5  # degrees
 
         # Calculate the absolute difference from the target temperature
@@ -57,12 +62,12 @@ class SmartHomeTempControlEnv(gym.Env):
             reward = 1 - (temperature_diff / comfort_zone)# Scales linearly within the comfort zone
 
         else:
-            if current_temperature > target_temperature and self.heating_system.get_heat_energy() > 1:
-                penalty = -np.exp(temperature_diff - comfort_zone)
+            if current_temperature > target_temperature:
+                # Do not penalize if the heating system is off
+                penalty = 1 - self.heating_system.get_heat_energy()
             else:
-                penalty = 0
+                penalty = -np.exp(temperature_diff - comfort_zone)
 
-            penalty = -np.exp(temperature_diff - comfort_zone)
             # Normalize penalty to a range or adjust scale as needed for your environment
             reward = max(penalty, -10)  # Example: caps the penalty to -10 for extreme temperature differences
 
@@ -79,12 +84,12 @@ class SmartHomeTempControlEnv(gym.Env):
         self.total_reward = 0
         self.reward_data = [0]
 
-        TimeManager().reset_time_to(starting_time)
+        TimeManager().reset_time_to(starting_time, self.run_for_days)
         self.occupacy_manager = OccupancyManager()
         self.temperature_manager = TemperatureManager(self.out_tmp_reader)
         #TODO: Read from configuration
         self.heating_system = HeatingSystem(H_acc=0.50, H_cool=0.25, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
-        return self.observation()
+        return self.observation(), {}
 
     def observation(self):
         cur_temp = self.temperature_manager.get_current_temperature()

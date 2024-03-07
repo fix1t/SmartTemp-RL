@@ -50,11 +50,11 @@ all_scores = [] # For plotting the scores over episodes
 
 try:
     for episode in range(1, number_episodes + 1):
-        state = env.reset(start_from_random_day=False)
+        state, _ = env.reset(start_from_random_day=False)
         score = 0
-        for t in range(maximum_number_timesteps_per_episode):
+        while True:
             action = agent.act(state, epsilon)
-            next_state, reward, done, _ = env.step(action)
+            next_state, reward, done, _, _ = env.step(action)
             agent.step(state, action, reward, next_state, done)
             state = next_state
             score += reward
@@ -66,9 +66,9 @@ try:
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)), end="")
         if episode % 100 == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
-        if np.mean(scores_on_100_episodes) >= 200.0:
-            print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
-            break
+        # if np.mean(scores_on_100_episodes) >= 200.0:
+        #     print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(episode, np.mean(scores_on_100_episodes)))
+        #     break
 except KeyboardInterrupt:
     print("\nTraining interrupted. Saving current agent...")
 finally:
