@@ -7,6 +7,23 @@ from smart_home_env import SmartHomeTempControlEnv
 from datetime import datetime
 import matplotlib.pyplot as plt
 
+
+def save_agent(agent, score, number_of_episodes):
+    if not os.path.exists('agents'):
+        os.makedirs('agents')
+    current_time = datetime.now().strftime("%m-%d_%H-%M")
+    filename = f'agents/{current_time}_{int(score)}_in_{number_of_episodes}_eps.pth'
+    torch.save(agent.local_qnetwork.state_dict(), filename)
+
+def plot_scores(scores):
+    plt.figure(figsize=(10, 5))
+    plt.plot(scores)
+    plt.title('Scores over Episodes')
+    plt.xlabel('Episode')
+    plt.ylabel('Score')
+    plt.show()
+
+
 number_episodes = 1500
 maximum_number_timesteps_per_episode = 4 * 24 * 7
 epsilon_starting_value  = 1.0
@@ -29,22 +46,6 @@ agent = DQL(state_size, number_actions)
 print('State shape: ', state_shape)
 print('State size: ', state_size)
 print('Number of actions: ', number_actions)
-
-
-def save_agent(agent, score, number_of_episodes):
-    if not os.path.exists('agents'):
-        os.makedirs('agents')
-    current_time = datetime.now().strftime("%m-%d_%H-%M")
-    filename = f'agents/{current_time}_{int(score)}_in_{number_of_episodes}_eps.pth'
-    torch.save(agent.local_qnetwork.state_dict(), filename)
-
-def plot_scores(scores):
-    plt.figure(figsize=(10, 5))
-    plt.plot(scores)
-    plt.title('Scores over Episodes')
-    plt.xlabel('Episode')
-    plt.ylabel('Score')
-    plt.show()
 
 all_scores = [] # For plotting the scores over episodes
 

@@ -51,7 +51,8 @@ class DQL():
         self.memory.push((state, action, reward, next_state, done))
 
         # Learn every 4 steps
-        self.t_step = (self.t_step + 1) % 4
+        NUMBERS_OF_STEPS_BEFORE_LEARNING = 4
+        self.t_step = (self.t_step + 1) % NUMBERS_OF_STEPS_BEFORE_LEARNING
         if self.t_step == 0 and len(self.memory.memory) > minibatch_size:
             experiences = self.memory.sample(minibatch_size)
             self.learn(experiences, discount_factor)

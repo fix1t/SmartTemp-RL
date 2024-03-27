@@ -51,7 +51,6 @@ class SmartHomeTempControlEnv(gym.Env):
         return self.observation(), reward, done, truncated, info
 
     def calculate_reward(self, current_temperature, target_temperature):
-        # Define a temperature threshold within which it is considered to be 'comfortable'
         comfort_zone = 0.5  # degrees
 
         # Calculate the absolute difference from the target temperature
@@ -60,7 +59,6 @@ class SmartHomeTempControlEnv(gym.Env):
         # If within the comfort zone - provide a positive reward
         if temperature_diff <= comfort_zone:
             reward = 1 - (temperature_diff / comfort_zone)# Scales linearly within the comfort zone
-
         else:
             if current_temperature > target_temperature:
                 # Do not penalize if the heating system is off
