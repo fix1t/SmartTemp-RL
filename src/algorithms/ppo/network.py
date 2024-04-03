@@ -8,7 +8,7 @@ from torch import nn
 import torch.nn.functional as F
 import numpy as np
 
-class FeedForwardNN(nn.Module):
+class Network(nn.Module):
 	"""
 		A standard in_dim-64-64-out_dim Feed Forward Neural Network.
 	"""
@@ -23,7 +23,7 @@ class FeedForwardNN(nn.Module):
 			Return:
 				None
 		"""
-		super(FeedForwardNN, self).__init__()
+		super(Network, self).__init__()
 
 		self.layers = nn.Sequential(
             nn.Linear(in_dim, 64),
@@ -47,5 +47,5 @@ class FeedForwardNN(nn.Module):
 		# Convert observation to tensor if it's a numpy array
 		if isinstance(obs, np.ndarray):
 			obs = torch.tensor(obs, dtype=torch.float)
-			
+
 		return self.layers(obs)

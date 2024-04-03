@@ -9,8 +9,9 @@ import torch
 
 from algorithms.ppo.arguments import get_args
 from algorithms.ppo.agent import Agent as PPO
-from algorithms.ppo.network import FeedForwardNN
+from algorithms.ppo.network import Network
 from algorithms.ppo.eval_policy import eval_policy
+from env.environment import TempRegulationEnv
 
 def train(env, hyperparameters, actor_model, critic_model):
 	"""
@@ -28,7 +29,7 @@ def train(env, hyperparameters, actor_model, critic_model):
 	print(f"Training", flush=True)
 
 	# Create a model for PPO.
-	model = PPO(policy_class=FeedForwardNN, env=env, **hyperparameters)
+	model = PPO(policy_class=Network, env=env, **hyperparameters)
 
 	# Tries to load in an existing actor/critic model to continue training on
 	if actor_model != '' and critic_model != '':
@@ -70,7 +71,7 @@ def test(env, actor_model):
 	act_dim = env.action_space.n
 
 	# Build our policy the same way we build our actor model in PPO
-	policy = FeedForwardNN(obs_dim, act_dim)
+	policy = Network(obs_dim, act_dim)
 
 	# Load in the actor model saved by the PPO algorithm
 	policy.load_state_dict(torch.load(actor_model))
@@ -108,7 +109,9 @@ def main(args):
 	# Creates the environment we'll be running. If you want to replace with your own
 	# custom environment, note that it must inherit Gym and have both continuous
 	# observation and action spaces.
-	env = gym.make("CartPole-v1")
+	env = TempRegulationEnv()	# Custom environment
+
+	# env = gym.make("CartPole-v1")
 	# env = gym.make("CartPole-v1", render_mode="human")
 	# Train or test, depending on the mode specified
 	if args.mode == 'train':

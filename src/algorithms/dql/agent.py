@@ -1,3 +1,4 @@
+from collections import deque
 import random
 import numpy as np
 import torch
@@ -5,6 +6,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from algorithms.dql.network import Network
 from algorithms.dql.memory import ReplayMemory
+from algorithms.tools.logger import Logger
 
 # Hyperparameters for the DQL agent
 learning_rate = 5e-4  # Learning rate for the optimizer
@@ -14,21 +16,19 @@ replay_buffer_size = int(1e5)  # Size of the replay buffer
 interpolation_parameter = 1e-3  # Used in soft update of target network
 
 class Agent():
-    def __init__(self, state_size, action_size):
+    def __init__(self, policy_class, env ):
         """
         Initializes the agent.
-
-        Parameters:
-            state_size (int): Dimension of each state.
-            action_size (int): Number of actions available to the agent.
         """
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # Device configuration
-        self.state_size = state_size  # State space size
-        self.action_size = action_size  # Action space size
+
+        self.env = env
+        self.obs_dim = env.observation_space.shape[0]
+        self.act_dim = env.action_space.n # Discrete action space
 
         # Q-Networks
-        self.local_qnetwork = Network(state_size, action_size).to(self.device)  # Local network for learning
-        self.target_qnetwork = Network(state_size, action_size).to(self.device)  # Target network for stable Q-targets
+        self.local_qnetwork = policy_class(self.obs_dim, self.act_dim).to(self.device)  # Local network for learning
+        self.target_qnetwork = policy_class(self.obs_dim, self.act_dim).to(self.device)  # Target network for stable Q-targets
 
         # Optimizer
         self.optimizer = optim.Adam(self.local_qnetwork.parameters(), lr=learning_rate)
@@ -79,7 +79,7 @@ class Agent():
         if random.random() > epsilon:
             return np.argmax(action_values.cpu().data.numpy())  # Exploit
         else:
-            return random.choice(np.arange(self.action_size))  # Explore
+            return random.choice(np.arange(self.act_dim))  # Explore
 
     def learn(self, experiences, discount_factor):
         """
@@ -124,3 +124,28 @@ class Agent():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(interpolation_parameter * local_param.data + (1.0 - interpolation_parameter) * target_param.data)
 
+    def train(self, total_timesteps):
+        epsilon_starting_value  = 1.0
+        epsilon_ending_value  = 0.01
+        epsilon_decay_value  = 0.995
+        epsilon = epsilon_starting_value
+
+        scores_on_100_episodes = deque(maxlen = 100)
+        all_scores = []
+
+        for episode in range(1, total_timesteps + 1):
+            state, _ = self.env.reset(start_from_random_day=False)
+            score = 0
+            while True:
+                action = self.act(state, epsilon)
+                next_state, reward, done, _, _ = self.env.step(action)
+                self.step(state, action, reward, next_state, done)
+                state = next_state
+                score += reward
+                if done:
+                    break
+            scores_on_100_episodes.append(score)
+            all_scores.append(score)
+            epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
+
+            Logger().log(np.mean(scores_on_100_episodes), episode)

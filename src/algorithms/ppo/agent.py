@@ -8,10 +8,9 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 
+from algorithms.tools.logger import Logger
+
 class Agent:
-	"""
-		This is the PPO class we will use as our model in main.py
-	"""
 	def __init__(self, policy_class, env, **hyperparameters):
 		"""
 			Initializes the PPO model, including hyperparameters.
@@ -186,7 +185,7 @@ class Agent:
 			ep_rews = [] # rewards collected per episode
 
 			# Reset the environment. sNote that obs is short for observation.
-			obs = self.env.reset()
+			obs, _ = self.env.reset()
 			done = False
 
 			# Run an episode for a maximum of max_timesteps_per_episode timesteps
@@ -203,8 +202,7 @@ class Agent:
 				# Calculate action and make a step in the env.
 				# Note that rew is short for reward.
 				action, log_prob = self.get_action(obs)
-				obs, rew, done, _ = self.env.step(action)
-
+				obs, rew, done, _, _ = self.env.step(action)
 				# Track recent reward, action, and action log probability
 				ep_rews.append(rew)
 				batch_acts.append(action)
@@ -343,11 +341,7 @@ class Agent:
 		avg_ep_lens = np.mean(self.logger['batch_lens'])
 		avg_ep_rews = np.mean([np.sum(ep_rews) for ep_rews in self.logger['batch_rews']])
 		avg_actor_loss = np.mean(self.logger['actor_losses'])
-		print(f"-------------------- Iteration {self.logger['i_so_far']} -------------------- ")
-		print(f"Average Episode Length: {avg_ep_lens}")
-		print(f"Average Episode Return: {avg_ep_rews}")
-		print(f"Average Actor Loss: {avg_actor_loss}")
-		print(f"Timesteps So Far: {self.logger['t_so_far']}")
 		self.logger['batch_lens'] = []
 		self.logger['batch_rews'] = []
 		self.logger['actor_losses'] = []
+		Logger().log(avg_ep_rews, self.logger['i_so_far'])
