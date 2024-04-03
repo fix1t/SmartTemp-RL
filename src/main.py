@@ -5,7 +5,6 @@ from env.environment import TempRegulationEnv
 from algorithms.tools.logger import Logger
 
 # PPO imports
-from algorithms.ppo.arguments import get_args as get_ppo_args
 from algorithms.ppo.agent import Agent as PPOAgent
 from algorithms.ppo.network import Network as PPONetwork
 from algorithms.ppo.eval_policy import eval_policy as eval_ppo_policy
@@ -13,7 +12,6 @@ from algorithms.ppo.eval_policy import eval_policy as eval_ppo_policy
 # DQL imports
 from algorithms.dql.agent import Agent as DQLAgent
 from algorithms.dql.network import Network as DQLNetwork
-from algorithms.dql.eval_policy import eval_policy as eval_dql_policy
 
 def train_ppo(env, hyperparameters, actor_model, critic_model):
     print(f"Training PPO", flush=True)
