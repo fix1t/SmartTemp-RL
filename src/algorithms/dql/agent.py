@@ -16,7 +16,7 @@ replay_buffer_size = int(1e5)  # Size of the replay buffer
 interpolation_parameter = 1e-3  # Used in soft update of target network
 
 class Agent():
-    def __init__(self, policy_class, env ):
+    def __init__(self, policy_class, env, **hyperparameters):
         """
         Initializes the agent.
         """

@@ -3,8 +3,7 @@
 # Variables
 VENV_NAME := venv
 PYTHON := $(VENV_NAME)/bin/python
-DQL := dqn_trainer.py
-PPO := ppo_trainer.py
+SCRIPT := main.py
 all: clean install run
 
 install:
@@ -18,12 +17,12 @@ run: install dql
 dql:
 	@echo "Running DQL script..."
 	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(DQL)"
+	$(PYTHON) $(SCRIPT) --mode train --algorithm DQL"
 
 ppo:
 	@echo "Running PPO script..."
 	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(PPO)"
+	$(PYTHON) $(SCRIPT) --mode train --algorithm PPO"
 
 clean:
 	rm -rf $(VENV)
@@ -31,6 +30,3 @@ clean:
 	find . -type d -name '__pycache__' -delete
 
 .PHONY: all clean build run
-
-
-

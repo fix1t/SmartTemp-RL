@@ -2,9 +2,10 @@
 	This file is used only to evaluate our trained policy/actor after
 	training in main.py with ppo.py. I wrote this file to demonstrate
 	that our trained policy exists independently of our learning algorithm,
-	which resides in ppo.py. Thus, we can test our trained policy without 
+	which resides in ppo.py. Thus, we can test our trained policy without
 	relying on ppo.py.
 """
+import torch
 
 def _log_summary(ep_len, ep_ret, ep_num):
 		"""
@@ -31,13 +32,13 @@ def _log_summary(ep_len, ep_ret, ep_num):
 def rollout(policy, env, render):
 	"""
 		Returns a generator to roll out each episode given a trained policy and
-		environment to test on. 
+		environment to test on.
 
 		Parameters:
 			policy - The trained policy to test
 			env - The environment to evaluate the policy on
 			render - Specifies whether to render or not
-		
+
 		Return:
 			A generator object rollout, or iterable, which will return the latest
 			episodic length and return on each iteration of the generator.
@@ -64,6 +65,9 @@ def rollout(policy, env, render):
 			t += 1
 
 			# Render environment if specified, off by default
+			if isinstance(obs, np.ndarray):
+				obs = torch.tensor(obs, dtype=torch.float)
+
 			if render:
 				print(f"Rollout at timestep {t}", flush=True)
 				env.render()
@@ -86,7 +90,7 @@ def eval_policy(policy, env, render=True):
 		The main function to evaluate our policy with. It will iterate a generator object
 		"rollout", which will simulate each episode and return the most recent episode's
 		length and return. We can then log it right after. And yes, eval_policy will run
-		forever until you kill the process. 
+		forever until you kill the process.
 
 		Parameters:
 			policy - The trained policy to test, basically another name for our actor model

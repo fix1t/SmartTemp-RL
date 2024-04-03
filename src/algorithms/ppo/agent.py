@@ -45,7 +45,7 @@ class Agent:
 		self.act_dim = env.action_space.n # Discrete action space
 
 		 # Initialize actor and critic networks
-		self.actor = policy_class(self.obs_dim, self.act_dim)                                                   # ALG STEP 1
+		self.actor = policy_class(self.obs_dim, self.act_dim)												   # ALG STEP 1
 		self.critic = policy_class(self.obs_dim, 1)
 
 		# Initialize optimizers for actor and critic
@@ -59,14 +59,14 @@ class Agent:
 		# This logger will help us with printing out summaries of each iteration
 		self.logger = {
 			'delta_t': time.time_ns(),
-			't_so_far': 0,          # timesteps so far
-			'i_so_far': 0,          # iterations so far
-			'batch_lens': [],       # episodic lengths in batch
-			'batch_rews': [],       # episodic returns in batch
-			'actor_losses': [],     # losses of actor network in current iteration
+			't_so_far': 0,		  # timesteps so far
+			'i_so_far': 0,		  # iterations so far
+			'batch_lens': [],	   # episodic lengths in batch
+			'batch_rews': [],	   # episodic returns in batch
+			'actor_losses': [],	 # losses of actor network in current iteration
 		}
 
-	def learn(self, total_timesteps):
+	def train(self, total_timesteps):
 		"""
 			Train the actor and critic networks. Here is where the main PPO algorithm resides.
 
@@ -76,13 +76,13 @@ class Agent:
 			Return:
 				None
 		"""
-		print(f"Learning... Running {self.max_timesteps_per_episode} timesteps per episode, ", end='')
+		print(f"Training... Running {self.max_timesteps_per_episode} timesteps per episode, ", end='')
 		print(f"{self.timesteps_per_batch} timesteps per batch for a total of {total_timesteps} timesteps")
 		t_so_far = 0 # Timesteps simulated so far
 		i_so_far = 0 # Iterations ran so far
-		while t_so_far < total_timesteps:                                                                       # ALG STEP 2
+		while t_so_far < total_timesteps:																	   # ALG STEP 2
 			# Autobots, roll out (just kidding, we're collecting our batch simulations here)
-			batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()                     # ALG STEP 3
+			batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()					 # ALG STEP 3
 
 			# Calculate how many timesteps we collected this batch
 			t_so_far += np.sum(batch_lens)
@@ -96,7 +96,7 @@ class Agent:
 
 			# Calculate advantage at k-th iteration
 			V, _ = self.evaluate(batch_obs, batch_acts)
-			A_k = batch_rtgs - V.detach()                                                                       # ALG STEP 5
+			A_k = batch_rtgs - V.detach()																	   # ALG STEP 5
 
 			# One of the only tricks I use that isn't in the pseudocode. Normalizing advantages
 			# isn't theoretically necessary, but in practice it decreases the variance of
@@ -105,7 +105,7 @@ class Agent:
 			A_k = (A_k - A_k.mean()) / (A_k.std() + 1e-10)
 
 			# This is the loop where we update our network for some n epochs
-			for _ in range(self.n_updates_per_iteration):                                                       # ALG STEP 6 & 7
+			for _ in range(self.n_updates_per_iteration):													   # ALG STEP 6 & 7
 				# Calculate V_phi and pi_theta(a_t | s_t)
 				V, curr_log_probs = self.evaluate(batch_obs, batch_acts)
 
@@ -220,7 +220,7 @@ class Agent:
 		batch_obs = torch.tensor(batch_obs, dtype=torch.float)
 		batch_acts = torch.tensor(batch_acts, dtype=torch.int)
 		batch_log_probs = torch.tensor(batch_log_probs, dtype=torch.float)
-		batch_rtgs = self.compute_rtgs(batch_rews)                                                              # ALG STEP 4
+		batch_rtgs = self.compute_rtgs(batch_rews)															  # ALG STEP 4
 
 		# Log the episodic returns and episodic lengths in this batch.
 		self.logger['batch_rews'] = batch_rews
@@ -345,3 +345,26 @@ class Agent:
 		self.logger['batch_rews'] = []
 		self.logger['actor_losses'] = []
 		Logger().log(avg_ep_rews, self.logger['i_so_far'])
+
+	def test_policy(self, total_timesteps=4*24*180, render=True):
+		"""
+			Test the policy of the agent.
+
+			Parameters:
+				total_timesteps - the total number of timesteps to test the policy for
+				render - specifies whether to render the environment or not
+
+			Return:
+				None
+		"""
+		t_so_far = 0
+		while t_so_far < total_timesteps:
+			obs, _ = self.env.reset()
+			done = False
+			while not done:
+				if render:
+					self.env.render()
+				action, _ = self.get_action(obs)
+				obs, _, done, _, _ = self.env.step(action)
+				t_so_far += 1
+		self.env.close()
