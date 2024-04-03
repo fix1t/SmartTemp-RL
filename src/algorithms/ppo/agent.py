@@ -1,8 +1,3 @@
-"""
-	The file contains the PPO class to train with.
-	NOTE: All "ALG STEP"s are following the numbers from the original PPO pseudocode.
-			It can be found here: https://spinningup.openai.com/en/latest/_images/math/e62a8971472597f4b014c2da064f636ffe365ba3.svg
-"""
 
 import gym
 import time
@@ -12,9 +7,8 @@ import time
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-from torch.distributions import MultivariateNormal
 
-class PPO:
+class Agent:
 	"""
 		This is the PPO class we will use as our model in main.py
 	"""
@@ -34,7 +28,7 @@ class PPO:
 		print(f"Environment has observation space {env.observation_space} and action space {env.action_space}", flush=True)
 		print(f"{type(env.observation_space)} == <class 'gym.spaces.box.Box'> = {type(env.observation_space) == gym.spaces.Box}")
 		print(f"{type(env.action_space)} == <class 'gym.spaces.box.Box'> = {type(env.action_space) == gym.spaces.Box}")
-		
+
 		# assert(type(env.observation_space) == gym.spaces.Box)
 		# assert(type(env.action_space) == gym.spaces.Box)
 
@@ -106,7 +100,7 @@ class PPO:
 			A_k = batch_rtgs - V.detach()                                                                       # ALG STEP 5
 
 			# One of the only tricks I use that isn't in the pseudocode. Normalizing advantages
-			# isn't theoretically necessary, but in practice it decreases the variance of 
+			# isn't theoretically necessary, but in practice it decreases the variance of
 			# our advantages and makes convergence much more stable and faster. I added this because
 			# solving some environments was too unstable without it.
 			A_k = (A_k - A_k.mean()) / (A_k.std() + 1e-10)
@@ -120,7 +114,7 @@ class PPO:
 				# NOTE: we just subtract the logs, which is the same as
 				# dividing the values and then canceling the log with e^log.
 				# For why we use log probabilities instead of actual probabilities,
-				# here's a great explanation: 
+				# here's a great explanation:
 				# https://cs.stackexchange.com/questions/70518/why-do-we-use-the-log-in-gradient-based-reinforcement-algorithms
 				# TL;DR makes gradient ascent easier behind the scenes.
 				ratios = torch.exp(curr_log_probs - batch_log_probs)
@@ -191,8 +185,8 @@ class PPO:
 		while t < self.timesteps_per_batch:
 			ep_rews = [] # rewards collected per episode
 
-			# Reset the environment. sNote that obs is short for observation. 
-			obs, _ = self.env.reset()
+			# Reset the environment. sNote that obs is short for observation.
+			obs = self.env.reset()
 			done = False
 
 			# Run an episode for a maximum of max_timesteps_per_episode timesteps
@@ -206,10 +200,10 @@ class PPO:
 				# Track observations in this batch
 				batch_obs.append(obs)
 
-				# Calculate action and make a step in the env. 
+				# Calculate action and make a step in the env.
 				# Note that rew is short for reward.
 				action, log_prob = self.get_action(obs)
-				obs, rew, done, _ , _ = self.env.step(action)
+				obs, rew, done, _ = self.env.step(action)
 
 				# Track recent reward, action, and action log probability
 				ep_rews.append(rew)

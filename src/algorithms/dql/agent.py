@@ -2,8 +2,9 @@ import random
 import numpy as np
 import torch
 import torch.optim as optim
-import torch.nn as nn
 import torch.nn.functional as F
+from algorithms.dql.network import Network
+from algorithms.dql.memory import ReplayMemory
 
 # Hyperparameters for the DQL agent
 learning_rate = 5e-4  # Learning rate for the optimizer
@@ -12,7 +13,7 @@ discount_factor = 0.99  # Discount factor for future rewards
 replay_buffer_size = int(1e5)  # Size of the replay buffer
 interpolation_parameter = 1e-3  # Used in soft update of target network
 
-class DQL():
+class Agent():
     def __init__(self, state_size, action_size):
         """
         Initializes the agent.
@@ -123,69 +124,3 @@ class DQL():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(interpolation_parameter * local_param.data + (1.0 - interpolation_parameter) * target_param.data)
 
-class ReplayMemory(object):
-  def __init__(self, capacity):
-    self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    self.capacity = capacity
-    self.memory = []
-
-  def push(self, event):
-    self.memory.append(event)
-    if len(self.memory) > self.capacity:
-      del self.memory[0]
-
-  def sample(self, batch_size):
-    experiences = random.sample(self.memory, k = batch_size)
-    states = torch.from_numpy(np.vstack([e[0] for e in experiences if e is not None])).float().to(self.device)
-    actions = torch.from_numpy(np.vstack([e[1] for e in experiences if e is not None])).long().to(self.device)
-    rewards = torch.from_numpy(np.vstack([e[2] for e in experiences if e is not None])).float().to(self.device)
-    next_states = torch.from_numpy(np.vstack([e[3] for e in experiences if e is not None])).float().to(self.device)
-    dones = torch.from_numpy(np.vstack([e[4] for e in experiences if e is not None]).astype(np.uint8)).float().to(self.device)
-    return states, next_states, actions, rewards, dones
-
-class Network(nn.Module):
-    """
-    A neural network for approximating action-value functions in reinforcement learning.
-
-    The network architecture is simple, consisting of three fully connected layers.
-    It takes an input representing the state of the environment and outputs a value for each action.
-
-    Parameters:
-        state_size (int): Dimension of each input state.
-        action_size (int): Number of actions that can be taken in the environment.
-        seed (int, optional): Random seed for initializing weights. Defaults to 42.
-    """
-    def __init__(self, state_size, action_size, seed=42):
-        """
-        Initializes the network with two hidden layers and one output layer.
-        """
-        super(Network, self).__init__()  # Initializes the base class nn.Module
-        self.seed = torch.manual_seed(seed)  # Sets the random seed for PyTorch
-
-        # Defines the first fully connected layer (input layer to hidden layer 1)
-        self.fc1 = nn.Linear(state_size, 64)  # First hidden layer with 64 units
-
-        # Defines the second fully connected layer (hidden layer 1 to hidden layer 2)
-        self.fc2 = nn.Linear(64, 64)  # Second hidden layer with 64 units
-
-        # Defines the third fully connected layer (hidden layer 2 to output layer)
-        self.fc3 = nn.Linear(64, action_size)  # Output layer with 'action_size' units
-
-    def forward(self, state):
-        """
-        Defines the forward pass of the network.
-
-        Parameters:
-            state (torch.Tensor): The input state tensor.
-
-        Returns:
-            torch.Tensor: The output tensor containing action values.
-        """
-        # Passes the input through the first layer and apply ReLU (rectified linear unit) activation function
-        x = F.relu(self.fc1(state))
-
-        # Passes the result through the second layer and apply ReLU (rectified linear unit) activation function
-        x = F.relu(self.fc2(x))
-
-        # Passes the result through the third layer (no activation function here, as this is the output layer)
-        return self.fc3(x)

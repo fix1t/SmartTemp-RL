@@ -3,19 +3,19 @@ from gym import spaces
 import numpy as np
 from datetime import datetime
 
-from modules.occupancy_manager import OccupancyManager
-from modules.temperature_manager import TemperatureManager
-from modules.configuration_manager import ConfigurationManager
-from modules.time_manager import TimeManager
-from modules.heating_system import HeatingSystem
-from tools.renderer import SimulationRenderer
-from tools.csv_line_reader import CSVLineReader
+from env.modules.occupancy_manager import OccupancyManager
+from env.modules.temperature_manager import TemperatureManager
+from env.modules.configuration_manager import ConfigurationManager
+from env.modules.time_manager import TimeManager
+from env.modules.heating_system import HeatingSystem
+from env.tools.renderer import SimulationRenderer
+from env.tools.csv_line_reader import CSVLineReader
 
-class SmartHomeTempControlEnv(gym.Env):
+class TempRegulationEnv(gym.Env):
     metadata = {'render.modes': ['console']}
 
     def __init__(self, start_from_random_day=True, run_for_days=7):
-        super(SmartHomeTempControlEnv, self).__init__()
+        super(TempRegulationEnv, self).__init__()
         self.action_space = spaces.Discrete(2)  # 0: Heat Up, 1: Do Nothing
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
@@ -134,5 +134,5 @@ class SmartHomeTempControlEnv(gym.Env):
 
 
 if __name__ == '__main__':
-    env = SmartHomeTempControlEnv()
+    env = TempRegulationEnv()
     env.simulate()

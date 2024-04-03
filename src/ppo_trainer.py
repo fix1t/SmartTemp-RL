@@ -1,5 +1,5 @@
 """
-	This file is the executable for running PPO. It is based on this medium article: 
+	This file is the executable for running PPO. It is based on this medium article:
 	https://medium.com/@eyyu/coding-ppo-from-scratch-with-pytorch-part-1-4-613dfc1b14c8
 """
 
@@ -7,10 +7,10 @@ import gym
 import sys
 import torch
 
-from arguments import get_args
-from ppo import PPO
-from network import FeedForwardNN
-from eval_policy import eval_policy
+from algorithms.ppo.arguments import get_args
+from algorithms.ppo.agent import Agent as PPO
+from algorithms.ppo.network import FeedForwardNN
+from algorithms.ppo.eval_policy import eval_policy
 
 def train(env, hyperparameters, actor_model, critic_model):
 	"""
@@ -24,7 +24,7 @@ def train(env, hyperparameters, actor_model, critic_model):
 
 		Return:
 			None
-	"""	
+	"""
 	print(f"Training", flush=True)
 
 	# Create a model for PPO.
@@ -95,11 +95,11 @@ def main(args):
 	# ArgumentParser because it's too annoying to type them every time at command line. Instead, you can change them here.
 	# To see a list of hyperparameters, look in ppo.py at function _init_hyperparameters
 	hyperparameters = {
-				'timesteps_per_batch': 2048, 
-				'max_timesteps_per_episode': 200, 
-				'gamma': 0.99, 
+				'timesteps_per_batch': 2048,
+				'max_timesteps_per_episode': 200,
+				'gamma': 0.99,
 				'n_updates_per_iteration': 10,
-				'lr': 3e-4, 
+				'lr': 3e-4,
 				'clip': 0.2,
 				'render': False,
 				'render_every_i': 10

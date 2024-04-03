@@ -1,9 +1,9 @@
-from tools.logger_manager import Logger
-from modules.configuration_manager import ConfigurationManager
+from env.tools.logger_manager import Logger
+from env.modules.configuration_manager import ConfigurationManager
 from datetime import datetime, timedelta
 import random
 
-from modules.time_manager import TimeManager
+from env.modules.time_manager import TimeManager
 
 class OccupancyManager:
     """

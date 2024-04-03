@@ -1,7 +1,7 @@
-from tools.csv_line_reader import CSVLineReader
-from modules.configuration_manager import ConfigurationManager
-from tools.logger_manager import Logger
-from modules.time_manager import TimeManager
+from env.tools.csv_line_reader import CSVLineReader
+from env.tools.logger_manager import Logger
+from env.modules.configuration_manager import ConfigurationManager
+from env.modules.time_manager import TimeManager
 
 class TemperatureManager:
     """

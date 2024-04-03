@@ -2,14 +2,14 @@
 
 ## Run simulation
 
-to install required libraries:
+creating python virtual environment and installing required dependencies:
 ```shell
-pip install -r requirements.txt
+cd src && make install
 ```
 
-to run simultaion prototype:
+run agent training:
 ```shell
-python3 gui.py
+cd src && make run
 ```
 
 ## Architecture overview
@@ -53,22 +53,22 @@ python3 gui.py
 ### Weekly Schedule
 The simulation incorporates a detailed weekly schedule for each family member (father, mother, child), including their daily routines from Monday to Sunday. This schedule includes specific leave and return times on weekdays, with a variance to account for unpredictability in their routine. On weekends, it is assumed they are at home.
 
-```json
+```python
 {
     "weekly_schedule": {
         "Monday": {
             "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-            ... // Rest of the people.
+            ... # Rest of the people.
         },
-        // Rest of the week.
+        # Rest of the week.
     },
-    "random_home_day_chance": 0.05, // 5% chance someone stays home or has an irregular schedule
+    "random_event_chance": 0.05,       # 5% chance someone stays home or has an irregular schedule
+    "random_event_max_duration": 180,  # Implies only to early/late leave/arrival
     "random_event": {
-        "sick-day": 0.05,           // 5% chance someone stays home sick
-        "vacation": 0.05,           // 5% chance someone stays home on vacation
-        ... // Others..
-    },
-    "random_event_max_duration": 180 // Implies only to early/late leave/arrival
+        "sick-day": 0.05,              # 5% chance someone stays home sick
+        "vacation": 0.05,              # 5% chance someone stays home on vacation
+        ... # Others..
+    }
 }
 ```
 

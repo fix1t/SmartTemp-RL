@@ -1,6 +1,6 @@
 import csv
 import random
-from tools.logger_manager import Logger
+from env.tools.logger_manager import Logger
 
 class CSVLineReader:
     def __init__(self, file_path, start_from_random=False):

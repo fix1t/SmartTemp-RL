@@ -12,7 +12,7 @@ class ConfigurationManager:
         return cls._instance
 
     def load_configuration(self):
-        from environment_configuration import CONFIG
+        from env.environment_configuration import CONFIG
         self.config = CONFIG
 
     def get_temp_config(self, key):

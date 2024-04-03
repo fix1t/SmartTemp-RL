@@ -1,15 +1,15 @@
 import sys
 import torch
 import time
-from agent.DQL import DQL
-from smart_home_env import SmartHomeTempControlEnv
+from algorithms.dql.agent import Agent as DQL
+from env.environment import TempRegulationEnv
 
 # Expected usage: python agent_replay.py <filename>
 if len(sys.argv) != 2:
     print("Usage: python agent_replay.py <filename>")
     sys.exit(1)
 
-env = SmartHomeTempControlEnv()
+env = TempRegulationEnv()
 state_size = env.observation_space.shape[0]
 number_actions = env.action_space.n
 agent = DQL(state_size, number_actions)

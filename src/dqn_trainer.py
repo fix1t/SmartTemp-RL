@@ -1,12 +1,12 @@
 import os
-import numpy as np
 from collections import deque
 import torch
-from agent.DQL import DQL
-from smart_home_env import SmartHomeTempControlEnv
+import numpy as np
 from datetime import datetime
 import matplotlib.pyplot as plt
 
+from algorithms.dql.agent import Agent as DQL
+from env.environment import TempRegulationEnv
 
 def save_agent(agent, score, number_of_episodes):
     if not os.path.exists('agents'):
@@ -38,7 +38,7 @@ print('Epsilon ending value: ', epsilon_ending_value)
 print('Epsilon decay value: ', epsilon_decay_value)
 print('Epsilon: ', epsilon)
 
-env = SmartHomeTempControlEnv(start_from_random_day=True)
+env = TempRegulationEnv(start_from_random_day=True)
 state_shape = env.observation_space.shape
 state_size = env.observation_space.shape[0]
 number_actions = env.action_space.n
