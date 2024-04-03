@@ -145,11 +145,6 @@ class Agent:
 			# Print a summary of our training so far
 			self._log_summary()
 
-			# Save our model if it's time
-			if i_so_far % self.save_freq == 0:
-				torch.save(self.actor.state_dict(), './ppo_actor.pth')
-				torch.save(self.critic.state_dict(), './ppo_critic.pth')
-
 	def rollout(self):
 		"""
 			Too many transformers references, I'm sorry. This is where we collect the batch of data
@@ -189,7 +184,7 @@ class Agent:
 			done = False
 
 			# Run an episode for a maximum of max_timesteps_per_episode timesteps
-			for ep_t in range(self.max_timesteps_per_episode):
+			while not done:
 				# If render is specified, render the environment
 				if self.render and (self.logger['i_so_far'] % self.render_every_i == 0) and len(batch_lens) == 0:
 					self.env.render()
@@ -207,10 +202,6 @@ class Agent:
 				ep_rews.append(rew)
 				batch_acts.append(action)
 				batch_log_probs.append(log_prob)
-
-				# If the environment tells us the episode is terminated, break
-				if done:
-					break
 
 			# Track episodic lengths and rewards
 			batch_lens.append(ep_t + 1)

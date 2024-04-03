@@ -38,15 +38,25 @@ class Logger():
         if not os.path.exists(folder):
             os.makedirs(folder)
         current_time = datetime.now().strftime("%m-%d_%H-%M")
-        filename = f'{folder}/{current_time}.pth'
-        torch.save(agent.local_qnetwork.state_dict(), filename)
+        filename = f'{folder}/{current_time}'
 
-    def plot_scores(self, filename=None):
-        if not os.path.exists('out/plots'):
-            os.makedirs('out/plots')
+        if hasattr(agent, 'actor'):
+            torch.save(agent.actor.state_dict(), f"{filename}_actor_model.pth")
+        if hasattr(agent, 'critic'):
+            torch.save(agent.critic.state_dict(), f"{filename}_critic_model.pth")
+
+        if hasattr(agent, 'local_qnetwork'):
+            torch.save(agent.local_qnetwork.state_dict(), f"{filename}_local_qnetwork.pth")
+        if hasattr(agent, 'target_qnetwork'):
+            torch.save(agent.target_qnetwork.state_dict(), f"{filename}_target_qnetwork.pth")
+
+    def plot_scores(self, folder='out/plots', filename=None):
+        if not os.path.exists(folder):
+            os.makedirs(folder)
         if filename is None:
             current_time = datetime.now().strftime("%m-%d_%H-%M")
-            filename = f'out/plots/{current_time}.png'
+            filename = f'{folder}/{current_time}.png'
+
         plt.figure(figsize=(10, 5))
         plt.plot(self.average_score)
         plt.title('Scores over Episodes')
