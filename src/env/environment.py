@@ -14,9 +14,12 @@ from env.tools.csv_line_reader import CSVLineReader
 class TempRegulationEnv(gym.Env):
     metadata = {'render.modes': ['console']}
 
-    def __init__(self, start_from_random_day=True, max_steps_per_episode=7 * 24 * 4):
+    def __init__(self, start_from_random_day=True, max_steps_per_episode=7 * 24 * 4, seed=None):
         super(TempRegulationEnv, self).__init__()
         self.action_space = spaces.Discrete(2)  # 0: Heat Up, 1: Do Nothing
+
+        if seed is not None:
+            np.random.seed(seed)
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
         self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
@@ -74,7 +77,12 @@ class TempRegulationEnv(gym.Env):
         return reward
 
     def reset(self, start_from_random_day=True):
-        self.out_tmp_reader = CSVLineReader(ConfigurationManager().get_settings_config("temperature_data_file"), start_from_random=start_from_random_day)
+        self.out_tmp_reader = CSVLineReader(
+            ConfigurationManager().get_settings_config("temperature_data_file"),
+            start_from_random=start_from_random_day,
+            seed=np.random.randint(0, 10_000)
+            )
+
         starting_time, _ = self.out_tmp_reader.get_next_line()
         starting_time = datetime.strptime(starting_time, '%Y%m%dT%H%M')
 

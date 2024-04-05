@@ -3,9 +3,14 @@ import random
 from env.tools.logger_manager import Logger
 
 class CSVLineReader:
-    def __init__(self, file_path, start_from_random=False):
+    def __init__(self, file_path, start_from_random=False, seed=12345):
         self.file_path = file_path
         self.start_from_random = start_from_random
+
+        # Set the seed for reproducibility
+        self.seed = seed
+        random.seed(seed)
+
         self.reset(start_from_random=self.start_from_random)
 
     def reset(self, start_from_random=False):
@@ -51,19 +56,3 @@ class CSVLineReader:
         except ValueError:
             Logger.error(f"Warning: Cannot convert to float: {line}")
             return line
-
-if __name__ == '__main__':
-    # Example usage
-    file_path = 'data/basel_10_years_hourly.csv'
-    reader_random_start = CSVLineReader(file_path, start_from_random=True)
-
-    print("Reading a few lines from a random starting point:")
-    for _ in range(5):
-        line = reader_random_start.get_next_line()
-        print(line)
-
-    reader_random_start.reset_to_beginning()
-    print("\nResetting to the beginning and reading a few lines:")
-    for _ in range(5):
-        line = reader_random_start.get_next_line()
-        print(line)
