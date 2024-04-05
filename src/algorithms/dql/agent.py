@@ -130,9 +130,6 @@ class Agent():
         epsilon_decay_value  = 0.995
         epsilon = epsilon_starting_value
 
-        scores_on_50_episodes = deque(maxlen = 50)
-        all_scores = []
-
         number_episodes = total_timesteps // self.env.max_steps_per_episode
         print("-------Training DQL agent-------")
         print(f"Training for {total_timesteps} timesteps with {self.env.max_steps_per_episode} steps per episode.")
@@ -150,8 +147,6 @@ class Agent():
                 state = next_state
                 score += reward
 
-            scores_on_50_episodes.append(score)
-            all_scores.append(score)
             epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
-            if episode % 50 == 0:
-                Logger().log_episode(np.mean(scores_on_50_episodes), episode)
+
+            Logger().log_episode(score, episode)

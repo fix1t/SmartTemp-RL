@@ -19,6 +19,7 @@ def train_ppo(env, hyperparameters, actor_model, critic_model):
     global agent
     agent = PPOAgent(policy_class=PPONetwork, env=env, **hyperparameters)
     if actor_model != '' and critic_model != '':
+        print(f"Loading actor and critic models.", flush=True)
         agent.actor.load_state_dict(torch.load(actor_model))
         agent.critic.load_state_dict(torch.load(critic_model))
         print(f"Successfully loaded.", flush=True)
@@ -27,33 +28,50 @@ def train_ppo(env, hyperparameters, actor_model, critic_model):
     agent.train(total_timesteps=10_000_000)
 
 def test_ppo(env, actor_model):
+    if actor_model == '':
+        print(f"Please provide an actor model to test.", flush=True)
+        return
     print(f"Testing PPO {actor_model}", flush=True)
     global agent
     agent = PPOAgent(policy_class=PPONetwork, env=env)
     agent.actor.load_state_dict(torch.load(actor_model))
     agent.test_policy()
 
-def train_dql(env, hyperparameters):
+def train_dql(env, hyperparameters, local_qnetwork, target_qnetwork):
     print('Training DQL', flush=True)
     global agent
     agent = DQLAgent(env=env, policy_class=DQLNetwork, **hyperparameters)
+    if local_qnetwork != '' and target_qnetwork != '':
+        agent.local_qnetwork.load_state_dict(torch.load(local_qnetwork))
+        agent.target_policy.load_state_dict(torch.load(target_qnetwork))
+        print(f"Successfully loaded.", flush=True)
+    else:
+        print(f"Training from scratch.", flush=True)
+
     agent.train(total_timesteps=10_000_000)
 
-def test_dql(env, actor_model):
-    print(f"Testing DQL {actor_model}", flush=True)
+def test_dql(env, target_qnetwork):
+    if target_qnetwork == '':
+        print(f"Please provide a target Q network to test.", flush=True)
+        return
+    print(f"Testing DQL {target_qnetwork} target Q network.", flush=True)
     global agent
     agent = DQLAgent(env=env, policy_class=DQLNetwork)
-    agent.policy.load_state_dict(torch.load(actor_model))
+    agent.policy.load_state_dict(torch.load(target_qnetwork))
     #TODO: Add test_policy method to DQLAgent
     agent.test_policy()
 
 def main():
     parser = argparse.ArgumentParser(description='Train or test PPO/DQL model.')
-    parser.add_argument('-m', '--mode', choices=['train', 'test'], required=False, default='train' , help='Mode to run the script in')
+    parser.add_argument('-m', '--mode', choices=['train', 'test'], required=False, default='train' , help='Mode to run the script in. Test mode requires a model file.')
     parser.add_argument('-a', '--algorithm', choices=['PPO', 'DQL'], required=False, default='DQL', help='Algorithm to use')
-    parser.add_argument('--actor_model', required=False, default='', help='Path to the actor model file')
+    parser.add_argument('--actor_model', required=False, default='', help='Path to the actor model file - only for PPO')
     parser.add_argument('--critic_model', required=False, default='', help='Path to the critic model file - only for PPO')
+    parser.add_argument('--local_qnetwork', required=False, default='', help='Path to the local qnetwork model file - only for DQL')
+    parser.add_argument('--target_qnetwork', required=False, default='', help='Path to the target qnetwork model file - only for DQL')
+    parser.add_argument('--seed', required=False, default='', help='Seed for the environment')
     args = parser.parse_args()
+
 
     env = TempRegulationEnv()
 
@@ -75,7 +93,6 @@ def main():
                 test_ppo(env, args.actor_model)
         elif args.algorithm == 'DQL':
             hyperparameters = {
-                'number_episodes': 1500,
                 'epsilon_starting_value': 1.0,
                 'epsilon_ending_value': 0.01,
                 'epsilon_decay_value': 0.995,
@@ -86,9 +103,9 @@ def main():
                 'interpolation_parameter': 1e-3     # Used in soft update of target network
             }
             if args.mode == 'train':
-                train_dql(env, hyperparameters)
+                train_dql(env, hyperparameters, args.local_qnetwork, args.target_qnetwork)
             elif args.mode == 'test':
-                test_dql(env, args.actor_model)
+                test_dql(env, args.target_qnetwork)
 
     except KeyboardInterrupt:
         print(f'{args.algorithm} {args.mode}ing interrupted by user.', flush=True)

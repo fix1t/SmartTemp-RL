@@ -167,7 +167,7 @@ class Agent:
 		t = 0 # Keeps track of how many timesteps we've run so far this batch
 		ep_t = 0 # Keeps track of how many timesteps we've run so far this episode
 
-        # Keep simulating until we've run more than or equal to specified timesteps per batch
+		# Keep simulating until we've run more than or equal to specified timesteps per batch
 		while t < self.timesteps_per_batch:
 			ep_rews = [] # rewards collected per episode
 
@@ -342,13 +342,13 @@ class Agent:
 				None
 		"""
 		t_so_far = 0
-		while t_so_far < total_timesteps:
-			obs, _ = self.env.reset()
-			done = False
-			while not done:
-				if render:
-					self.env.render()
-				action, _ = self.get_action(obs)
-				obs, _, done, _, _ = self.env.step(action)
-				t_so_far += 1
+		self.env.set_max_steps_per_episode(total_timesteps)
+		obs, _ = self.env.reset()
+		done = False
+		while not done:
+			if render:
+				self.env.render()
+			action, _ = self.get_action(obs)
+			obs, _, done, _, _ = self.env.step(action)
+			t_so_far += 1
 		self.env.close()

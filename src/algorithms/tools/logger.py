@@ -1,3 +1,4 @@
+from collections import deque
 import os
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -12,27 +13,31 @@ class Logger():
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(Logger, cls).__new__(cls)
-            cls._instance.average_score = []  # This stores the history of average scores.
+            cls._instance.all_scores = []
             cls._instance.iter = 0
             cls._instance.dql = True
         return cls._instance
 
     def log_episode(self, score, episode=None):
-        self.average_score.append(score)
+        self.all_scores.append(score)
         if episode is not None:
             self.iter = episode
         else:
             self.iter += 1
-        print(f'\Episode: {iter}\tAverage Score: {score:.2f}', end="")
+        num_scores = min(10, len(self.all_scores))
+        average_score_of_last_10_episodes = sum(self.all_scores[-10:]) / num_scores
+        print(f'\rEpisode: {self.iter}\tAverage Score Of Last 10: {average_score_of_last_10_episodes:.2f}', end="")
 
     def log_iteration(self, score, iter=None):
         self.dql = False
-        self.average_score.append(score)
+        self.all_scores.append(score)
         if iter is not None:
             self.iter = iter
         else:
             self.iter += 1
-        print(f'\rIteration: {iter}\tAverage Score: {score:.2f}', end="")
+        num_scores = min(10, len(self.all_scores))
+        average_score_of_last_10_episodes = sum(self.all_scores[-10:]) / num_scores
+        print(f'\rIteration: {iter}\tAverage Score Of Last 10: {average_score_of_last_10_episodes:.2f}', end="")
 
     @staticmethod
     def save_agent(agent, folder='out/agents'):
@@ -59,7 +64,7 @@ class Logger():
             filename = f'{folder}/{current_time}.png'
 
         plt.figure(figsize=(10, 5))
-        plt.plot(self.average_score)
+        plt.plot(self.all_scores)
         if self.dql:
             plt.title('Scores over Episodes')
             plt.xlabel('Episode')

@@ -14,15 +14,14 @@ from env.tools.csv_line_reader import CSVLineReader
 class TempRegulationEnv(gym.Env):
     metadata = {'render.modes': ['console']}
 
-    def __init__(self, start_from_random_day=True, run_for_days=7):
+    def __init__(self, start_from_random_day=True, max_steps_per_episode=7 * 24 * 4):
         super(TempRegulationEnv, self).__init__()
         self.action_space = spaces.Discrete(2)  # 0: Heat Up, 1: Do Nothing
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
         self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
         self.total_reward = 0
-        self.run_for_days = run_for_days
-        self.max_steps_per_episode = run_for_days * 24 * 4
+        self.max_steps_per_episode = max_steps_per_episode
         self.reset(start_from_random_day)
 
 
@@ -83,12 +82,15 @@ class TempRegulationEnv(gym.Env):
         self.total_reward = 0
         self.reward_data = [0]
 
-        TimeManager().reset_time_to(starting_time, self.run_for_days)
+        TimeManager().reset_time_to(starting_time, self.max_steps_per_episode)
         self.occupacy_manager = OccupancyManager()
         self.temperature_manager = TemperatureManager(self.out_tmp_reader)
         #TODO: Read from configuration
         self.heating_system = HeatingSystem(H_acc=0.50, H_cool=0.25, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
         return self.observation(), {}
+
+    def set_max_steps_per_episode(self, max_steps_per_episode):
+        self.max_steps_per_episode = max_steps_per_episode
 
     def observation(self):
         cur_temp = self.temperature_manager.get_current_temperature()
@@ -101,10 +103,8 @@ class TempRegulationEnv(gym.Env):
     def render(self, mode='web'):
         if mode == 'web':
             # Check if the renderer already exists and the server is running
-            if hasattr(self, 'renderer') and self.renderer.app.server.running:
-                print("Server is already running.")
+            if hasattr(self, 'renderer'):
                 return
-
             self.renderer = SimulationRenderer(self)
             self.renderer.run_server()
         elif mode == 'console':

@@ -41,9 +41,9 @@ class TimeManager:
     def is_over(self):
         return self.current_time >= self.final_time
 
-    def reset_time_to(self, time, run_for_days):
+    def reset_time_to(self, time, timesteps):
         self.current_time = time
-        self.final_time = time + timedelta(days=run_for_days)
+        self.final_time = time + timedelta(minutes=15*timesteps)
         self.time_history = []
         self.time_history.append(self.current_time)
         return self.current_time
