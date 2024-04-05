@@ -5,7 +5,7 @@ VENV_NAME := venv
 PYTHON := $(VENV_NAME)/bin/python
 SCRIPT := main.py
 MODEL_PPO := 04-05_13-10
-MODEL_DQL := 04-05_13-10
+MODEL_DQL := 04-05_13-53
 
 all: clean install run
 
@@ -25,7 +25,7 @@ dql:
 dql-test:
 	@echo "Running DQL test script..."
 	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(SCRIPT) --mode test --algorithm DQL --target_qnetwork out/DQL/${MODEL_DQL}_model.pth"
+	$(PYTHON) $(SCRIPT) --mode test --algorithm DQL --local_qnetwork out/DQL/${MODEL_DQL}_local_qnetwork.pth"
 
 ppo:
 	@echo "Running PPO script..."

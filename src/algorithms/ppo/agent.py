@@ -341,6 +341,9 @@ class Agent:
 			Return:
 				None
 		"""
+		print("-------Testing PPO agent-------")
+		print(f"Testing for {self.env.total_timesteps} timesteps.")
+		print("--------------------------------")
 		t_so_far = 0
 		self.env.set_max_steps_per_episode(total_timesteps)
 		obs, _ = self.env.reset()
@@ -351,4 +354,10 @@ class Agent:
 			action, _ = self.get_action(obs)
 			obs, _, done, _, _ = self.env.step(action)
 			t_so_far += 1
+
+		print(f"Total timesteps: {t_so_far}")
+		print("Done testing.")
+		print("--------------------------------")
+
+		time.sleep(5*60)
 		self.env.close()

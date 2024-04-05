@@ -28,14 +28,15 @@ def train_ppo(env, hyperparameters, actor_model, critic_model):
     agent.train(total_timesteps=10_000_000)
 
 def test_ppo(env, actor_model):
-    if actor_model == '':
-        print(f"Please provide an actor model to test.", flush=True)
-        return
     print(f"Testing PPO {actor_model}", flush=True)
     global agent
     agent = PPOAgent(policy_class=PPONetwork, env=env)
-    agent.actor.load_state_dict(torch.load(actor_model))
-    agent.test_policy()
+    try:
+        agent.actor.load_state_dict(torch.load(actor_model))
+    except FileNotFoundError:
+        print(f"Could not find ${actor_model}. Please provide a valid path to actor model to test.", flush=True)
+        return
+    agent.test_policy(4*24*730)
 
 def train_dql(env, hyperparameters, local_qnetwork, target_qnetwork):
     print('Training DQL', flush=True)
@@ -50,16 +51,17 @@ def train_dql(env, hyperparameters, local_qnetwork, target_qnetwork):
 
     agent.train(total_timesteps=10_000_000)
 
-def test_dql(env, target_qnetwork):
-    if target_qnetwork == '':
-        print(f"Please provide a target Q network to test.", flush=True)
-        return
-    print(f"Testing DQL {target_qnetwork} target Q network.", flush=True)
+def test_dql(env, local_qnetwork):
+    print(f"Testing DQL {local_qnetwork} target Q network.", flush=True)
     global agent
     agent = DQLAgent(env=env, policy_class=DQLNetwork)
-    agent.policy.load_state_dict(torch.load(target_qnetwork))
-    #TODO: Add test_policy method to DQLAgent
-    agent.test_policy()
+    try:
+        agent.local_qnetwork.load_state_dict(torch.load(local_qnetwork))
+
+    except FileNotFoundError:
+        print(f"Could not find {local_qnetwork}. Please provide a valid path to local Q network to test.", flush=True)
+        return
+    agent.test_policy(4*24*730)
 
 def main():
     parser = argparse.ArgumentParser(description='Train or test PPO/DQL model.')
@@ -105,7 +107,7 @@ def main():
             if args.mode == 'train':
                 train_dql(env, hyperparameters, args.local_qnetwork, args.target_qnetwork)
             elif args.mode == 'test':
-                test_dql(env, args.target_qnetwork)
+                test_dql(env, args.local_qnetwork)
 
     except KeyboardInterrupt:
         print(f'{args.algorithm} {args.mode}ing interrupted by user.', flush=True)
