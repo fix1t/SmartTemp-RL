@@ -124,28 +124,34 @@ class Agent():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(interpolation_parameter * local_param.data + (1.0 - interpolation_parameter) * target_param.data)
 
-    def train(self, total_timesteps):
+    def train(self, total_timesteps=4*24*365*10):
         epsilon_starting_value  = 1.0
         epsilon_ending_value  = 0.01
         epsilon_decay_value  = 0.995
         epsilon = epsilon_starting_value
 
-        scores_on_100_episodes = deque(maxlen = 100)
+        scores_on_50_episodes = deque(maxlen = 50)
         all_scores = []
 
-        for episode in range(1, total_timesteps + 1):
+        number_episodes = total_timesteps // self.env.max_steps_per_episode
+        print("-------Training DQL agent-------")
+        print(f"Training for {total_timesteps} timesteps with {self.env.max_steps_per_episode} steps per episode.")
+        print(f"Total number of episodes: {number_episodes}")
+        print("--------------------------------")
+
+        for episode in range(1, number_episodes+1):
             state, _ = self.env.reset(start_from_random_day=False)
             score = 0
-            while True:
+            done = False
+            while not done:
                 action = self.act(state, epsilon)
                 next_state, reward, done, _, _ = self.env.step(action)
                 self.step(state, action, reward, next_state, done)
                 state = next_state
                 score += reward
-                if done:
-                    break
-            scores_on_100_episodes.append(score)
+
+            scores_on_50_episodes.append(score)
             all_scores.append(score)
             epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
-
-            Logger().log(np.mean(scores_on_100_episodes), episode)
+            if episode % 50 == 0:
+                Logger().log_episode(np.mean(scores_on_50_episodes), episode)

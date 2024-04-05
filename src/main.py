@@ -24,7 +24,7 @@ def train_ppo(env, hyperparameters, actor_model, critic_model):
         print(f"Successfully loaded.", flush=True)
     else:
         print(f"Training from scratch.", flush=True)
-    agent.train(total_timesteps=200_000_000)
+    agent.train(total_timesteps=10_000_000)
 
 def test_ppo(env, actor_model):
     print(f"Testing PPO {actor_model}", flush=True)
@@ -37,7 +37,7 @@ def train_dql(env, hyperparameters):
     print('Training DQL', flush=True)
     global agent
     agent = DQLAgent(env=env, policy_class=DQLNetwork, **hyperparameters)
-    agent.train(hyperparameters['number_episodes'])
+    agent.train(total_timesteps=10_000_000)
 
 def test_dql(env, actor_model):
     print(f"Testing DQL {actor_model}", flush=True)

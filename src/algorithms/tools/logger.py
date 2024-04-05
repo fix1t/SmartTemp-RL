@@ -13,25 +13,26 @@ class Logger():
         if cls._instance is None:
             cls._instance = super(Logger, cls).__new__(cls)
             cls._instance.average_score = []  # This stores the history of average scores.
-            cls._instance._episode_num = 0
+            cls._instance.iter = 0
+            cls._instance.dql = True
         return cls._instance
 
-    def log(self, score, episode_num=None):
-        self.average_score.append(score)  # Corrected to append to the class attribute
-
-        if episode_num is not None:
-            self._episode_num = episode_num
+    def log_episode(self, score, episode=None):
+        self.average_score.append(score)
+        if episode is not None:
+            self.iter = episode
         else:
-            self._episode_num += 1
+            self.iter += 1
+        print(f'\Episode: {iter}\tAverage Score: {score:.2f}', end="")
 
-        self.print_progress(score, self._episode_num)  # Pass score correctly
-
-    @staticmethod
-    def print_progress(score, episode_num=None):
-        if episode_num is None:
-            print(f'\rAverage Score: {score:.2f}', end="")
+    def log_iteration(self, score, iter=None):
+        self.dql = False
+        self.average_score.append(score)
+        if iter is not None:
+            self.iter = iter
         else:
-            print(f'\rEpisode {episode_num}\tAverage Score: {score:.2f}', end="")
+            self.iter += 1
+        print(f'\rIteration: {iter}\tAverage Score: {score:.2f}', end="")
 
     @staticmethod
     def save_agent(agent, folder='out/agents'):
@@ -59,6 +60,12 @@ class Logger():
 
         plt.figure(figsize=(10, 5))
         plt.plot(self.average_score)
+        if self.dql:
+            plt.title('Scores over Episodes')
+            plt.xlabel('Episode')
+        else:
+            plt.title('Scores over Iterations')
+            plt.xlabel('Iteration')
         plt.title('Scores over Episodes')
         plt.xlabel('Episode')
         plt.ylabel('Score')

@@ -23,24 +23,12 @@ class Agent:
 			Returns:
 				None
 		"""
-		# Make sure the environment is compatible with our code
-		print(f"Environment has observation space {env.observation_space} and action space {env.action_space}", flush=True)
-		print(f"{type(env.observation_space)} == <class 'gym.spaces.box.Box'> = {type(env.observation_space) == gym.spaces.Box}")
-		print(f"{type(env.action_space)} == <class 'gym.spaces.box.Box'> = {type(env.action_space) == gym.spaces.Box}")
-
-		# assert(type(env.observation_space) == gym.spaces.Box)
-		# assert(type(env.action_space) == gym.spaces.Box)
 
 		# Initialize hyperparameters for training with PPO
 		self._init_hyperparameters(hyperparameters)
 
 		# Extract environment information
 		self.env = env
-		print(f"Observation space: {self.env.observation_space.shape}")
-		print(f"Action space: {self.env.action_space.shape}")
-		print(f"Action space: {self.env.action_space.n}")
-		print(f"Observation_space: {self.env.observation_space}")
-
 		self.obs_dim = env.observation_space.shape[0]
 		self.act_dim = env.action_space.n # Discrete action space
 
@@ -76,8 +64,11 @@ class Agent:
 			Return:
 				None
 		"""
-		print(f"Training... Running {self.max_timesteps_per_episode} timesteps per episode, ", end='')
-		print(f"{self.timesteps_per_batch} timesteps per batch for a total of {total_timesteps} timesteps")
+		print("-------Training PPO agent-------")
+		print(f"Training for {total_timesteps} timesteps with {self.timesteps_per_batch} timesteps per batch.")
+		print(f"Total of {total_timesteps//self.timesteps_per_batch} iterations.")
+		print("--------------------------------")
+
 		t_so_far = 0 # Timesteps simulated so far
 		i_so_far = 0 # Iterations ran so far
 		while t_so_far < total_timesteps:																	   # ALG STEP 2
@@ -142,7 +133,7 @@ class Agent:
 				# Log actor loss
 				self.logger['actor_losses'].append(actor_loss.detach())
 
-			# Print a summary of our training so far
+			# Print a summary and reset batch data
 			self._log_summary()
 
 	def rollout(self):
@@ -174,8 +165,9 @@ class Agent:
 		ep_rews = []
 
 		t = 0 # Keeps track of how many timesteps we've run so far this batch
+		ep_t = 0 # Keeps track of how many timesteps we've run so far this episode
 
-		# Keep simulating until we've run more than or equal to specified timesteps per batch
+        # Keep simulating until we've run more than or equal to specified timesteps per batch
 		while t < self.timesteps_per_batch:
 			ep_rews = [] # rewards collected per episode
 
@@ -208,6 +200,7 @@ class Agent:
 			batch_rews.append(ep_rews)
 
 		# Reshape data as tensors in the shape specified in function description, before returning
+		batch_obs = np.array(batch_obs, dtype=np.float32)  # optimize tensor operations
 		batch_obs = torch.tensor(batch_obs, dtype=torch.float)
 		batch_acts = torch.tensor(batch_acts, dtype=torch.int)
 		batch_log_probs = torch.tensor(batch_log_probs, dtype=torch.float)
@@ -329,13 +322,13 @@ class Agent:
 			Return:
 				None
 		"""
-		avg_ep_lens = np.mean(self.logger['batch_lens'])
 		avg_ep_rews = np.mean([np.sum(ep_rews) for ep_rews in self.logger['batch_rews']])
+		avg_ep_lens = np.mean(self.logger['batch_lens'])
 		avg_actor_loss = np.mean(self.logger['actor_losses'])
 		self.logger['batch_lens'] = []
 		self.logger['batch_rews'] = []
 		self.logger['actor_losses'] = []
-		Logger().log(avg_ep_rews, self.logger['i_so_far'])
+		Logger().log_iteration(avg_ep_rews, self.logger['i_so_far'])
 
 	def test_policy(self, total_timesteps=4*24*180, render=True):
 		"""

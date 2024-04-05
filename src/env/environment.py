@@ -22,6 +22,7 @@ class TempRegulationEnv(gym.Env):
         self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
         self.total_reward = 0
         self.run_for_days = run_for_days
+        self.max_steps_per_episode = run_for_days * 24 * 4
         self.reset(start_from_random_day)
 
 
