@@ -14,6 +14,7 @@ class Network(nn.Module):
         action_size (int): Number of actions that can be taken in the environment.
         seed (int, optional): Random seed for initializing weights. Defaults to 42.
     """
+
     def __init__(self, state_size, action_size, seed=42):
         """
         Initializes the network with two hidden layers and one output layer.
