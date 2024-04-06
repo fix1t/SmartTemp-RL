@@ -55,5 +55,6 @@ ppo-test: get_latest_ppo_model
 
 clean:
 	rm -rf $(VENV)
-	find . -type f -name '*.pyc' -delete
-	find . -type d -name '__pycache__' -delete
+	find . -type f -name '*.pyc' -exec rm -rf {} +
+	find . -type d -name '__pycache__' -exec rm -rf {} +
+
