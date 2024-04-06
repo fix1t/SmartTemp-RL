@@ -5,64 +5,67 @@ import time
 from env.environment import TempRegulationEnv
 from algorithms.tools.logger import Logger
 
+from algorithms.network import Network as Network
+
 # PPO imports
 from algorithms.ppo.agent import Agent as PPOAgent
-from algorithms.ppo.network import Network as PPONetwork
 
 # DQL imports
 from algorithms.dql.agent import Agent as DQLAgent
-from algorithms.dql.network import Network as DQLNetwork
 
-agent = None  # Global variable to store the agent
-
-def train_ppo(env, hyperparameters, actor_model, critic_model):
+def train_ppo(agent:PPOAgent, actor_model, critic_model, total_timesteps=4*24*360*20):
     print(f"Training PPO", flush=True)
-    global agent
-    agent = PPOAgent(policy_class=PPONetwork, env=env, **hyperparameters)
     if actor_model != '' and critic_model != '':
-        print(f"Loading actor and critic models.", flush=True)
-        agent.actor.load_state_dict(torch.load(actor_model))
-        agent.critic.load_state_dict(torch.load(critic_model))
+        try:
+            print(f"Loading actor and critic models.", flush=True)
+            agent.load_actor(actor_model)
+            agent.load_critic(critic_model)
+        except FileNotFoundError:
+            print(f"Could not find {actor_model} or {critic_model}. Please provide a valid path to actor and critic models to load.", flush=True)
+            return
         print(f"Successfully loaded.", flush=True)
     else:
         print(f"Training from scratch.", flush=True)
-    agent.train(total_timesteps=4*24*360*20)
 
-def test_ppo(env, actor_model):
+    agent.train(total_timesteps)
+
+def test_ppo(agent:PPOAgent, actor_model, total_timesteps=4*24*14):
     print(f"Testing PPO {actor_model}", flush=True)
-    global agent
-    agent = PPOAgent(policy_class=PPONetwork, env=env)
     try:
-        agent.actor.load_state_dict(torch.load(actor_model))
+        print(f"Loading actor model.", flush=True)
+        agent.load_actor(actor_model)
     except FileNotFoundError:
         print(f"Could not find ${actor_model}. Please provide a valid path to actor model to test.", flush=True)
         return
-    agent.test_policy(4*24*14)
+    agent.test_policy(total_timesteps)
 
-def train_dql(env, hyperparameters, local_qnetwork, target_qnetwork):
+def train_dql(agent:DQLAgent, local_qnetwork, target_qnetwork, total_timesteps=4*24*360*20):
     print('Training DQL', flush=True)
-    global agent
-    agent = DQLAgent(env=env, policy_class=DQLNetwork, **hyperparameters)
+    # TODO: Pass local and target Q networks
+
     if local_qnetwork != '' and target_qnetwork != '':
-        agent.local_qnetwork.load_state_dict(torch.load(local_qnetwork))
-        agent.target_policy.load_state_dict(torch.load(target_qnetwork))
+        try:
+            print(f"Loading local and target Q networks.", flush=True)
+            agent.load_local_qnetwork(local_qnetwork)
+            agent.load_target_qnetwork(target_qnetwork)
+        except FileNotFoundError:
+            print(f"Could not find {local_qnetwork} or {target_qnetwork}. Please provide a valid path to local and target Q networks to load.", flush=True)
+            return
         print(f"Successfully loaded.", flush=True)
     else:
         print(f"Training from scratch.", flush=True)
 
-    agent.train(total_timesteps=4*24*360*20)
+    agent.train(total_timesteps)
 
-def test_dql(env, local_qnetwork):
+def test_dql(agent:DQLAgent, local_qnetwork, total_timesteps=4*24*14):
     print(f"Testing DQL {local_qnetwork} target Q network.", flush=True)
-    global agent
-    agent = DQLAgent(env=env, policy_class=DQLNetwork)
     try:
         agent.local_qnetwork.load_state_dict(torch.load(local_qnetwork))
 
     except FileNotFoundError:
         print(f"Could not find {local_qnetwork}. Please provide a valid path to local Q network to test.", flush=True)
         return
-    agent.test_policy(4*24*14)
+    agent.test_policy(total_timesteps)
 
 def main():
     parser = argparse.ArgumentParser(description='Train or test PPO/DQL model.')
@@ -75,6 +78,8 @@ def main():
     parser.add_argument('--seed', required=False, default='',  type=int, help='Seed for the environment')
     args = parser.parse_args()
 
+    if args.seed == '':
+        args.seed = None
 
     env = TempRegulationEnv(
         start_from_random_day=True,
@@ -95,10 +100,17 @@ def main():
                 'render': False,
                 'render_every_i': 10
             }
+
+            # Network for PPO
+            actor = Network(env.observation_space.shape[0], env.action_space.n, [64, 64])
+            critic = Network(env.observation_space.shape[0], 1,[64, 64])
+            agent = PPOAgent(actor_network=actor, critic_network=critic, env=env, **hyperparameters)
+
             if args.mode == 'train':
-                train_ppo(env, hyperparameters, args.actor_model, args.critic_model)
+                train_ppo(agent, args.actor_model, args.critic_model)
             else:
-                test_ppo(env, args.actor_model)
+                test_ppo(agent, args.actor_model)
+
         elif args.algorithm == 'DQL':
             hyperparameters = {
                 'epsilon_starting_value': 1.0,
@@ -110,30 +122,35 @@ def main():
                 'replay_buffer_size': int(1e5),     # Size of the replay buffer
                 'interpolation_parameter': 1e-3     # Used in soft update of target network
             }
+
+            # Network for DQL
+            local_qnetwork = Network(env.observation_space.shape[0], env.action_space.n, [64, 64])
+            target_qnetwork = Network(env.observation_space.shape[0], env.action_space.n, [64, 64])
+            agent = DQLAgent(env=env, local_qnetwork=local_qnetwork, target_qnetwork=target_qnetwork, **hyperparameters)
+
             if args.mode == 'train':
-                train_dql(env, hyperparameters, args.local_qnetwork, args.target_qnetwork)
+                train_dql(agent, args.local_qnetwork, args.target_qnetwork)
             elif args.mode == 'test':
-                test_dql(env, args.local_qnetwork)
+                test_dql(agent, args.local_qnetwork)
 
     except KeyboardInterrupt:
-        print(f'{args.algorithm} {args.mode}ing interrupted by user.', flush=True)
+        print(f'\n{args.algorithm} {args.mode}ing interrupted by user.', flush=True)
 
     finally:
         # Save the agent and plot the average score overtime
         if args.mode == 'train':
             elapsed_time = time.time() - start_time
-            print('-------------------------------Training completed-------------------------------')
-            print("Saving agent and plotting scores.")
-            global agent
+            print('-------Training completed-------')
+            print("Saving agent and plotting scores...")
             save_folder = f"out/{args.algorithm}"
             Logger().save_agent(agent, save_folder)
             print("Agent saved successfully.")
             Logger().plot_scores(save_folder)
             print("Scores plotted successfully.")
+            print(f'Trained model available in {save_folder} folder.')
+            print(f"Training took {elapsed_time/60:.2f} minutes and {elapsed_time%60:.2f} seconds.")
+            print('--------------------------------')
             env.close()
-            print(f'Ouput available in {save_folder} folder.')
-            print(f"Training took {elapsed_time//60:.2f} minutes and {elapsed_time%60:.2f} seconds.")
-            print('----------------------------------------------------------------------9---------')
 
 if __name__ == '__main__':
     main()

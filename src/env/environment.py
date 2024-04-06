@@ -25,6 +25,7 @@ class TempRegulationEnv(gym.Env):
         self.observation_space = spaces.Box(low=np.array([0, -30, 0, 0, 0]), high=np.array([30, 40, 1, 6, 5]), dtype=np.float32)
         self.total_reward = 0
         self.max_steps_per_episode = max_steps_per_episode
+        self.start_from_random_day = start_from_random_day
         self.reset(start_from_random_day)
 
 
@@ -104,7 +105,9 @@ class TempRegulationEnv(gym.Env):
     def energy_reward(self):
         return -self.heating_system.get_heat_energy()
 
-    def reset(self, start_from_random_day=True):
+    def reset(self, start_from_random_day=None):
+        if start_from_random_day is None:
+            start_from_random_day = self.start_from_random_day
         self.out_tmp_reader = CSVLineReader(
             ConfigurationManager().get_settings_config("temperature_data_file"),
             start_from_random=start_from_random_day,

@@ -11,7 +11,7 @@ from torch.optim import Adam
 from algorithms.tools.logger import Logger
 
 class Agent:
-    def __init__(self, policy_class, env, **hyperparameters):
+    def __init__(self, actor_network, critic_network, env, **hyperparameters):
         """
             Initializes the PPO model, including hyperparameters.
 
@@ -33,8 +33,8 @@ class Agent:
         self.act_dim = env.action_space.n # Discrete action space
 
          # Initialize actor and critic networks
-        self.actor = policy_class(self.obs_dim, self.act_dim)                                                   # ALG STEP 1
-        self.critic = policy_class(self.obs_dim, 1)
+        self.actor = actor_network
+        self.critic = critic_network
 
         # Initialize optimizers for actor and critic
         self.actor_optim = Adam(self.actor.parameters(), lr=self.lr)
@@ -329,6 +329,30 @@ class Agent:
         self.logger['batch_rews'] = []
         self.logger['actor_losses'] = []
         Logger().log_iteration(avg_ep_rews, self.logger['i_so_far'])
+
+    def load_actor(self, path):
+        """
+            Load the actor network from a file.
+
+            Parameters:
+                path - the path to the actor network file.
+
+            Return:
+                None
+        """
+        self.actor.load_state_dict(torch.load(path))
+
+    def load_critic(self, path):
+        """
+            Load the critic network from a file.
+
+            Parameters:
+                path - the path to the critic network file.
+
+            Return:
+                None
+        """
+        self.critic.load_state_dict(torch.load(path))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
         """

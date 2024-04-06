@@ -5,12 +5,12 @@ import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
-from algorithms.dql.network import Network
+from algorithms.network import Network
 from algorithms.dql.memory import ReplayMemory
 from algorithms.tools.logger import Logger
 
 class Agent():
-    def __init__(self, policy_class, env, **hyperparameters):
+    def __init__(self, local_qnetwork, target_qnetwork, env, **hyperparameters):
         """
         Initializes the agent.
         """
@@ -20,11 +20,10 @@ class Agent():
 
         self.env = env
         self.obs_dim = env.observation_space.shape[0]
-        self.act_dim = env.action_space.n # Discrete action space
+        self.act_dim = env.action_space.n
 
-        # Q-Networks
-        self.local_qnetwork = policy_class(self.obs_dim, self.act_dim).to(self.device)  # Local network for learning
-        self.target_qnetwork = policy_class(self.obs_dim, self.act_dim).to(self.device)  # Target network for stable Q-targets
+        self.local_qnetwork = local_qnetwork
+        self.target_qnetwork = target_qnetwork
 
         # Optimizer
         self.optimizer = optim.Adam(self.local_qnetwork.parameters(), lr=self.learning_rate)
@@ -161,6 +160,12 @@ class Agent():
             epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
 
             Logger().log_episode(score, episode)
+
+    def load_local_qnetwork(self, path):
+        self.local_qnetwork.load_state_dict(torch.load(path))
+
+    def save_target_qnetwork(self, path):
+        self.target_qnetwork.save_state_dict(torch.load(path))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
         print("-------Testing DQL agent-------")
