@@ -22,31 +22,32 @@ CONFIG = {
 
     "schedule": {
         "people": ["father", "mother", "child"],    # List of people in the house
+        "people": ["father"],
         "weekly_schedule": {
             "Monday": {
-                "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-                "mother": {"leave": "07:00", "return": "16:00", "variance": 60},
-                "child": {"leave": "07:00", "return": "13:30", "variance": 30}
+                "father": {"leave": "08:00", "return": "18:00", "variance": 15},
+                "mother": {"leave": "07:00", "return": "16:00", "variance": 15},
+                "child": {"leave": "07:00", "return": "13:30", "variance": 10}
             },
             "Tuesday": {
-                "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-                "mother": {"leave": "07:00", "return": "16:00", "variance": 60},
-                "child": {"leave": "07:00", "return": "13:30", "variance": 30}
+                "father": {"leave": "08:00", "return": "18:00", "variance": 15},
+                "mother": {"leave": "07:00", "return": "16:00", "variance": 15},
+                "child": {"leave": "07:00", "return": "13:30", "variance": 10}
             },
             "Wednesday": {
-                "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-                "mother": {"leave": "07:00", "return": "16:00", "variance": 60},
-                "child": {"leave": "07:00", "return": "13:30", "variance": 30}
+                "father": {"leave": "08:00", "return": "18:00", "variance": 15},
+                "mother": {"leave": "07:00", "return": "16:00", "variance": 15},
+                "child": {"leave": "07:00", "return": "13:30", "variance": 10}
             },
             "Thursday": {
-                "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-                "mother": {"leave": "07:00", "return": "16:00", "variance": 60},
-                "child": {"leave": "07:00", "return": "16:00", "variance": 30}
+                "father": {"leave": "08:00", "return": "18:00", "variance": 15},
+                "mother": {"leave": "07:00", "return": "16:00", "variance": 15},
+                "child": {"leave": "07:00", "return": "16:00", "variance": 10}
             },
             "Friday": {
-                "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-                "mother": {"leave": "07:00", "return": "16:00", "variance": 60},
-                "child": {"leave": "07:00", "return": "12:30", "variance": 30}
+                "father": {"leave": "08:00", "return": "18:00", "variance": 15},
+                "mother": {"leave": "07:00", "return": "16:00", "variance": 15},
+                "child": {"leave": "07:00", "return": "12:30", "variance": 10}
             },
             "Saturday": {
                 "father": {"at_home": "true"},

@@ -25,7 +25,7 @@ def train_ppo(env, hyperparameters, actor_model, critic_model):
         print(f"Successfully loaded.", flush=True)
     else:
         print(f"Training from scratch.", flush=True)
-    agent.train(total_timesteps=10_000_000)
+    agent.train(total_timesteps=4*24*360*10)
 
 def test_ppo(env, actor_model):
     print(f"Testing PPO {actor_model}", flush=True)
@@ -36,7 +36,7 @@ def test_ppo(env, actor_model):
     except FileNotFoundError:
         print(f"Could not find ${actor_model}. Please provide a valid path to actor model to test.", flush=True)
         return
-    agent.test_policy(4*24*730)
+    agent.test_policy(4*24*14)
 
 def train_dql(env, hyperparameters, local_qnetwork, target_qnetwork):
     print('Training DQL', flush=True)
@@ -49,7 +49,7 @@ def train_dql(env, hyperparameters, local_qnetwork, target_qnetwork):
     else:
         print(f"Training from scratch.", flush=True)
 
-    agent.train(total_timesteps=10_000_000)
+    agent.train(total_timesteps=4*24*360*20)
 
 def test_dql(env, local_qnetwork):
     print(f"Testing DQL {local_qnetwork} target Q network.", flush=True)
@@ -61,7 +61,7 @@ def test_dql(env, local_qnetwork):
     except FileNotFoundError:
         print(f"Could not find {local_qnetwork}. Please provide a valid path to local Q network to test.", flush=True)
         return
-    agent.test_policy(4*24*730)
+    agent.test_policy(4*24*14)
 
 def main():
     parser = argparse.ArgumentParser(description='Train or test PPO/DQL model.')

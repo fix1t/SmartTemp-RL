@@ -37,6 +37,9 @@ class HeatingSystem:
     def get_heat_history(self):
         return self.H_history
 
+    def is_heating(self):
+        return self.H_energy > 0.5
+
     def step(self, action):
         """Update the HS's heat energy based on the action taken."""
         # assert action in [0, 1], "Invalid action"

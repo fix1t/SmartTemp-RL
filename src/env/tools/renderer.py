@@ -40,7 +40,7 @@ class SimulationRenderer:
                 xaxis=dict(type='date', title='Time', autorange=True),
                 yaxis=dict(title='Score', autorange=True),
                 title='Score Over Time',
-                margin=dict(l=40, r=40, t=40, b=40),
+                margin=dict(l=40, r=40, t=40, b=0),
             )
 
             return fig
@@ -64,7 +64,8 @@ class SimulationRenderer:
                 xaxis=dict(type='date', title='Time', autorange=True),
                 yaxis=dict(title='Temperature (°C)', autorange=True),
                 title='Temperature Over Time',
-                margin=dict(l=40, r=40, t=40, b=40),
+                margin=dict(l=40, r=40, t=40, b=0),
+                showlegend=False,
             )
 
             return fig
@@ -83,7 +84,7 @@ class SimulationRenderer:
                 xaxis=dict(type='date', title='Time', autorange=True),
                 yaxis=dict(title='Meter Reading', autorange=True),
                 title='Heating Over Time',
-                margin=dict(l=40, r=40, t=40, b=40),
+                margin=dict(l=40, r=40, t=40, b=0),
             )
 
             return fig
@@ -104,7 +105,8 @@ class SimulationRenderer:
                 xaxis=dict(type='date', title='Time', autorange=True),
                 yaxis=dict(title='At home', autorange=True),
                 title='People At Home Over Time',
-                margin=dict(l=40, r=40, t=40, b=40),
+                margin=dict(l=40, r=40, t=40, b=0),
+                showlegend=False,
             )
 
             return fig

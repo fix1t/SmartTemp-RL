@@ -145,3 +145,10 @@ class OccupancyManager:
     def is_occupied(self):
         return any(self.people_presence.values())
 
+    def is_arrival(self):
+        for person in self.people:
+            if len(self.people_presence_history[person]) >= 2:
+                if self.people_presence_history[person][-2] == False and self.people_presence_history[person][-1] == True:
+                    return True
+        return False
+

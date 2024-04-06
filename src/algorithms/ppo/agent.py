@@ -354,6 +354,8 @@ class Agent:
             action, _ = self.get_action(obs)
             obs, _, done, _, _ = self.env.step(action)
             t_so_far += 1
+            time.sleep(0.05)
+
 
         print(f"Total timesteps: {t_so_far}")
         print("Done testing.")

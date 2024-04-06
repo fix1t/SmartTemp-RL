@@ -63,7 +63,7 @@ class Logger():
             current_time = datetime.now().strftime("%m-%d_%H-%M")
             filename = f'{folder}/{current_time}.png'
 
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(20, 10))
         plt.plot(self.all_scores)
         if self.dql:
             plt.title('Scores over Episodes')

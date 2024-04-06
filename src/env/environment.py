@@ -22,7 +22,7 @@ class TempRegulationEnv(gym.Env):
             np.random.seed(seed)
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
-        self.observation_space = spaces.Box(low=np.array([0, -30,0]), high=np.array([30, 40, 5]), dtype=np.float32)
+        self.observation_space = spaces.Box(low=np.array([0, -30, 0, 0]), high=np.array([30, 40, 1, 5]), dtype=np.float32)
         self.total_reward = 0
         self.max_steps_per_episode = max_steps_per_episode
         self.reset(start_from_random_day)
@@ -39,12 +39,11 @@ class TempRegulationEnv(gym.Env):
 
         self.occupacy_manager.step()
 
-        # TODO: Calculate reward for people being home or not + hvac usage penalty
-        target_temperature = ConfigurationManager().get_temp_config("target_temperature")
-        current_temperature = self.temperature_manager.get_current_temperature()
-        reward = self.calculate_reward(current_temperature, target_temperature)
+        reward = self.calculate_reward()
 
         self.total_reward += reward
+        self.reward_data.append(reward)
+        # self.reward_data.append(self.total_reward)
 
         done = TimeManager().is_over()
         truncated = False
@@ -53,28 +52,57 @@ class TempRegulationEnv(gym.Env):
         # To comply with the gym API, the step function should return the following: observation, reward, terminated, info
         return self.observation(), reward, done, truncated, info
 
-    def calculate_reward(self, current_temperature, target_temperature):
-        comfort_zone = 0.5  # degrees
+    def calculate_reward(self):
+        is_occupied = self.occupacy_manager.is_occupied()
+
+        # If the house is not occupied, we do not penalize the temperature difference
+        if not is_occupied:
+            reward = self.energy_reward() # Penalize more when the house is not occupied
+            # print(f"Energy reward: {reward}")
+        else:
+            COMFORT_TO_COST_PREFERENCE = 0.7
+            energy_reward =  (1- COMFORT_TO_COST_PREFERENCE) * self.energy_reward()
+            temperature_reward = COMFORT_TO_COST_PREFERENCE * self.temperature_reward()
+            reward = energy_reward + temperature_reward
+            # print(f"Energy reward: {energy_reward} + Temp reward: {temperature_reward} = {reward}")
+        return reward
+
+    def temperature_reward(self):
+        target_temperature = ConfigurationManager().get_temp_config("target_temperature")
+        current_temperature = self.temperature_manager.get_current_temperature()
+        heating_on = self.heating_system.is_heating()
 
         # Calculate the absolute difference from the target temperature
         temperature_diff = abs(current_temperature - target_temperature)
+        MAXIMUM_TEMP_REWARD = 3
+        COMFORT_ZONE = 1
 
-        # If within the comfort zone - provide a positive reward
-        if temperature_diff <= comfort_zone:
-            reward = 1 - (temperature_diff / comfort_zone)# Scales linearly within the comfort zone
+        # Give extra motivation, when someone arrives - to heat up the house in advance
+        if self.occupacy_manager.is_arrival():
+            EXTRA_MOTIVATION = 5
         else:
-            if current_temperature > target_temperature:
-                # Do not penalize if the heating system is off
-                penalty = 1 - self.heating_system.get_heat_energy()
-            else:
-                penalty = -np.exp(temperature_diff - comfort_zone)
+            EXTRA_MOTIVATION = 1
 
-            # Normalize penalty to a range or adjust scale as needed for your environment
-            reward = max(penalty, -10)  # Example: caps the penalty to -10 for extreme temperature differences
+        #                             | <- High temperature
+        #                    OK       |        BAD
+        #  Heating off -> ____________|____________ <- Heating on
+        #                             |
+        #                    BAD      |        OK
+        #                             | <- Low temperature
 
-        self.total_reward += reward
-        self.reward_data.append(self.total_reward)
-        return reward
+        is_higher_than_target = current_temperature > target_temperature
+        is_comfortable = temperature_diff < COMFORT_ZONE
+
+        if not heating_on and is_higher_than_target and not is_comfortable:
+            reward = 0
+        else:
+            reward = MAXIMUM_TEMP_REWARD - temperature_diff / COMFORT_ZONE
+
+        return EXTRA_MOTIVATION * reward
+
+
+    def energy_reward(self):
+        return -self.heating_system.get_heat_energy()
 
     def reset(self, start_from_random_day=True):
         self.out_tmp_reader = CSVLineReader(
@@ -105,8 +133,7 @@ class TempRegulationEnv(gym.Env):
         out_temp = self.temperature_manager.get_current_outside_temperature()
         occ = self.occupacy_manager.is_occupied()
         heat_energy = self.heating_system.get_heat_energy()
-        #TODO: Add occupancy
-        return np.array([cur_temp, out_temp, heat_energy]).astype(np.float32)
+        return np.array([cur_temp, out_temp, occ, heat_energy]).astype(np.float32)
 
     def render(self, mode='web'):
         if mode == 'web':
