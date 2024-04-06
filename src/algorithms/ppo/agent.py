@@ -342,7 +342,7 @@ class Agent:
                 None
         """
         print("-------Testing PPO agent-------")
-        print(f"Testing for {self.env.total_timesteps} timesteps.")
+        print(f"Testing for {total_timesteps} timesteps.")
         print("--------------------------------")
         t_so_far = 0
         self.env.set_max_steps_per_episode(total_timesteps)
@@ -354,7 +354,7 @@ class Agent:
             action, _ = self.get_action(obs)
             obs, _, done, _, _ = self.env.step(action)
             t_so_far += 1
-            time.sleep(0.05)
+            time.sleep(0.01)
 
 
         print(f"Total timesteps: {t_so_far}")

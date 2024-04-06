@@ -1,5 +1,6 @@
 import argparse
 import torch
+import time
 
 from env.environment import TempRegulationEnv
 from algorithms.tools.logger import Logger
@@ -25,7 +26,7 @@ def train_ppo(env, hyperparameters, actor_model, critic_model):
         print(f"Successfully loaded.", flush=True)
     else:
         print(f"Training from scratch.", flush=True)
-    agent.train(total_timesteps=4*24*360*10)
+    agent.train(total_timesteps=4*24*360*20)
 
 def test_ppo(env, actor_model):
     print(f"Testing PPO {actor_model}", flush=True)
@@ -78,10 +79,11 @@ def main():
     env = TempRegulationEnv(
         start_from_random_day=True,
         seed=int(args.seed),
-        max_steps_per_episode=4*24*7,
+        max_steps_per_episode=4*24*14,
     )
 
     try:
+        start_time = time.time()
         if args.algorithm == 'PPO':
             hyperparameters = {
                 'timesteps_per_batch': 2048,
@@ -119,6 +121,8 @@ def main():
     finally:
         # Save the agent and plot the average score overtime
         if args.mode == 'train':
+            elapsed_time = time.time() - start_time
+            print('-------------------------------Training completed-------------------------------')
             print("Saving agent and plotting scores.")
             global agent
             save_folder = f"out/{args.algorithm}"
@@ -127,7 +131,9 @@ def main():
             Logger().plot_scores(save_folder)
             print("Scores plotted successfully.")
             env.close()
-            print(f'Ouput available in {save_folder} folder.')\
+            print(f'Ouput available in {save_folder} folder.')
+            print(f"Training took {elapsed_time//60:.2f} minutes and {elapsed_time%60:.2f} seconds.")
+            print('----------------------------------------------------------------------9---------')
 
 if __name__ == '__main__':
     main()

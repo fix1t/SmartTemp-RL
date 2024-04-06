@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+import datetime as dt
 
 from env.modules.configuration_manager import ConfigurationManager
 
@@ -23,11 +23,14 @@ class TimeManager:
     def get_today(self):
         return self.current_time.strftime("%A")
 
+    def get_weekday(self):
+        return self.current_time.weekday()
+
     def get_current_time(self):
         return self.current_time
 
     def update_time(self):
-        self.current_time += timedelta(minutes=ConfigurationManager().get_settings_config("minutes_per_step"))
+        self.current_time += dt.timedelta(minutes=ConfigurationManager().get_settings_config("minutes_per_step"))
         self.time_history.append(self.current_time)
         return self.current_time
 
@@ -43,7 +46,7 @@ class TimeManager:
 
     def reset_time_to(self, time, timesteps):
         self.current_time = time
-        self.final_time = time + timedelta(minutes=15*timesteps)
+        self.final_time = time + dt.timedelta(minutes=15*timesteps)
         self.time_history = []
         self.time_history.append(self.current_time)
         return self.current_time

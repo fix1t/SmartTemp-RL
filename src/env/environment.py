@@ -22,7 +22,7 @@ class TempRegulationEnv(gym.Env):
             np.random.seed(seed)
 
         #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
-        self.observation_space = spaces.Box(low=np.array([0, -30, 0, 0]), high=np.array([30, 40, 1, 5]), dtype=np.float32)
+        self.observation_space = spaces.Box(low=np.array([0, -30, 0, 0, 0]), high=np.array([30, 40, 1, 6, 5]), dtype=np.float32)
         self.total_reward = 0
         self.max_steps_per_episode = max_steps_per_episode
         self.reset(start_from_random_day)
@@ -132,8 +132,9 @@ class TempRegulationEnv(gym.Env):
         cur_temp = self.temperature_manager.get_current_temperature()
         out_temp = self.temperature_manager.get_current_outside_temperature()
         occ = self.occupacy_manager.is_occupied()
+        weekday = TimeManager().get_weekday()
         heat_energy = self.heating_system.get_heat_energy()
-        return np.array([cur_temp, out_temp, occ, heat_energy]).astype(np.float32)
+        return np.array([cur_temp, out_temp, occ, weekday, heat_energy]).astype(np.float32)
 
     def render(self, mode='web'):
         if mode == 'web':
