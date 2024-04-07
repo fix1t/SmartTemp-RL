@@ -37,7 +37,7 @@ class Network(nn.Module):
         # Adding the output layer
         layers.append(nn.Linear(hidden_dim, out_dim))
         if output_activation is not None:
-            layers.append(output_activation)
+            layers.append(output_activation())
 
         # Combine all layers into a Sequential module
         self.layers = nn.Sequential(*layers)

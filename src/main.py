@@ -3,7 +3,9 @@ import torch
 import time
 
 from env.environment import TempRegulationEnv
+
 from algorithms.tools.logger import Logger
+from tools.config_loader import load_config
 
 from algorithms.network import Network as Network
 
@@ -75,11 +77,16 @@ def main():
     parser.add_argument('--critic_model', required=False, default='', type=str ,help='Path to the critic model file - only for PPO')
     parser.add_argument('--local_qnetwork', required=False, default='', type=str ,help='Path to the local qnetwork model file - only for DQL')
     parser.add_argument('--target_qnetwork', required=False, default='', type=str ,help='Path to the target qnetwork model file - only for DQL')
+    parser.add_argument('--config', required=False, default='', type=str ,help='Path to the config file. Specifies hyperparameters and network parameters for algorithm')
     parser.add_argument('--seed', required=False, default='',  type=int, help='Seed for the environment')
     args = parser.parse_args()
 
     if args.seed == '':
         args.seed = None
+
+    CONFIG = load_config(args.config, args.algorithm)
+    NETWORK = CONFIG['network']
+    HYPERPARAMETERS = CONFIG['hyperparameters']
 
     env = TempRegulationEnv(
         start_from_random_day=True,
@@ -90,21 +97,21 @@ def main():
     try:
         start_time = time.time()
         if args.algorithm == 'PPO':
-            hyperparameters = {
-                'timesteps_per_batch': 2048,
-                'max_timesteps_per_episode': 200,
-                'gamma': 0.99,
-                'n_updates_per_iteration': 10,
-                'lr': 3e-4,
-                'clip': 0.2,
-                'render': False,
-                'render_every_i': 10
-            }
+            NETWORK = CONFIG['network']
+            actor = Network(
+                env.observation_space.shape[0],
+                env.action_space.n,
+                NETWORK['hidden_layers'],
+                NETWORK['activation'],
+                NETWORK['output_activation'])
+            critic = Network(
+                env.observation_space.shape[0],
+                1,
+                NETWORK['hidden_layers'],
+                NETWORK['activation'],
+                NETWORK['output_activation'])
 
-            # Network for PPO
-            actor = Network(env.observation_space.shape[0], env.action_space.n, [64, 64])
-            critic = Network(env.observation_space.shape[0], 1,[64, 64])
-            agent = PPOAgent(actor_network=actor, critic_network=critic, env=env, **hyperparameters)
+            agent = PPOAgent(env=env, actor_network=actor, critic_network=critic, **HYPERPARAMETERS)
 
             if args.mode == 'train':
                 train_ppo(agent, args.actor_model, args.critic_model)
@@ -112,21 +119,21 @@ def main():
                 test_ppo(agent, args.actor_model)
 
         elif args.algorithm == 'DQL':
-            hyperparameters = {
-                'epsilon_starting_value': 1.0,
-                'epsilon_ending_value': 0.01,
-                'epsilon_decay_value': 0.995,
-                'learning_rate': 5e-4,              # Learning rate for the optimizer
-                'minibatch_size': 100,              # Size of the minibatch from replay memory for learning
-                'discount_factor': 0.99,            # Discount factor for future rewards
-                'replay_buffer_size': int(1e5),     # Size of the replay buffer
-                'interpolation_parameter': 1e-3     # Used in soft update of target network
-            }
+            NETWORK = CONFIG['network']
+            local_qnetwork = Network(
+                env.observation_space.shape[0],
+                env.action_space.n,
+                NETWORK['hidden_layers'],
+                NETWORK['activation'],
+                NETWORK['output_activation'])
+            target_qnetwork = Network(
+                env.observation_space.shape[0],
+                env.action_space.n,
+                NETWORK['hidden_layers'],
+                NETWORK['activation'],
+                NETWORK['output_activation'])
 
-            # Network for DQL
-            local_qnetwork = Network(env.observation_space.shape[0], env.action_space.n, [64, 64])
-            target_qnetwork = Network(env.observation_space.shape[0], env.action_space.n, [64, 64])
-            agent = DQLAgent(env=env, local_qnetwork=local_qnetwork, target_qnetwork=target_qnetwork, **hyperparameters)
+            agent = DQLAgent(env=env, local_qnetwork=local_qnetwork, target_qnetwork=target_qnetwork, **HYPERPARAMETERS)
 
             if args.mode == 'train':
                 train_dql(agent, args.local_qnetwork, args.target_qnetwork)

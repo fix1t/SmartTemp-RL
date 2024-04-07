@@ -41,6 +41,9 @@ PPO_DEFAULT_CONFIG = {
     }
 }
 
+def bark():
+    print('bark-bark')
+
 def load_config(file_path, algorithm='DQL'):
     """
     Load configuration from a YAML file, validate completeness, and set defaults for missing values.
@@ -52,70 +55,68 @@ def load_config(file_path, algorithm='DQL'):
     Returns:
         dict: Configuration dictionary with all necessary values set, using defaults where required.
     """
-    print('--------------------------------')
+    print('---------------CONFIG---------------')
     print(f"Loading config for {algorithm} from '{file_path}'")
 
     config = DQL_DEFAULT_CONFIG.copy() if algorithm == 'DQL' else PPO_DEFAULT_CONFIG.copy()
 
-    try:
-        with open(file_path, 'r') as file:
-            loaded_config = yaml.load(file, Loader=yaml.FullLoader)
-    except FileNotFoundError:
-        print(f"Warning: Config file not found at '{file_path}'. Using default values.")
-        print('--------------------------------')
-        return config
 
-    if not isinstance(loaded_config, dict):
-        print("Warning: Loaded config is empty or invalid. Using default values.")
-        print('--------------------------------')
-        return config
+    if file_path != '':
+        load = True
 
-    # Update the config with values from the loaded config, if they exist
-    for section in config:
-        if section in loaded_config:
-            for key in config[section]:
-                if key in loaded_config[section]:
-                    config[section][key] = loaded_config[section][key]
+        try:
+            with open(file_path, 'r') as file:
+                loaded_config = yaml.load(file, Loader=yaml.FullLoader)
+        except FileNotFoundError:
+            print(f"Warning: Config file not found at '{file_path}'. Using default values.")
+            load = False
+
+        if not isinstance(loaded_config, dict):
+            print("Warning: Loaded config is empty or invalid. Using default values.")
+            load = False
+
+        # Update the config with values from the loaded config, if they exist
+        if load:
+            for section in config:
+                if section in loaded_config:
+                    for key in config[section]:
+                        if key in loaded_config[section]:
+                            config[section][key] = loaded_config[section][key]
+                        else:
+                            print(f"Warning: '{key}' not found in '{section}' section. Using default value.")
                 else:
-                    print(f"Warning: '{key}' not found in '{section}' section. Using default value.")
-        else:
-            print(f"Warning: '{section}' section is missing. Using default values.")
+                    print(f"Warning: '{section}' section is missing. Using default values.")
+
+    else: # No config file provided
+        print("Warning: No config file provided. Using default values.")
 
     # Set the activation functions based on the names
     config['network']['activation'] = activation_function(config['network']['activation'])
     config['network']['output_activation'] = activation_function(config['network']['output_activation'])
-
-    print('--------------------------------')
+    print('------------------------------------')
     return config
 
 def activation_function(name):
     """
     Get the activation function from the name.
-
     Parameters:
         name (str): Name of the activation function.
-
     Returns:
-        torch.nn.Module: The activation function module.
+        A PyTorch activation function.
     """
-    if name == 'ReLU':
-        return torch.nn.ReLU()
-    elif name == 'Sigmoid':
-        return torch.nn.Sigmoid()
-    elif name == 'Tanh':
-        return torch.nn.Tanh()
-    elif name == 'Softmax':
-        return torch.nn.Softmax(dim=1)
+    activations = {
+        'ReLU': torch.nn.ReLU,
+        'Sigmoid': torch.nn.Sigmoid,
+        'Tanh': torch.nn.Tanh,
+        'Softmax': lambda : torch.nn.Softmax(dim=-1)
+    }
+    if name in activations:
+        return activations[name]
     else:
-        print(f"Warning: Activation function '{name}' not found. Using ReLU.")
+        print(f"Warning: Activation function '{name}' not recognized. Defaulting to ReLU.")
         return torch.nn.ReLU()
+
 
 if __name__ == '__main__':
-    config = load_config('/home/fix/SmartTemp-RL/src/configurations/ppo/default.yaml', 'PPO')
-    print(config)
-    config = load_config('/home/fix/SmartTemp-RL/src/configurations/dql/default.yaml', 'DQL')
-    print(config)
-    config = load_config('configurations/ppo/default.yaml', 'PPO')
-    print(config)
-    config = load_config('config.yml', 'invalid')
+    config = load_config('algorithms/dql/configurations/default.yaml', 'DQL')
     print(config)
