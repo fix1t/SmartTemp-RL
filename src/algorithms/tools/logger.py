@@ -41,27 +41,30 @@ class Logger():
 
     @staticmethod
     def save_agent(agent, folder='out/agents'):
-        if not os.path.exists(folder):
-            os.makedirs(folder)
         current_time = datetime.now().strftime("%m-%d_%H-%M")
-        filename = f'{folder}/{current_time}'
+        folder_full_path = f"{folder}/{current_time}"
+
+        if not os.path.exists(folder_full_path):
+            os.makedirs(folder_full_path)
 
         if hasattr(agent, 'actor'):
-            torch.save(agent.actor.state_dict(), f"{filename}_actor_model.pth")
+            torch.save(agent.actor.state_dict(), f"{folder_full_path}/actor_model.pth")
         if hasattr(agent, 'critic'):
-            torch.save(agent.critic.state_dict(), f"{filename}_critic_model.pth")
+            torch.save(agent.critic.state_dict(), f"{folder_full_path}/critic_model.pth")
 
         if hasattr(agent, 'local_qnetwork'):
-            torch.save(agent.local_qnetwork.state_dict(), f"{filename}_local_qnetwork.pth")
+            torch.save(agent.local_qnetwork.state_dict(), f"{folder_full_path}/local_qnetwork.pth")
         if hasattr(agent, 'target_qnetwork'):
-            torch.save(agent.target_qnetwork.state_dict(), f"{filename}_target_qnetwork.pth")
+            torch.save(agent.target_qnetwork.state_dict(), f"{folder_full_path}/target_qnetwork.pth")
 
-    def plot_scores(self, folder='out/plots', filename=None):
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        if filename is None:
-            current_time = datetime.now().strftime("%m-%d_%H-%M")
-            filename = f'{folder}/{current_time}.png'
+    def plot_scores(self, folder='out/plots'):
+        current_time=datetime.now().strftime("%m-%d_%H-%M")
+        folder_full_path = f"{folder}/{current_time}"
+
+        if not os.path.exists(folder_full_path):
+            os.makedirs(folder_full_path)
+
+        file_full_path = f'{folder_full_path}/score.png'
 
         plt.figure(figsize=(20, 10))
         plt.plot(self.all_scores)
@@ -74,6 +77,6 @@ class Logger():
         plt.title('Scores over Episodes')
         plt.xlabel('Episode')
         plt.ylabel('Score')
-        plt.savefig(filename)
+        plt.savefig(file_full_path)
         plt.close()
 

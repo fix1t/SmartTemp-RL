@@ -4,55 +4,38 @@ PYTHON := $(VENV_NAME)/bin/python
 SCRIPT := main.py
 SEED := 1
 
+# Paths for the latest model files
+LATEST_DQL_MODEL := $(shell find ./out/DQL -type f -name 'local_qnetwork.pth' | xargs ls -t | head -n 1)
+LATEST_PPO_ACTOR_MODEL := $(shell find ./out/PPO -type f -name 'actor_model.pth' | xargs ls -t | head -n 1)
+LATEST_PPO_CRITIC_MODEL := $(shell find ./out/PPO -type f -name 'critic_model.pth' | xargs ls -t | head -n 1)
 
-.PHONY: all clean install run dql dql-test ppo ppo-test get_latest_dql_model get_latest_ppo_model
+.PHONY: all clean install run dql dql-test ppo ppo-test
 
-all: clean install get_latest_dql_model get_latest_ppo_model dql
+all: clean install dql
 
 install:
 	@echo "Creating virtual environment..."
 	python3 -m venv $(VENV_NAME)
-	@echo "Activating virtual environment..."
-	bash -c "source venv/bin/activate && pip install -r requirements.txt"
+	@echo "Activating virtual environment and installing dependencies..."
+	$(VENV_NAME)/bin/pip install -r requirements.txt
 
 dql:
-	@echo "Running DQL script..."
-	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(SCRIPT) --seed ${SEED} --mode train --algorithm DQL"
+	@echo "Running DQL training script..."
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm DQL
 
-dql-test: get_latest_dql_model
-	@echo "Running DQL test script..."
-	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(SCRIPT) --seed ${SEED} --mode test --algorithm DQL --local_qnetwork out/DQL/${MODEL_DQL}_local_qnetwork.pth"
+dql-test:
+	@echo "Running DQL test script with the latest model..."
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --local_qnetwork $(LATEST_DQL_MODEL)
 
 ppo:
-	@echo "Running PPO script..."
-	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(SCRIPT) --seed ${SEED} --mode train --algorithm PPO"
+	@echo "Running PPO training script..."
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm PPO
 
-ppo-test: get_latest_ppo_model
-	@echo "Running PPO test script..."
-	bash -c "source $(VENV_NAME)/bin/activate && \
-	$(PYTHON) $(SCRIPT) --seed ${SEED} --mode test --algorithm PPO --actor_model out/PPO/${MODEL_PPO}_actor_model.pth --critic_model out/PPO/${MODEL_PPO}_critic_model.pth"
-
-get_latest_dql_model:
-	$(eval MODEL_DQL=$(shell find ./out/DQL -type f -name '*.pth' | sed -E 's|.*\/([0-9-]+_[0-9-]+).*|\1|' | sort -r | head -n1))
-	@if [ -z "$(MODEL_DQL)" ]; then \
-		echo "Warning: No DQL model files found."; \
-		return 1; \
-	else \
-		echo "Running DQL model for datetime $(MODEL_DQL)"; \
-	fi
-
-get_latest_ppo_model:
-	$(eval MODEL_PPO=$(shell find ./out/PPO -type f -name '*.pth' | sed -E 's|.*\/([0-9-]+_[0-9-]+).*|\1|' | sort -r | head -n1))
-	@if [ -z "$(MODEL_PPO)" ]; then \
-		echo "Warning: No PPO model files found."; \
-		return 1; \
-	else \
-		echo "Running PPO model for datetime $(MODEL_PPO)"; \
-	fi
+ppo-test:
+	@echo "Running PPO test script with the latest actor and critic models..."
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm PPO --actor_model $(LATEST_PPO_ACTOR_MODEL) --critic_model $(LATEST_PPO_CRITIC_MODEL)
 
 clean:
-	rm -rf $(VENV)
+	@echo "Cleaning up Python cache files and virtual environment..."
+	rm -rf $(VENV_NAME)
 	find . -type d -name '__pycache__' -exec rm -rf {} +

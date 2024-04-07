@@ -1,4 +1,3 @@
-import argparse
 import torch
 import time
 
@@ -6,6 +5,7 @@ from env.environment import TempRegulationEnv
 
 from algorithms.tools.logger import Logger
 from tools.config_loader import load_config
+from tools.arguments_parser import get_args
 
 from algorithms.network import Network as Network
 
@@ -70,19 +70,7 @@ def test_dql(agent:DQLAgent, local_qnetwork, total_timesteps=4*24*14):
     agent.test_policy(total_timesteps)
 
 def main():
-    parser = argparse.ArgumentParser(description='Train or test PPO/DQL model.')
-    parser.add_argument('-m', '--mode', choices=['train', 'test'], required=False, default='train' , type=str ,help='Mode to run the script in. Test mode requires a model file.')
-    parser.add_argument('-a', '--algorithm', choices=['PPO', 'DQL'], required=False, default='DQL', type=str ,help='Algorithm to use')
-    parser.add_argument('--actor_model', required=False, default='', type=str ,help='Path to the actor model file - only for PPO')
-    parser.add_argument('--critic_model', required=False, default='', type=str ,help='Path to the critic model file - only for PPO')
-    parser.add_argument('--local_qnetwork', required=False, default='', type=str ,help='Path to the local qnetwork model file - only for DQL')
-    parser.add_argument('--target_qnetwork', required=False, default='', type=str ,help='Path to the target qnetwork model file - only for DQL')
-    parser.add_argument('--config', required=False, default='', type=str ,help='Path to the config file. Specifies hyperparameters and network parameters for algorithm')
-    parser.add_argument('--seed', required=False, default='',  type=int, help='Seed for the environment')
-    args = parser.parse_args()
-
-    if args.seed == '':
-        args.seed = None
+    args = get_args()
 
     CONFIG = load_config(args.config, args.algorithm)
     NETWORK = CONFIG['network']
@@ -94,10 +82,10 @@ def main():
         max_steps_per_episode=4*24*14,
     )
 
+    start_time = time.time()
+
     try:
-        start_time = time.time()
         if args.algorithm == 'PPO':
-            NETWORK = CONFIG['network']
             actor = Network(
                 env.observation_space.shape[0],
                 env.action_space.n,
@@ -119,7 +107,6 @@ def main():
                 test_ppo(agent, args.actor_model)
 
         elif args.algorithm == 'DQL':
-            NETWORK = CONFIG['network']
             local_qnetwork = Network(
                 env.observation_space.shape[0],
                 env.action_space.n,
@@ -148,8 +135,7 @@ def main():
         if args.mode == 'train':
             elapsed_time = time.time() - start_time
             print('-------Training completed-------')
-            print("Saving agent and plotting scores...")
-            save_folder = f"out/{args.algorithm}"
+            save_folder = f"out/{args.algorithm}/"
             Logger().save_agent(agent, save_folder)
             print("Agent saved successfully.")
             Logger().plot_scores(save_folder)
