@@ -9,7 +9,7 @@ dash-html-components
 matplotlib
 gymnasium[box2d]
 tqdm
-
+pyyaml
 absl-py
 astor
 atari-py
