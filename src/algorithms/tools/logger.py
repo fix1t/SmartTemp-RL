@@ -1,8 +1,7 @@
-from collections import deque
 import os
-from datetime import datetime
 import matplotlib.pyplot as plt
 import torch
+import yaml
 
 class Logger():
     """
@@ -25,8 +24,8 @@ class Logger():
         else:
             self.iter += 1
         num_scores = min(10, len(self.all_scores))
-        average_score_of_last_10_episodes = sum(self.all_scores[-10:]) / num_scores
-        print(f'\rEpisode: {self.iter}\tAverage Score Of Last 10: {average_score_of_last_10_episodes:.2f}', end="")
+        average_score_of_last_10_episodes = sum(self.all_scores[-num_scores:]) / num_scores
+        print(f'\rEpisode: {self.iter}\tAverage Score Of Last {num_scores}: {average_score_of_last_10_episodes:.2f}', end="")
 
     def log_iteration(self, score, iter=None):
         self.dql = False
@@ -36,35 +35,29 @@ class Logger():
         else:
             self.iter += 1
         num_scores = min(10, len(self.all_scores))
-        average_score_of_last_10_episodes = sum(self.all_scores[-10:]) / num_scores
-        print(f'\rIteration: {iter}\tAverage Score Of Last 10: {average_score_of_last_10_episodes:.2f}', end="")
+        average_score_of_last_10_episodes = sum(self.all_scores[-num_scores:]) / num_scores
+        print(f'\rIteration: {iter}\tAverage Score Of Last {num_scores}: {average_score_of_last_10_episodes:.2f}', end="")
 
     @staticmethod
-    def save_agent(agent, folder='out/agents'):
-        current_time = datetime.now().strftime("%m-%d_%H-%M")
-        folder_full_path = f"{folder}/{current_time}"
-
-        if not os.path.exists(folder_full_path):
-            os.makedirs(folder_full_path)
+    def save_trained_agent(agent, folder='out/agents'):
+        if not os.path.exists(folder):
+            os.makedirs(folder)
 
         if hasattr(agent, 'actor'):
-            torch.save(agent.actor.state_dict(), f"{folder_full_path}/actor_model.pth")
+            torch.save(agent.actor.state_dict(), f"{folder}/actor_model.pth")
         if hasattr(agent, 'critic'):
-            torch.save(agent.critic.state_dict(), f"{folder_full_path}/critic_model.pth")
+            torch.save(agent.critic.state_dict(), f"{folder}/critic_model.pth")
 
         if hasattr(agent, 'local_qnetwork'):
-            torch.save(agent.local_qnetwork.state_dict(), f"{folder_full_path}/local_qnetwork.pth")
+            torch.save(agent.local_qnetwork.state_dict(), f"{folder}/local_qnetwork.pth")
         if hasattr(agent, 'target_qnetwork'):
-            torch.save(agent.target_qnetwork.state_dict(), f"{folder_full_path}/target_qnetwork.pth")
+            torch.save(agent.target_qnetwork.state_dict(), f"{folder}/target_qnetwork.pth")
 
     def plot_scores(self, folder='out/plots'):
-        current_time=datetime.now().strftime("%m-%d_%H-%M")
-        folder_full_path = f"{folder}/{current_time}"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
 
-        if not os.path.exists(folder_full_path):
-            os.makedirs(folder_full_path)
-
-        file_full_path = f'{folder_full_path}/score.png'
+        file_full_path = f'{folder}/score.png'
 
         plt.figure(figsize=(20, 10))
         plt.plot(self.all_scores)
@@ -80,3 +73,37 @@ class Logger():
         plt.savefig(file_full_path)
         plt.close()
 
+
+    def save_agent_info(self, folder, agent, config, elapsed_time):
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        with open(f"{folder}/info.txt", "w") as f:
+            f.write(f"---------------Training summary---------------------\n\n")
+            num_scores = min(10, len(self.all_scores))
+            summary = {
+                "Elapsed Time": elapsed_time,
+                "Max reward per episode": max(self.all_scores),
+                f"Average over last {num_scores} episodes": sum(self.all_scores[-num_scores:]) / num_scores,
+                "Total episodes/iterations": len(self.all_scores),
+                "Total steps": len(self.all_scores) * agent.env.max_steps_per_episode,
+            }
+            f.write(yaml.dump(summary))
+            f.write("\n\n")
+
+            f.write(f"---------------Agent's configuration----------------\n\n")
+            f.write(yaml.dump(config))
+            f.write("\n\n")
+
+            f.write(f"---------------Agent's network----------------------\n\n")
+            if hasattr(agent, 'actor'):
+                f.write(f"Actor network:\n")
+                f.write(f"{agent.actor}\n\n")
+                f.write(f"Critic network:\n")
+                f.write(f"{agent.critic}\n\n")
+
+            else:
+                f.write(f"Local Q-network:\n")
+                f.write(f"{agent.local_qnetwork}\n\n")
+                f.write(f"Target Q-network:\n")
+                f.write(f"{agent.target_qnetwork}\n")

@@ -1,11 +1,9 @@
-from collections import deque
 import random
 from time import sleep
 import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
-from algorithms.network import Network
 from algorithms.dql.memory import ReplayMemory
 from algorithms.tools.logger import Logger
 
@@ -36,11 +34,11 @@ class Agent():
         """
         Initializes hyperparameters for the agent.
         """
-        learning_rate = 5e-4  # Learning rate for the optimizer
-        minibatch_size = 100  # Size of the minibatch from replay memory for learning
-        discount_factor = 0.99  # Discount factor for future rewards
-        replay_buffer_size = int(1e5)  # Size of the replay buffer
-        interpolation_parameter = 1e-3  # Used in soft update of target network
+        learning_rate = 5e-4                    # Learning rate for the optimizer
+        minibatch_size = 100                    # Size of the minibatch from replay memory for learning
+        discount_factor = 0.99                  # Discount factor for future rewards
+        replay_buffer_size = int(1e5)           # Size of the replay buffer
+        interpolation_parameter = 1e-3          # Used in soft update of target network
         self.learning_rate = hyperparameters.get('learning_rate', learning_rate)
         self.minibatch_size = hyperparameters.get('minibatch_size', minibatch_size)
         self.discount_factor = hyperparameters.get('discount_factor', discount_factor)

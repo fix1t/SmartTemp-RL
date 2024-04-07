@@ -135,13 +135,12 @@ def main():
         if args.mode == 'train':
             elapsed_time = time.time() - start_time
             print('-------Training completed-------')
-            save_folder = f"out/{args.algorithm}/"
-            Logger().save_agent(agent, save_folder)
-            print("Agent saved successfully.")
-            Logger().plot_scores(save_folder)
-            print("Scores plotted successfully.")
-            print(f'Trained model available in {save_folder} folder.')
-            print(f"Training took {elapsed_time/60:.2f} minutes and {elapsed_time%60:.2f} seconds.")
+            print(f"Training took {int(elapsed_time//60)} minutes and {elapsed_time%60:.2f} seconds.")
+            folder_path = f"out/{args.algorithm}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
+            Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
+            Logger().save_trained_agent(agent, folder_path)
+            Logger().plot_scores(folder_path)
+            print(f'Trained model and summary available in {folder_path} folder.')
             print('--------------------------------')
             env.close()
 
