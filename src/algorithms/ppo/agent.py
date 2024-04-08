@@ -76,7 +76,7 @@ class Agent:
             batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()                     # ALG STEP 3
 
             # Calculate how many timesteps we collected this batch
-            t_so_far += np.sum(batch_lens)
+            t_so_far += self.batch_size
 
             # Increment the number of iterations
             i_so_far += 1

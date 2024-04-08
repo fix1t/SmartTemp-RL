@@ -11,11 +11,6 @@ DQL_DEFAULT_CONFIG = {
     'hyperparameters': {
         'learning_rate': 0.0005,
         'discount_factor': 0.99,
-        'epsilon': 0.1,
-        'batch_size': 32,
-        'epsilon_starting_value': 1.0,
-        'epsilon_ending_value': 0.01,
-        'epsilon_decay_value': 0.995,
         'batch_size': 100,
         'replay_buffer_size': 100000,
         'interpolation_parameter': 0.001
@@ -36,13 +31,21 @@ PPO_DEFAULT_CONFIG = {
         'n_updates_per_iteration': 10,
         'learning_rate': 3e-4,
         'clip': 0.2
-    }
+        }
 }
 
-def bark():
-    print('bark-bark')
+def log_progress(message, silent=False):
+    """
+    Log a progress message to the console.
 
-def load_config(file_path, algorithm='DQL'):
+    Parameters:
+        message (str): The message to log.
+        silent (bool): Whether to suppress the message.
+    """
+    if not silent:
+        print(f"Progress: {message}")
+
+def load_config(file_path, algorithm='DQL', silent=False):
     """
     Load configuration from a YAML file, validate completeness, and set defaults for missing values.
 
@@ -53,8 +56,8 @@ def load_config(file_path, algorithm='DQL'):
     Returns:
         dict: Configuration dictionary with all necessary values set, using defaults where required.
     """
-    print('---------------CONFIG---------------')
-    print(f"Loading config for {algorithm} from '{file_path}'")
+    log_progress('---------------CONFIG---------------', silent=silent)
+    log_progress(f"Loading config for {algorithm} from '{file_path}'", silent=silent)
 
     config = DQL_DEFAULT_CONFIG.copy() if algorithm == 'DQL' else PPO_DEFAULT_CONFIG.copy()
 
@@ -66,11 +69,11 @@ def load_config(file_path, algorithm='DQL'):
             with open(file_path, 'r') as file:
                 loaded_config = yaml.load(file, Loader=yaml.FullLoader)
         except FileNotFoundError:
-            print(f"Warning: Config file not found at '{file_path}'. Using default values.")
+            log_progress(f"Warning: Config file not found at '{file_path}'. Using default values.", silent=silent)
             load = False
 
         if not isinstance(loaded_config, dict):
-            print("Warning: Loaded config is empty or invalid. Using default values.")
+            log_progress("Warning: Loaded config is empty or invalid. Using default values.", silent=silent)
             load = False
 
         # Update the config with values from the loaded config, if they exist
@@ -81,17 +84,17 @@ def load_config(file_path, algorithm='DQL'):
                         if key in loaded_config[section]:
                             config[section][key] = loaded_config[section][key]
                         else:
-                            print(f"Warning: '{key}' not found in '{section}' section. Using default value.")
+                            log_progress(f"Warning: '{key}' not found in '{section}' section. Using default value.", silent=silent)
                 else:
-                    print(f"Warning: '{section}' section is missing. Using default values.")
+                    log_progress(f"Warning: '{section}' section is missing. Using default values.", silent=silent)
 
     else: # No config file provided
-        print("Warning: No config file provided. Using default values.")
+        log_progress("Warning: No config file provided. Using default values.", silent=silent)
 
     # Set the activation functions based on the names
     config['network']['activation'] = activation_function(config['network']['activation'])
     config['network']['output_activation'] = activation_function(config['network']['output_activation'])
-    print('------------------------------------')
+    log_progress('------------------------------------', silent=silent)
     return config
 
 def activation_function(name):

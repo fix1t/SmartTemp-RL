@@ -17,6 +17,11 @@ class Logger():
             cls._instance.dql = True
         return cls._instance
 
+    def reset(self):
+        self.all_scores = []
+        self.iter = 0
+        self.dql = True
+
     def log_episode(self, score, episode=None):
         self.all_scores.append(score)
         if episode is not None:
@@ -73,6 +78,11 @@ class Logger():
         plt.savefig(file_full_path)
         plt.close()
 
+    def get_last_avg_score(self, num_scores=10):
+        num_scores = min(num_scores, len(self.all_scores))
+        if num_scores == 0:
+            return 0
+        return sum(self.all_scores[-num_scores:]) / num_scores
 
     def save_agent_info(self, folder, agent, config, elapsed_time):
         if not os.path.exists(folder):
@@ -80,11 +90,15 @@ class Logger():
 
         with open(f"{folder}/info.txt", "w") as f:
             f.write(f"---------------Training summary---------------------\n\n")
-            num_scores = min(10, len(self.all_scores))
+
+            if self.all_scores.__len__() == 0:
+                f.write("No episodes were run\n")
+                return
+
             summary = {
                 "Elapsed Time": elapsed_time,
                 "Max reward per episode": max(self.all_scores),
-                f"Average over last {num_scores} episodes": sum(self.all_scores[-num_scores:]) / num_scores,
+                "Average over last 10 episodes": self.get_last_avg_score(),
                 "Total episodes/iterations": len(self.all_scores),
                 "Total steps": len(self.all_scores) * agent.env.max_steps_per_episode,
             }
