@@ -1,3 +1,4 @@
+import argparse
 import os
 import time
 from algorithms.tools.logger import Logger
@@ -82,7 +83,12 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
         print('--------------------------------')
 
 if __name__ == '__main__':
-    generate_configurations('DQL')
-    generate_configurations('PPO')
-    run_configurations('generated_configs/dql', total_timesteps=4*24*365*20, agent_type='DQL')
-    run_configurations('generated_configs/ppo', total_timesteps=4*24*365*20, agent_type='PPO')
+    parser = argparse.ArgumentParser(description='Run configurations for DQL and PPO agents.')
+    parser.add_argument('--agent', choices=['DQL', 'PPO'], required=True, type=str, help='Agent type to run configurations for')
+    parser.add_argument('--folder', required=True, type=str, help='Folder with configurations')
+    parser.add_argument('--timesteps', required=False, default=4*24*360*20, type=int, help='Total timesteps to train the agent')
+    parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
+    args = parser.parse_args()
+
+    generate_configurations(args.agent)
+    run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output)
