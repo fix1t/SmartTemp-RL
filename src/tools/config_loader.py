@@ -16,7 +16,7 @@ DQL_DEFAULT_CONFIG = {
         'epsilon_starting_value': 1.0,
         'epsilon_ending_value': 0.01,
         'epsilon_decay_value': 0.995,
-        'minibatch_size': 100,
+        'batch_size': 100,
         'replay_buffer_size': 100000,
         'interpolation_parameter': 0.001
     }
@@ -30,14 +30,12 @@ PPO_DEFAULT_CONFIG = {
         'output_activation': 'Softmax'
     },
     'hyperparameters': {
-        'timesteps_per_batch': 2048,
+        'batch_size': 2048,
         'max_timesteps_per_episode': 200,
-        'gamma': 0.99,
+        'discount_factor': 0.99,
         'n_updates_per_iteration': 10,
-        'lr': 3e-4,
-        'clip': 0.2,
-        'render': False,
-        'render_every_i': 10
+        'learning_rate': 3e-4,
+        'clip': 0.2
     }
 }
 

@@ -35,12 +35,12 @@ class Agent():
         Initializes hyperparameters for the agent.
         """
         learning_rate = 5e-4                    # Learning rate for the optimizer
-        minibatch_size = 100                    # Size of the minibatch from replay memory for learning
+        batch_size = 100                    # Size of the minibatch from replay memory for learning
         discount_factor = 0.99                  # Discount factor for future rewards
         replay_buffer_size = int(1e5)           # Size of the replay buffer
         interpolation_parameter = 1e-3          # Used in soft update of target network
         self.learning_rate = hyperparameters.get('learning_rate', learning_rate)
-        self.minibatch_size = hyperparameters.get('minibatch_size', minibatch_size)
+        self.batch_size = hyperparameters.get('batch_size', batch_size)
         self.discount_factor = hyperparameters.get('discount_factor', discount_factor)
         self.replay_buffer_size = hyperparameters.get('replay_buffer_size', replay_buffer_size)
         self.interpolation_parameter = hyperparameters.get('interpolation_parameter', interpolation_parameter)
@@ -62,8 +62,8 @@ class Agent():
         # Learn every 4 steps
         NUMBERS_OF_STEPS_BEFORE_LEARNING = 4
         self.t_step = (self.t_step + 1) % NUMBERS_OF_STEPS_BEFORE_LEARNING
-        if self.t_step == 0 and len(self.memory.memory) > self.minibatch_size:
-            experiences = self.memory.sample(self.minibatch_size)
+        if self.t_step == 0 and len(self.memory.memory) > self.batch_size:
+            experiences = self.memory.sample(self.batch_size)
             self.learn(experiences, self.discount_factor)
 
     def act(self, state, epsilon=0.):

@@ -37,8 +37,8 @@ class Agent:
         self.critic = critic_network
 
         # Initialize optimizers for actor and critic
-        self.actor_optim = Adam(self.actor.parameters(), lr=self.lr)
-        self.critic_optim = Adam(self.critic.parameters(), lr=self.lr)
+        self.actor_optim = Adam(self.actor.parameters(), lr=self.learning_rate)
+        self.critic_optim = Adam(self.critic.parameters(), lr=self.learning_rate)
 
         # Initialize the covariance matrix used to query the actor for actions
         self.cov_var = torch.full(size=(self.act_dim,), fill_value=0.5)
@@ -65,8 +65,8 @@ class Agent:
                 None
         """
         print("-------Training PPO agent-------")
-        print(f"Training for {total_timesteps} timesteps with {self.timesteps_per_batch} timesteps per batch.")
-        print(f"Total of {total_timesteps//self.timesteps_per_batch} iterations.")
+        print(f"Training for {total_timesteps} timesteps with {self.batch_size} timesteps per batch.")
+        print(f"Total of {total_timesteps//self.batch_size} iterations.")
         print("--------------------------------")
 
         t_so_far = 0 # Timesteps simulated so far
@@ -168,7 +168,7 @@ class Agent:
         ep_t = 0 # Keeps track of how many timesteps we've run so far this episode
 
         # Keep simulating until we've run more than or equal to specified timesteps per batch
-        while t < self.timesteps_per_batch:
+        while t < self.batch_size:
             ep_rews = [] # rewards collected per episode
 
             # Reset the environment. sNote that obs is short for observation.
@@ -177,9 +177,6 @@ class Agent:
 
             # Run an episode for a maximum of max_timesteps_per_episode timesteps
             while not done:
-                # If render is specified, render the environment
-                if self.render and (self.logger['i_so_far'] % self.render_every_i == 0) and len(batch_lens) == 0:
-                    self.env.render()
 
                 t += 1 # Increment timesteps ran this batch so far
 
@@ -234,7 +231,7 @@ class Agent:
             # Iterate through all rewards in the episode. We go backwards for smoother calculation of each
             # discounted return (think about why it would be harder starting from the beginning)
             for rew in reversed(ep_rews):
-                discounted_reward = rew + discounted_reward * self.gamma
+                discounted_reward = rew + discounted_reward * self.discount_factor
                 batch_rtgs.insert(0, discounted_reward)
 
         # Convert the rewards-to-go into a tensor
@@ -291,15 +288,13 @@ class Agent:
         """
         # Initialize default values for hyperparameters
         # Algorithm hyperparameters
-        self.lr = hyperparameters.get('lr', 0.005)
-        self.gamma = hyperparameters.get('gamma', 0.95)
+        self.learning_rate = hyperparameters.get('learning_rate', 0.005)
+        self.discount_factor = hyperparameters.get('discount_factor', 0.95)
         self.clip = hyperparameters.get('clip', 0.2)
-        self.timesteps_per_batch = hyperparameters.get('timesteps_per_batch', 4800)
+        self.batch_size = hyperparameters.get('batch_size', 4800)
         self.max_timesteps_per_episode = hyperparameters.get('max_timesteps_per_episode', 1600)
         self.n_updates_per_iteration = hyperparameters.get('n_updates_per_iteration', 5)
 
-        self.render = hyperparameters.get('render', True)
-        self.render_every_i = hyperparameters.get('render_every_i', True)
         self.save_freq = hyperparameters.get('save_freq', 10)
         self.seed = hyperparameters.get('seed', None)
 
