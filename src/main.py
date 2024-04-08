@@ -69,12 +69,48 @@ def test_dql(agent:DQLAgent, local_qnetwork, total_timesteps=4*24*14):
         return
     agent.test_policy(total_timesteps)
 
+def load_agent(env, agent_type, config):
+    NETWORK = config['network']
+    HYPERPARAMETERS = config['hyperparameters']
+    if agent_type == 'PPO':
+        actor = Network(
+            env.observation_space.shape[0],
+            env.action_space.n,
+            NETWORK['hidden_layers'],
+            NETWORK['activation'],
+            NETWORK['output_activation'])
+        critic = Network(
+            env.observation_space.shape[0],
+            1,
+            NETWORK['hidden_layers'],
+            NETWORK['activation'],
+            NETWORK['output_activation'])
+        agent = PPOAgent(env=env, actor_network=actor, critic_network=critic, **HYPERPARAMETERS)
+    elif agent_type == 'DQL':
+        local_qnetwork = Network(
+            env.observation_space.shape[0],
+            env.action_space.n,
+            NETWORK['hidden_layers'],
+            NETWORK['activation'],
+            NETWORK['output_activation'])
+        target_qnetwork = Network(
+            env.observation_space.shape[0],
+            env.action_space.n,
+            NETWORK['hidden_layers'],
+            NETWORK['activation'],
+            NETWORK['output_activation'])
+        agent = DQLAgent(env=env, local_qnetwork=local_qnetwork, target_qnetwork=target_qnetwork, **HYPERPARAMETERS)
+    else:
+        print(f"Unknown agent type '{agent_type}'. Exiting.", flush=True)
+        return None
+    return agent
+
+
 def main():
     args = get_args()
 
     CONFIG = load_config(args.config, args.algorithm)
-    NETWORK = CONFIG['network']
-    HYPERPARAMETERS = CONFIG['hyperparameters']
+
 
     env = TempRegulationEnv(
         start_from_random_day=True,
@@ -83,45 +119,19 @@ def main():
     )
 
     start_time = time.time()
+    agent = load_agent(env, args.algorithm, CONFIG)
+    if agent is None:
+        print(f"Could not load agent. Exiting.", flush=True)
+        return
 
     try:
         if args.algorithm == 'PPO':
-            actor = Network(
-                env.observation_space.shape[0],
-                env.action_space.n,
-                NETWORK['hidden_layers'],
-                NETWORK['activation'],
-                NETWORK['output_activation'])
-            critic = Network(
-                env.observation_space.shape[0],
-                1,
-                NETWORK['hidden_layers'],
-                NETWORK['activation'],
-                NETWORK['output_activation'])
-
-            agent = PPOAgent(env=env, actor_network=actor, critic_network=critic, **HYPERPARAMETERS)
-
             if args.mode == 'train':
                 train_ppo(agent, args.actor_model, args.critic_model)
             else:
                 test_ppo(agent, args.actor_model)
 
         elif args.algorithm == 'DQL':
-            local_qnetwork = Network(
-                env.observation_space.shape[0],
-                env.action_space.n,
-                NETWORK['hidden_layers'],
-                NETWORK['activation'],
-                NETWORK['output_activation'])
-            target_qnetwork = Network(
-                env.observation_space.shape[0],
-                env.action_space.n,
-                NETWORK['hidden_layers'],
-                NETWORK['activation'],
-                NETWORK['output_activation'])
-
-            agent = DQLAgent(env=env, local_qnetwork=local_qnetwork, target_qnetwork=target_qnetwork, **HYPERPARAMETERS)
-
             if args.mode == 'train':
                 train_dql(agent, args.local_qnetwork, args.target_qnetwork)
             elif args.mode == 'test':
@@ -136,7 +146,7 @@ def main():
             elapsed_time = time.time() - start_time
             print('-------Training completed-------')
             print(f"Training took {int(elapsed_time//60)} minutes and {elapsed_time%60:.2f} seconds.")
-            folder_path = f"out/{args.algorithm}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
+            folder_path = f"out/{args.algorithm.lower()}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
             Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
             Logger().save_trained_agent(agent, folder_path)
             Logger().plot_scores(folder_path)

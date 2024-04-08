@@ -39,3 +39,4 @@ clean:
 	@echo "Cleaning up Python cache files and virtual environment..."
 	rm -rf $(VENV_NAME)
 	find . -type d -name '__pycache__' -exec rm -rf {} +
+	rm -rf out logs generated_configs
