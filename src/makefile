@@ -8,7 +8,7 @@ SEED := 1
 CONFIG_SCRIPT := run_configurations.py
 CONFIG_SCRIPT_OUTPUT := out/generated_configs/results
 CONFIG_SCRIPT_FOLDER := out/generated_configs
-CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
+CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 14)))))
 
 # Paths for the latest model files
 LATEST_DQL_MODEL := $(shell find ./out/DQL -type f -name 'local_qnetwork.pth' | xargs ls -t | head -n 1)
