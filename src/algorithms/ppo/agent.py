@@ -1,365 +1,151 @@
-
-import gym
-import time
-
 import numpy as np
-import time
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-
 from algorithms.tools.logger import Logger
+import time
 
 class Agent:
+    # Initial setup of the agent with actor-critic networks and environment
     def __init__(self, actor_network, critic_network, env, **hyperparameters):
-        """
-            Initializes the PPO model, including hyperparameters.
-
-            Parameters:
-                policy_class - the policy class to use for our actor/critic networks.
-                env - the environment to train on.
-                hyperparameters - all extra arguments passed into PPO that should be hyperparameters.
-
-            Returns:
-                None
-        """
-
-        # Initialize hyperparameters for training with PPO
-        self._init_hyperparameters(hyperparameters)
-
-        # Extract environment information
         self.env = env
-        self.obs_dim = env.observation_space.shape[0]
-        self.act_dim = env.action_space.n # Discrete action space
-
-         # Initialize actor and critic networks
         self.actor = actor_network
         self.critic = critic_network
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self._init_hyperparameters(hyperparameters)
+        self._init_optimizers()
+        self._init_logger()
 
-        # Initialize optimizers for actor and critic
-        self.actor_optim = Adam(self.actor.parameters(), lr=self.learning_rate)
-        self.critic_optim = Adam(self.critic.parameters(), lr=self.learning_rate)
-
-        # Initialize the covariance matrix used to query the actor for actions
-        self.cov_var = torch.full(size=(self.act_dim,), fill_value=0.5)
-        self.cov_mat = torch.diag(self.cov_var)
-
-        # This logger will help us with printing out summaries of each iteration
-        self.logger = {
-            'delta_t': time.time_ns(),
-            't_so_far': 0,          # timesteps so far
-            'i_so_far': 0,          # iterations so far
-            'batch_lens': [],       # episodic lengths in batch
-            'batch_rews': [],       # episodic returns in batch
-            'actor_losses': [],     # losses of actor network in current iteration
-        }
-
-    def train(self, total_timesteps):
-        """
-            Train the actor and critic networks. Here is where the main PPO algorithm resides.
-
-            Parameters:
-                total_timesteps - the total number of timesteps to train for
-
-            Return:
-                None
-        """
-        print("-------Training PPO agent-------")
-        print(f"Training for {total_timesteps} timesteps with {self.batch_size} timesteps per batch.")
-        print(f"Total of {total_timesteps//self.batch_size} iterations.")
-        print("--------------------------------")
-
-        t_so_far = 0 # Timesteps simulated so far
-        i_so_far = 0 # Iterations ran so far
-        while t_so_far < total_timesteps:                                                                       # ALG STEP 2
-            # Autobots, roll out (just kidding, we're collecting our batch simulations here)
-            batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()                     # ALG STEP 3
-
-            # Calculate how many timesteps we collected this batch
-            t_so_far += self.batch_size
-
-            # Increment the number of iterations
-            i_so_far += 1
-
-            # Logging timesteps so far and iterations so far
-            self.logger['t_so_far'] = t_so_far
-            self.logger['i_so_far'] = i_so_far
-
-            # Calculate advantage at k-th iteration
-            V, _ = self.evaluate(batch_obs, batch_acts)
-            A_k = batch_rtgs - V.detach()                                                                       # ALG STEP 5
-
-            # One of the only tricks I use that isn't in the pseudocode. Normalizing advantages
-            # isn't theoretically necessary, but in practice it decreases the variance of
-            # our advantages and makes convergence much more stable and faster. I added this because
-            # solving some environments was too unstable without it.
-            A_k = (A_k - A_k.mean()) / (A_k.std() + 1e-10)
-
-            # This is the loop where we update our network for some n epochs
-            for _ in range(self.n_updates_per_iteration):                                                       # ALG STEP 6 & 7
-                # Calculate V_phi and pi_theta(a_t | s_t)
-                V, curr_log_probs = self.evaluate(batch_obs, batch_acts)
-
-                # Calculate the ratio pi_theta(a_t | s_t) / pi_theta_k(a_t | s_t)
-                # NOTE: we just subtract the logs, which is the same as
-                # dividing the values and then canceling the log with e^log.
-                # For why we use log probabilities instead of actual probabilities,
-                # here's a great explanation:
-                # https://cs.stackexchange.com/questions/70518/why-do-we-use-the-log-in-gradient-based-reinforcement-algorithms
-                # TL;DR makes gradient ascent easier behind the scenes.
-                ratios = torch.exp(curr_log_probs - batch_log_probs)
-
-                # Calculate surrogate losses.
-                surr1 = ratios * A_k
-                surr2 = torch.clamp(ratios, 1 - self.clip, 1 + self.clip) * A_k
-
-                # Calculate actor and critic losses.
-                # NOTE: we take the negative min of the surrogate losses because we're trying to maximize
-                # the performance function, but Adam minimizes the loss. So minimizing the negative
-                # performance function maximizes it.
-                actor_loss = (-torch.min(surr1, surr2)).mean()
-                critic_loss = nn.MSELoss()(V, batch_rtgs)
-
-                # Calculate gradients and perform backward propagation for actor network
-                self.actor_optim.zero_grad()
-                actor_loss.backward(retain_graph=True)
-                self.actor_optim.step()
-
-                # Calculate gradients and perform backward propagation for critic network
-                self.critic_optim.zero_grad()
-                critic_loss.backward()
-                self.critic_optim.step()
-
-                # Log actor loss
-                self.logger['actor_losses'].append(actor_loss.detach())
-
-            # Print a summary and reset batch data
-            self._log_summary()
-
-    def rollout(self):
-        """
-            Too many transformers references, I'm sorry. This is where we collect the batch of data
-            from simulation. Since this is an on-policy algorithm, we'll need to collect a fresh batch
-            of data each time we iterate the actor/critic networks.
-
-            Parameters:
-                None
-
-            Return:
-                batch_obs - the observations collected this batch. Shape: (number of timesteps, dimension of observation)
-                batch_acts - the actions collected this batch. Shape: (number of timesteps, dimension of action)
-                batch_log_probs - the log probabilities of each action taken this batch. Shape: (number of timesteps)
-                batch_rtgs - the Rewards-To-Go of each timestep in this batch. Shape: (number of timesteps)
-                batch_lens - the lengths of each episode this batch. Shape: (number of episodes)
-        """
-        # Batch data. For more details, check function header.
-        batch_obs = []
-        batch_acts = []
-        batch_log_probs = []
-        batch_rews = []
-        batch_rtgs = []
-        batch_lens = []
-
-        # Episodic data. Keeps track of rewards per episode, will get cleared
-        # upon each new episode
-        ep_rews = []
-
-        t = 0 # Keeps track of how many timesteps we've run so far this batch
-        ep_t = 0 # Keeps track of how many timesteps we've run so far this episode
-
-        # Keep simulating until we've run more than or equal to specified timesteps per batch
-        while t < self.batch_size:
-            ep_rews = [] # rewards collected per episode
-
-            # Reset the environment. sNote that obs is short for observation.
-            obs, _ = self.env.reset()
-            done = False
-
-            # Run an episode for a maximum of max_timesteps_per_episode timesteps
-            while not done:
-
-                t += 1 # Increment timesteps ran this batch so far
-
-                # Track observations in this batch
-                batch_obs.append(obs)
-
-                # Calculate action and make a step in the env.
-                # Note that rew is short for reward.
-                action, log_prob = self.get_action(obs)
-                obs, rew, done, _, _ = self.env.step(action)
-                # Track recent reward, action, and action log probability
-                ep_rews.append(rew)
-                batch_acts.append(action)
-                batch_log_probs.append(log_prob)
-
-            # Track episodic lengths and rewards
-            batch_lens.append(ep_t + 1)
-            batch_rews.append(ep_rews)
-
-        # Reshape data as tensors in the shape specified in function description, before returning
-        batch_obs = np.array(batch_obs, dtype=np.float32)  # optimize tensor operations
-        batch_obs = torch.tensor(batch_obs, dtype=torch.float)
-        batch_acts = torch.tensor(batch_acts, dtype=torch.int)
-        batch_log_probs = torch.tensor(batch_log_probs, dtype=torch.float)
-        batch_rtgs = self.compute_rtgs(batch_rews)                                                              # ALG STEP 4
-
-        # Log the episodic returns and episodic lengths in this batch.
-        self.logger['batch_rews'] = batch_rews
-        self.logger['batch_lens'] = batch_lens
-
-        return batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens
-
-    def compute_rtgs(self, batch_rews):
-        """
-            Compute the Reward-To-Go of each timestep in a batch given the rewards.
-
-            Parameters:
-                batch_rews - the rewards in a batch, Shape: (number of episodes, number of timesteps per episode)
-
-            Return:
-                batch_rtgs - the rewards to go, Shape: (number of timesteps in batch)
-        """
-        # The rewards-to-go (rtg) per episode per batch to return.
-        # The shape will be (num timesteps per episode)
-        batch_rtgs = []
-
-        # Iterate through each episode
-        for ep_rews in reversed(batch_rews):
-
-            discounted_reward = 0 # The discounted reward so far
-
-            # Iterate through all rewards in the episode. We go backwards for smoother calculation of each
-            # discounted return (think about why it would be harder starting from the beginning)
-            for rew in reversed(ep_rews):
-                discounted_reward = rew + discounted_reward * self.discount_factor
-                batch_rtgs.insert(0, discounted_reward)
-
-        # Convert the rewards-to-go into a tensor
-        batch_rtgs = torch.tensor(batch_rtgs, dtype=torch.float)
-
-        return batch_rtgs
-
-    def get_action(self, obs):
-        action_probs = self.actor(obs)
-        dist = torch.distributions.Categorical(probs=action_probs)
-        action = dist.sample()
-        log_prob = dist.log_prob(action)
-        return action.item(), log_prob
-
-    def evaluate(self, batch_obs, batch_acts):
-        """
-        Estimate the values of each observation, and the log probs of
-        each action in the most recent batch with the most recent
-        iteration of the actor network. Should be called from learn.
-
-        Parameters:
-            batch_obs - the observations from the most recently collected batch as a tensor.
-                        Shape: (number of timesteps in batch, dimension of observation)
-            batch_acts - the actions from the most recently collected batch as a tensor.
-                        Shape: (number of timesteps in batch)
-
-        Return:
-            V - the predicted values of batch_obs
-            log_probs - the log probabilities of the actions taken in batch_acts given batch_obs
-        """
-        # Query critic network for a value V for each batch_obs. Shape of V should be same as batch_rtgs
-        V = self.critic(batch_obs).squeeze()
-
-        # Calculate the log probabilities of batch actions using most recent actor network.
-        action_probs = self.actor(batch_obs)
-        dist = torch.distributions.Categorical(probs=action_probs)
-        log_probs = dist.log_prob(batch_acts)
-
-        # Return the value vector V of each observation in the batch
-        # and log probabilities log_probs of each action in the batch
-        return V, log_probs
-
-
+    # Initializes hyperparameters from arguments or sets defaults
     def _init_hyperparameters(self, hyperparameters):
-        """
-            Initialize default and custom values for hyperparameters
-
-            Parameters:
-                hyperparameters - the extra arguments included when creating the PPO model, should only include
-                                    hyperparameters defined below with custom values.
-
-            Return:
-                None
-        """
-        # Initialize default values for hyperparameters
-        # Algorithm hyperparameters
         self.learning_rate = hyperparameters.get('learning_rate', 0.005)
         self.discount_factor = hyperparameters.get('discount_factor', 0.95)
         self.clip = hyperparameters.get('clip', 0.2)
         self.batch_size = hyperparameters.get('batch_size', 4800)
-        self.max_timesteps_per_episode = hyperparameters.get('max_timesteps_per_episode', 1600)
         self.n_updates_per_iteration = hyperparameters.get('n_updates_per_iteration', 5)
-
-        self.save_freq = hyperparameters.get('save_freq', 10)
         self.seed = hyperparameters.get('seed', None)
-
-        print(f"Hyperparameters for PPO algorithm: {vars(self)}")
-
-        # Sets the seed if specified
-        if self.seed != None:
-            # Check if seed is valid first
-            assert(type(self.seed) == int)
+        if self.seed:
             torch.manual_seed(self.seed)
-            print(f"Successfully set seed to {self.seed}")
 
-    def _log_summary(self):
-        """
-            Print to stdout what we've logged so far in the most recent batch.
+    # Initializes optimizers for both actor and critic networks
+    def _init_optimizers(self):
+        self.actor_optim = Adam(self.actor.parameters(), lr=self.learning_rate)
+        self.critic_optim = Adam(self.critic.parameters(), lr=self.learning_rate)
 
-            Parameters:
-                None
+    # Initializes the logger for tracking progress
+    def _init_logger(self):
+        self.logger = Logger()
+        self.logger.reset()
 
-            Return:
-                None
-        """
-        avg_ep_rews = np.mean([np.sum(ep_rews) for ep_rews in self.logger['batch_rews']])
-        avg_ep_lens = np.mean(self.logger['batch_lens'])
-        avg_actor_loss = np.mean(self.logger['actor_losses'])
-        self.logger['batch_lens'] = []
-        self.logger['batch_rews'] = []
-        self.logger['actor_losses'] = []
-        Logger().log_iteration(avg_ep_rews, self.logger['i_so_far'])
+    # Main training loop
+    def train(self, total_timesteps):
+        t_so_far = 0
+        i_so_far = 0
+        while t_so_far < total_timesteps:
+            batch_data = self.collect_batch_data()
+            t_so_far += np.sum(batch_data[-1])
+            i_so_far += 1
+            self.update_policy(batch_data)
+
+    # Collects data from environment interaction
+    def collect_batch_data(self):
+        batch_obs, batch_acts, batch_log_probs, batch_rews, batch_lens = [], [], [], [], []
+        t = 0
+        while t < self.batch_size:
+            obs, _ = self.env.reset()
+            action, log_prob, rew, done = None, None, 0, False
+            ep_rews = []
+            while not done:
+                action, log_prob = self.get_action(obs)
+                next_obs, rew, done, _, _ = self.env.step(action)
+                ep_rews.append(rew)
+                self._store_transition(batch_obs, batch_acts, batch_log_probs, obs, action, log_prob)
+                obs = next_obs
+                t += 1
+            batch_rews.append(ep_rews)
+            batch_lens.append(len(ep_rews))
+        batch_rtgs = self.compute_rtgs(batch_rews)
+        batch_data = self._convert_data_to_tensor(batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens)
+
+        self._log_summary(batch_rews)
+
+        return batch_data
+
+    def _convert_data_to_tensor(self, batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens):
+        batch_obs = torch.tensor(np.array(batch_obs, dtype=np.float32), dtype=torch.float, device=self.device)
+        batch_acts = torch.tensor(batch_acts, dtype=torch.short, device=self.device)
+        batch_log_probs = torch.tensor(batch_log_probs, dtype=torch.float, device=self.device)
+        batch_rtgs = torch.tensor(batch_rtgs, dtype=torch.float, device=self.device)
+        return batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens
+
+    # Stores transition data
+    def _store_transition(self, batch_obs, batch_acts, batch_log_probs, obs, action, log_prob):
+        batch_obs.append(obs)
+        batch_acts.append(action)
+        batch_log_probs.append(log_prob)
+
+    # Computes rewards-to-go
+    def compute_rtgs(self, batch_rews):
+        batch_rtgs = []
+        for ep_rews in reversed(batch_rews):
+            discounted_reward = 0
+            for rew in reversed(ep_rews):
+                discounted_reward = rew + self.discount_factor * discounted_reward
+                batch_rtgs.insert(0, discounted_reward)
+        return batch_rtgs
+
+    # Selects an action based on the current policy
+    def get_action(self, obs):
+        action_probs = self.actor(torch.tensor(obs, dtype=torch.float).unsqueeze(0))
+        dist = torch.distributions.Categorical(probs=action_probs)
+        action = dist.sample()
+        return action.item(), dist.log_prob(action)
+
+    # Updates the policy based on collected batch data
+    def update_policy(self, batch_data):
+        batch_obs, batch_acts, batch_log_probs, batch_rtgs, _ = batch_data
+        for _ in range(self.n_updates_per_iteration):
+            V, curr_log_probs = self.evaluate(batch_obs, batch_acts)
+            A_k = batch_rtgs - V.detach()
+            A_k = (A_k - A_k.mean()) / (A_k.std() + 1e-10)
+            self._update_networks(A_k, batch_log_probs, curr_log_probs, V, batch_rtgs)
+
+    # Evaluates the current policy and value function
+    def evaluate(self, batch_obs, batch_acts):
+        V = self.critic(batch_obs)
+        action_probs = self.actor(batch_obs)
+        dist = torch.distributions.Categorical(probs=action_probs)
+        log_probs = dist.log_prob(batch_acts)
+        return V.squeeze(), log_probs
+
+    # Performs the actual network updates
+    def _update_networks(self, A_k, batch_log_probs, curr_log_probs, V, batch_rtgs):
+        ratios = torch.exp(curr_log_probs - batch_log_probs)
+        surr1 = ratios * A_k
+        surr2 = torch.clamp(ratios, 1 - self.clip, 1 + self.clip) * A_k
+        actor_loss = (-torch.min(surr1, surr2)).mean()
+        critic_loss = nn.MSELoss()(V, batch_rtgs)
+        self.actor_optim.zero_grad()
+        actor_loss.backward()
+        self.actor_optim.step()
+        self.critic_optim.zero_grad()
+        critic_loss.backward()
+        self.critic_optim.step()
+        self.logger.store_loss(actor_loss.detach().item())
+
+    # Logs summary of training progress
+    def _log_summary(self, batch_rews):
+        # This computes the mean of episode totals, which seems to be your intention
+        avg_ep_rews = np.mean([np.sum(ep) for ep in batch_rews])
+        self.logger.log_iteration(avg_ep_rews)
 
     def load_actor(self, path):
-        """
-            Load the actor network from a file.
-
-            Parameters:
-                path - the path to the actor network file.
-
-            Return:
-                None
-        """
         self.actor.load_state_dict(torch.load(path))
 
     def load_critic(self, path):
-        """
-            Load the critic network from a file.
-
-            Parameters:
-                path - the path to the critic network file.
-
-            Return:
-                None
-        """
         self.critic.load_state_dict(torch.load(path))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
-        """
-            Test the policy of the agent.
-
-            Parameters:
-                total_timesteps - the total number of timesteps to test the policy for
-                render - specifies whether to render the environment or not
-
-            Return:
-                None
-        """
         print("-------Testing PPO agent-------")
         print(f"Testing for {total_timesteps} timesteps.")
         print("--------------------------------")
@@ -374,11 +160,8 @@ class Agent:
             obs, _, done, _, _ = self.env.step(action)
             t_so_far += 1
             time.sleep(0.01)
-
-
         print(f"Total timesteps: {t_so_far}")
         print("Done testing.")
         print("--------------------------------")
-
         time.sleep(5*60)
         self.env.close()

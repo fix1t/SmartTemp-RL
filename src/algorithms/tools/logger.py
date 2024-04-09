@@ -35,13 +35,18 @@ class Logger():
     def log_iteration(self, score, iter=None):
         self.dql = False
         self.all_scores.append(score)
-        if iter is not None:
-            self.iter = iter
-        else:
+        if iter is None:
             self.iter += 1
+        else:
+            self.iter = iter
         num_scores = min(10, len(self.all_scores))
         average_score_of_last_10_episodes = sum(self.all_scores[-num_scores:]) / num_scores
-        print(f'\rIteration: {iter}\tAverage Score Of Last {num_scores}: {average_score_of_last_10_episodes:.2f}', end="")
+        print(f'\rIteration: {self.iter}\tAverage Score Of Last {num_scores}: {average_score_of_last_10_episodes:.2f}', end="")
+
+    def store_loss(self, loss):
+        # print(f'\rLoss: {loss:.5f}', end="")
+        # TODO?
+        pass
 
     @staticmethod
     def save_trained_agent(agent, folder='out/agents'):
