@@ -4,10 +4,15 @@ from dash.dependencies import Output, Input
 import plotly.graph_objs as go
 import threading
 import time
+import logging
 
 class SimulationRenderer:
     def __init__(self, simulation):
         self.simulation = simulation
+        # Set logging level to WARNING to mute regular informational messages
+        logging.getLogger('werkzeug').setLevel(logging.WARNING)
+        logging.getLogger('dash').setLevel(logging.WARNING)
+
         self.app = dash.Dash(__name__)
         self.setup_layout()
         self.setup_callbacks()
