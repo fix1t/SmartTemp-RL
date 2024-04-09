@@ -101,36 +101,127 @@ class Agent:
         action = dist.sample()
         return action.item(), dist.log_prob(action)
 
-    # Updates the policy based on collected batch data
     def update_policy(self, batch_data):
+        """
+        Updates the policy based on collected batch data. This function implements
+        the core PPO policy update step. It iterates over the batch data multiple
+        times (as defined by `n_updates_per_iteration`) to perform multiple epochs
+        of optimization on the same batch of data, which is a key feature of PPO
+        to stabilize training.
+
+        Args:
+            batch_data: A tuple containing batch observations, actions, log probabilities,
+                        rewards-to-go (RTGs), and episode lengths. This data is used to
+                        calculate advantages and update the policy and value networks.
+
+        The update process involves calculating the advantage (A_k) by subtracting the value
+        estimates (V) from the RTGs. The advantage is then standardized to reduce variance,
+        following standard practice in advantage-based policy optimization methods.
+
+        The `_update_networks` method is then called to perform the actual optimization step,
+        adjusting the actor (policy) and critic (value function) networks based on the computed
+        advantages, old and current log probabilities, and value estimates.
+        """
         batch_obs, batch_acts, batch_log_probs, batch_rtgs, _ = batch_data
         for _ in range(self.n_updates_per_iteration):
+            # Calculate advantage at k-th iteration
             V, curr_log_probs = self.evaluate(batch_obs, batch_acts)
-            A_k = batch_rtgs - V.detach()
+            A_k = batch_rtgs - V.detach()  # Detach V to stop gradients
+
+            # One of the only trick found in https://github.com/ericyangyu/PPO-for-Beginners/blob/master/ppo.py
+            #    "I use that isn't in the pseudocode. Normalizing advantages
+            #    isn't theoretically necessary, but in practice it decreases the variance of
+            #    our advantages and makes convergence much more stable and faster. I added this because
+            #    solving some environments was too unstable without it."
+            # And it works well for me too.
             A_k = (A_k - A_k.mean()) / (A_k.std() + 1e-10)
             self._update_networks(A_k, batch_log_probs, curr_log_probs, V, batch_rtgs)
 
-    # Evaluates the current policy and value function
+
     def evaluate(self, batch_obs, batch_acts):
-        V = self.critic(batch_obs)
+        """
+        Evaluates the current policy and value function for a given batch of observations
+        and actions. This method is crucial for PPO's actor-critic architecture, providing
+        the necessary information to compute advantages and update the networks.
+
+        Args:
+            batch_obs: Tensor containing a batch of observations.
+            batch_acts: Tensor containing a batch of actions taken by the policy.
+
+        Returns:
+            V: The value function estimates for the given observations, representing
+            the expected return. Used in advantage calculation and critic update.
+            log_probs: The log probabilities of taking the actions in `batch_acts`
+                    under the current policy. Used to compute the probability ratio
+                    for the PPO objective.
+
+        This function uses the current policy (actor) to compute the probability
+        distribution over actions given the observations, then calculates the log
+        probabilities of the actual actions taken. It also computes the value function
+        estimates for the observations using the critic network.
+        """
+        # Query critic network for a value V for each batch_obs. Shape of V should be same as batch_rtgs
+        V = self.critic(batch_obs).squeeze()
+
+        # Calculate the log probabilities of batch actions using most recent actor network.
         action_probs = self.actor(batch_obs)
         dist = torch.distributions.Categorical(probs=action_probs)
         log_probs = dist.log_prob(batch_acts)
-        return V.squeeze(), log_probs
 
-    # Performs the actual network updates
+        # Return the value vector V of each observation in the batch
+        # and log probabilities log_probs of each action in the batch
+        return V, log_probs
+
     def _update_networks(self, A_k, batch_log_probs, curr_log_probs, V, batch_rtgs):
-        ratios = torch.exp(curr_log_probs - batch_log_probs)
-        surr1 = ratios * A_k
-        surr2 = torch.clamp(ratios, 1 - self.clip, 1 + self.clip) * A_k
-        actor_loss = (-torch.min(surr1, surr2)).mean()
-        critic_loss = nn.MSELoss()(V, batch_rtgs)
+        """
+        Performs the actual network updates for both the actor (policy) and critic
+        (value function) using the computed advantages, old and current log probabilities,
+        and value estimates.
+
+        Args:
+            A_k: The standardized advantages for the batch of data.
+            batch_log_probs: The log probabilities of the actions in the batch
+                            under the policy used to generate the data.
+            curr_log_probs: The current log probabilities of the batch actions under
+                            the updated policy.
+            V: The value function estimates for the batch observations.
+            batch_rtgs: The rewards-to-go for the batch, used in the critic loss.
+
+        This method calculates the PPO clipped objective for the actor loss, which minimizes
+        the difference between the old and new policy, constrained by a clipping factor to
+        prevent too large policy updates. The critic loss is computed as the mean squared error
+        between the predicted values (V) and the actual returns (batch_rtgs), aiming to improve
+        the value function estimation.
+
+        The method concludes by performing gradient descent to update both networks, using
+        separate optimizers for the actor and critic. It also logs the actor loss for monitoring.
+        """
+        # Calculate the ratio pi_theta(a_t | s_t) / pi_theta_k(a_t | s_t)
+        # NOTE: we just subtract the logs, which is the same as
+        # dividing the values and then canceling the log with e^log.
+        ratios = torch.exp(curr_log_probs - batch_log_probs)  # Probability ratio for actions
+
+        # Calculate surrogate losses
+        surr1 = ratios * A_k  # Unclipped objective
+        surr2 = torch.clamp(ratios, 1 - self.clip, 1 + self.clip) * A_k  # Clipped objective
+
+        # NOTE: we take the negative min of the surrogate losses because we're trying to maximize
+        # the performance function, but Adam minimizes the loss. So minimizing the negative
+        # performance function maximizes it.
+        actor_loss = (-torch.min(surr1, surr2)).mean()  # PPO's actor objective
+        critic_loss = nn.MSELoss()(V, batch_rtgs)  # Critic loss
+
+        # Calculate gradients and perform backward propagation for actor network
         self.actor_optim.zero_grad()
-        actor_loss.backward()
+        actor_loss.backward(retain_graph=True)
         self.actor_optim.step()
+
+        # Calculate gradients and perform backward propagation for critic networ
         self.critic_optim.zero_grad()
         critic_loss.backward()
         self.critic_optim.step()
+
+        # Log actor loss
         self.logger.store_loss(actor_loss.detach().item())
 
     # Logs summary of training progress
