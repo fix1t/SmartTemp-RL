@@ -22,6 +22,7 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
         return
     # Get all files in the folder
     files = os.listdir(folder_path)
+    files = sorted(files)
 
     # dictionary to store the best last average score for each configuration
     best_last_avg_score = {}
@@ -63,21 +64,21 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
     finally:
         total_time = time.time() - start_time
-        top_5 = sorted(best_last_avg_score.items(), key=lambda x: x[1], reverse=True)[:5]
+        sorted_scores = sorted(best_last_avg_score.items(), key=lambda x: x[1], reverse=True)
 
         with open(f"{output_folder}/{agent_type.lower()}/summary.txt", 'w') as f:
             f.write('Summary:\n')
             f.write(f"Total time: {int(total_time//3600)} hours, {int(total_time%3600//60)} minutes, {total_time%60:.2f} seconds\n")
+            f.write(f"Total configurations run {len(sorted_scores)} of {len(files)}\n\n")
 
-            top_5 = sorted(best_last_avg_score.items(), key=lambda x: x[1], reverse=True)[:5]
-            f.write("Top 5 configurations with the best last average scores:\n")
-            for i, (config, score) in enumerate(top_5, start=1):
+            f.write("Configurations results from best to worst:\n")
+            for i, (config, score) in enumerate(sorted_scores, start=1):
                 f.write(f"{i}. Configuration: {config}, Average score of last 10: {score:.2f}\n")
 
         print('Summary:')
         print(f"Total time: {int(total_time//3600)} hours, {int(total_time%3600//60)} minutes, {int(total_time%60)} seconds")
         print("Top 5 configurations with the best last average scores:")
-        for i, (config, score) in enumerate(top_5, start=1):
+        for i, (config, score) in enumerate(sorted_scores[:5], start=1):
             print(f"{i}. Configuration: {config}, Average score of last 10: {score:.2f}")
 
         print('--------------------------------')
@@ -90,5 +91,5 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
     args = parser.parse_args()
 
-    generate_configurations(args.agent)
+    generate_configurations(args.agent, args.folder)
     run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output)
