@@ -1,9 +1,9 @@
 import math
 
 class HeatingSystem:
-    def __init__(self, H_acc, H_cool, H_max, H_efficiency, T_base, T_max):
+    def __init__(self, H_acc_base, H_cool, H_max, H_efficiency, T_base, T_max):
         self.H_energy = 0                   # Initial heat energy in the HS
-        self.H_acc = H_acc                  # Heat accumulation rate
+        self.H_acc_base = H_acc_base        # Heat accumulation rate
         self.H_cool = H_cool                # Cooling rate
         self.H_max = H_max                  # Maximum heat energy
         self.H_efficiency = H_efficiency    # Efficiency of heat transfer
@@ -12,12 +12,15 @@ class HeatingSystem:
         self.T_max = T_max                  # Maximum comfortable temperature
         self.H_history = [self.H_energy]    # History of heat energy
 
-    def update_heat_energy(self, heating_on):
-        """Update the HS's heat energy based on its current state."""
-        if heating_on:
-            self.H_energy = min(self.H_energy + self.H_acc, self.H_max)
-        else:
+    def update_heat_energy(self, action):
+        # Adjust the heat energy based on the action
+        if action in [1, 2, 3]:  # Heating actions
+            self.H_energy += self.H_acc_base * action
+            self.H_energy = min(self.H_energy, self.H_max)  # Cap at H_max
+        elif action == 4:  # Cooling off
             self.H_energy = max(self.H_energy - self.H_cool, 0)
+        # 0 action means maintain, so no change to H_energy.H_cool, 0)
+        # else 1: # mantain the same temperature
 
     def get_temperature_change(self, T_current):
         """
@@ -41,28 +44,25 @@ class HeatingSystem:
         return self.H_energy > 0.5
 
     def step(self, action):
-        """Update the HS's heat energy based on the action taken."""
-        # assert action in [0, 1], "Invalid action"
-        self.update_heat_energy(action == 0)
+        self.update_heat_energy(action)
         self.H_history.append(self.H_energy)
 
 # Example usage
 if __name__ == "__main__":
-    HS = HeatingSystem(H_acc=0.1, H_cool=0.05, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
+    # Simulate the system
+    HS = HeatingSystem(H_acc_base=0.5, H_cool=1, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
+    T_current = 20  # Starting temperature
 
-    T_current = 20              # Starting room temperature in degrees Celsius
-    minutes = 60 * 24           # Simulate for 24 hours
-
-    for minute in range(minutes):
-        # Simulate turning the heating on for the first 12 hours
-        if minute < 60 * 12:
-            HS.update_heat_energy(heating_on=True)
-        else:
-            # And then off for the next 12 hours
-            HS.update_heat_energy(heating_on=False)
-
+    for timestep in range(1, 25):  # Simulate for 24 hours
+        if timestep <= 8:  # Increase heating in the morning
+            action = 2
+        elif 8 < timestep <= 14:  # Lower heating during the day
+            action = 4
+        elif 14 < timestep <= 20:  # Increase heating in the evening
+            action = 1
+        else:  # Let it cool off in the evening
+            action = 4
+        HS.step(action)
         T_change = HS.get_temperature_change(T_current)
-        T_current += T_change / 60
-
-        if minute % 60 == 0:
-            print(f"Minute {minute // 60 }: Temperature = {T_current:.2f}°C, Heat energy = {HS.H_energy:.2f}, temperature change = {T_change:.4f}°C")
+        T_current += T_change
+        print(f"Time {timestep}: Temp = {T_current:.2f}°C, Heat energy = {HS.H_energy:.2f}, Change = {T_change:.4f}°C")

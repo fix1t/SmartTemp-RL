@@ -26,6 +26,12 @@ class TimeManager:
     def get_weekday(self):
         return self.current_time.weekday()
 
+    def get_current_hour(self):
+        return self.current_time.hour
+
+    def get_current_month(self):
+        return self.current_time.month
+
     def get_current_time(self):
         return self.current_time
 

@@ -15,7 +15,9 @@ from algorithms.ppo.agent import Agent as PPOAgent
 # DQL imports
 from algorithms.dql.agent import Agent as DQLAgent
 
-def train_ppo(agent:PPOAgent, actor_model, critic_model, total_timesteps=4*24*360*20):
+def train_ppo(agent:PPOAgent, actor_model, critic_model, total_timesteps=None):
+    if total_timesteps is None:
+        total_timesteps = 4*24*360*15
     print(f"Training PPO", flush=True)
     if actor_model != '' and critic_model != '':
         try:
@@ -31,7 +33,9 @@ def train_ppo(agent:PPOAgent, actor_model, critic_model, total_timesteps=4*24*36
 
     agent.train(total_timesteps)
 
-def test_ppo(agent:PPOAgent, actor_model, total_timesteps=4*24*14):
+def test_ppo(agent:PPOAgent, actor_model, total_timesteps=None):
+    if total_timesteps is None:
+        total_timesteps = 4*24*14
     print(f"Testing PPO {actor_model}", flush=True)
     try:
         print(f"Loading actor model.", flush=True)
@@ -41,7 +45,9 @@ def test_ppo(agent:PPOAgent, actor_model, total_timesteps=4*24*14):
         return
     agent.test_policy(total_timesteps)
 
-def train_dql(agent:DQLAgent, local_qnetwork, target_qnetwork, total_timesteps=4*24*360*20):
+def train_dql(agent:DQLAgent, local_qnetwork, target_qnetwork, total_timesteps=None):
+    if total_timesteps is None:
+        total_timesteps = 4*24*360*15
     print('Training DQL', flush=True)
     # TODO: Pass local and target Q networks
 
@@ -59,7 +65,9 @@ def train_dql(agent:DQLAgent, local_qnetwork, target_qnetwork, total_timesteps=4
 
     agent.train(total_timesteps)
 
-def test_dql(agent:DQLAgent, local_qnetwork, total_timesteps=4*24*14):
+def test_dql(agent:DQLAgent, local_qnetwork, total_timesteps=None):
+    if total_timesteps is None:
+        total_timesteps = 4*24*14
     print(f"Testing DQL {local_qnetwork} target Q network.", flush=True)
     try:
         agent.local_qnetwork.load_state_dict(torch.load(local_qnetwork))
@@ -127,15 +135,15 @@ def main():
     try:
         if args.algorithm == 'PPO':
             if args.mode == 'train':
-                train_ppo(agent, args.actor_model, args.critic_model)
+                train_ppo(agent, args.actor_model, args.critic_model, total_timesteps=args.total_timesteps)
             else:
-                test_ppo(agent, args.actor_model)
+                test_ppo(agent, args.actor_model, total_timesteps=args.total_timesteps)
 
         elif args.algorithm == 'DQL':
             if args.mode == 'train':
-                train_dql(agent, args.local_qnetwork, args.target_qnetwork)
+                train_dql(agent, args.local_qnetwork, args.target_qnetwork, total_timesteps=args.total_timesteps)
             elif args.mode == 'test':
-                test_dql(agent, args.local_qnetwork)
+                test_dql(agent, args.local_qnetwork, total_timesteps=args.total_timesteps)
 
     except KeyboardInterrupt:
         print(f'\n{args.algorithm} {args.mode}ing interrupted by user.', flush=True)

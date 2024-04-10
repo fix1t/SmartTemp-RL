@@ -1,3 +1,5 @@
+import math
+import time
 import gym
 from gym import spaces
 import numpy as np
@@ -16,13 +18,25 @@ class TempRegulationEnv(gym.Env):
 
     def __init__(self, start_from_random_day=True, max_steps_per_episode=7 * 24 * 4, seed=None):
         super(TempRegulationEnv, self).__init__()
-        self.action_space = spaces.Discrete(2)  # 0: Heat Up, 1: Do Nothing
+        self.action_space = spaces.Discrete(5)
 
         if seed is not None:
             np.random.seed(seed)
 
-        #TODO: Define observation space - Current temperature, outside temperature, occupancy, heating system energy
-        self.observation_space = spaces.Box(low=np.array([0, -30, 0, 0, 0]), high=np.array([30, 40, 1, 6, 5]), dtype=np.float32)
+        indoor_temp, outoor_temp, occupancy, heat_energy, hour, weekday, month = {}, {}, {}, {}, {}, {}, {}
+        indoor_temp['min'], indoor_temp['max'] = 0, 30
+        outoor_temp['min'], outoor_temp['max'] = -30, 40
+        occupancy['min'], occupancy['max'] = 0, 1
+        heat_energy['min'], heat_energy['max'] = 0, 5
+        hour['min'], hour['max'] = 0, 24
+        weekday['min'], weekday['max'] = 0, 6
+        month['min'], month['max'] = 1, 12
+
+        low = np.array([indoor_temp['min'], outoor_temp['min'], occupancy['min'], heat_energy['min'], hour['min'], weekday['min'], month['min']])
+        high = np.array([indoor_temp['max'], outoor_temp['max'], occupancy['max'], heat_energy['max'], hour['max'], weekday['max'], month['max']])
+
+        self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
+
         self.total_reward = 0
         self.max_steps_per_episode = max_steps_per_episode
         self.start_from_random_day = start_from_random_day
@@ -65,18 +79,14 @@ class TempRegulationEnv(gym.Env):
             energy_reward =  (1- COMFORT_TO_COST_PREFERENCE) * self.energy_reward()
             temperature_reward = COMFORT_TO_COST_PREFERENCE * self.temperature_reward()
             reward = energy_reward + temperature_reward
-            # print(f"Energy reward: {energy_reward} + Temp reward: {temperature_reward} = {reward}")
         return reward
 
     def temperature_reward(self):
         target_temperature = ConfigurationManager().get_temp_config("target_temperature")
         current_temperature = self.temperature_manager.get_current_temperature()
-        heating_on = self.heating_system.is_heating()
 
         # Calculate the absolute difference from the target temperature
         temperature_diff = abs(current_temperature - target_temperature)
-        MAXIMUM_TEMP_REWARD = 3
-        COMFORT_ZONE = 1
 
         # Give extra motivation, when someone arrives - to heat up the house in advance
         if self.occupacy_manager.is_arrival():
@@ -84,26 +94,22 @@ class TempRegulationEnv(gym.Env):
         else:
             EXTRA_MOTIVATION = 1
 
-        #                             | <- High temperature
-        #                    OK       |        BAD
-        #  Heating off -> ____________|____________ <- Heating on
-        #                             |
-        #                    BAD      |        OK
-        #                             | <- Low temperature
+        MAXIMUM_TEMP_REWARD = 10  # Example value
+        MINIMUM_TEMP_REWARD = -10  # Example value
+        COMFORT_ZONE = 1  # Example value
 
-        is_higher_than_target = current_temperature > target_temperature
-        is_comfortable = temperature_diff < COMFORT_ZONE
-
-        if not heating_on and is_higher_than_target and not is_comfortable:
-            reward = 0
-        else:
-            reward = MAXIMUM_TEMP_REWARD - temperature_diff / COMFORT_ZONE
+        # < -10; 0; 10 >
+        # Hyperbolic function, where reward is 0 at comfort zone
+        reward = (MAXIMUM_TEMP_REWARD * COMFORT_ZONE/ temperature_diff) + MINIMUM_TEMP_REWARD
+        reward = min(MAXIMUM_TEMP_REWARD, reward)
 
         return EXTRA_MOTIVATION * reward
 
 
     def energy_reward(self):
-        return -self.heating_system.get_heat_energy()
+        normalized_energy = self.heating_system.get_heat_energy()/self.heating_system.H_max
+        # Rewards < -10; 0 >
+        return -1 * normalized_energy * 10
 
     def reset(self, start_from_random_day=None):
         if start_from_random_day is None:
@@ -125,7 +131,7 @@ class TempRegulationEnv(gym.Env):
         self.occupacy_manager = OccupancyManager()
         self.temperature_manager = TemperatureManager(self.out_tmp_reader)
         #TODO: Read from configuration
-        self.heating_system = HeatingSystem(H_acc=0.50, H_cool=0.25, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
+        self.heating_system = HeatingSystem(H_acc_base=0.5, H_cool=1, H_max=5, H_efficiency=0.8, T_base=3, T_max=27)
         return self.observation(), {}
 
     def set_max_steps_per_episode(self, max_steps_per_episode):
@@ -135,9 +141,11 @@ class TempRegulationEnv(gym.Env):
         cur_temp = self.temperature_manager.get_current_temperature()
         out_temp = self.temperature_manager.get_current_outside_temperature()
         occ = self.occupacy_manager.is_occupied()
-        weekday = TimeManager().get_weekday()
         heat_energy = self.heating_system.get_heat_energy()
-        return np.array([cur_temp, out_temp, occ, weekday, heat_energy]).astype(np.float32)
+        hour = TimeManager().get_current_hour()
+        weekday = TimeManager().get_weekday()
+        month = TimeManager().get_current_month()
+        return np.array([cur_temp, out_temp, occ, heat_energy, hour, weekday, month]).astype(np.float32)
 
     def render(self, mode='web'):
         if mode == 'web':

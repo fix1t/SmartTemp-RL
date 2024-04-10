@@ -43,7 +43,7 @@ def log_progress(message, silent=False):
         silent (bool): Whether to suppress the message.
     """
     if not silent:
-        print(f"Progress: {message}")
+        print(f"Config loader: {message}")
 
 def load_config(file_path, algorithm='DQL', silent=False):
     """
@@ -57,10 +57,7 @@ def load_config(file_path, algorithm='DQL', silent=False):
         dict: Configuration dictionary with all necessary values set, using defaults where required.
     """
     log_progress('---------------CONFIG---------------', silent=silent)
-    log_progress(f"Loading config for {algorithm} from '{file_path}'", silent=silent)
-
     config = DQL_DEFAULT_CONFIG.copy() if algorithm == 'DQL' else PPO_DEFAULT_CONFIG.copy()
-
 
     if file_path != '':
         load = True
@@ -71,6 +68,8 @@ def load_config(file_path, algorithm='DQL', silent=False):
         except FileNotFoundError:
             log_progress(f"Warning: Config file not found at '{file_path}'. Using default values.", silent=silent)
             load = False
+
+        log_progress(f"Loading config for {algorithm} from '{file_path}'", silent=silent)
 
         if not isinstance(loaded_config, dict):
             log_progress("Warning: Loaded config is empty or invalid. Using default values.", silent=silent)
