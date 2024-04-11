@@ -57,8 +57,7 @@ class TempRegulationEnv(gym.Env):
         reward = self.calculate_reward()
 
         self.total_reward += reward
-        self.reward_data.append(reward)
-        # self.reward_data.append(self.total_reward)
+        self.reward_data['total_reward'].append(self.total_reward)
 
         done = TimeManager().is_over()
         truncated = False
@@ -70,15 +69,21 @@ class TempRegulationEnv(gym.Env):
     def calculate_reward(self):
         is_occupied = self.occupacy_manager.is_occupied()
 
+        
         # If the house is not occupied, we do not penalize the temperature difference
         if not is_occupied:
-            reward = self.energy_reward() # Penalize more when the house is not occupied
-            # print(f"Energy reward: {reward}")
+            energy_reward = self.energy_reward() # Penalize more when the house is not occupied
+            temperature_reward = 0
+            reward = energy_reward
         else:
-            COMFORT_TO_COST_PREFERENCE = 0.7
+            COMFORT_TO_COST_PREFERENCE = 0.5
             energy_reward =  (1- COMFORT_TO_COST_PREFERENCE) * self.energy_reward()
             temperature_reward = COMFORT_TO_COST_PREFERENCE * self.temperature_reward()
             reward = energy_reward + temperature_reward
+
+        self.reward_data['energy_reward'].append(energy_reward)
+        self.reward_data['temperature_reward'].append(temperature_reward)
+        self.reward_data['step_reward'].append(reward)
         return reward
 
     def temperature_reward(self):
@@ -125,7 +130,11 @@ class TempRegulationEnv(gym.Env):
 
         self.target_temperature = ConfigurationManager().get_temp_config("target_temperature")
         self.total_reward = 0
-        self.reward_data = [0]
+        self.reward_data = {}
+        self.reward_data['step_reward'] = []
+        self.reward_data['energy_reward'] = []
+        self.reward_data['temperature_reward'] = []
+        self.reward_data['total_reward'] = []
 
         TimeManager().reset_time_to(starting_time, self.max_steps_per_episode)
         self.occupacy_manager = OccupancyManager()

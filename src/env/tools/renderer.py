@@ -37,15 +37,20 @@ class SimulationRenderer:
                            [Input('graph-update', 'n_intervals')])
         def update_score_graph(n):
             time_data, rewards = self.simulation.get_reward_data()
+            energy_rewards = rewards['energy_reward']
+            temperature_rewards = rewards['temperature_reward']
+            step_rewards = rewards['step_reward']
 
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=time_data, y=rewards, mode='lines+markers'))
-
+            fig.add_trace(go.Scatter(x=time_data, y=energy_rewards, mode='lines+markers', line=(dict(dash='dash')),name='Energy Reward'))
+            fig.add_trace(go.Scatter(x=time_data, y=temperature_rewards, mode='lines+markers', line=(dict(dash='dash')),name='Temperature Reward'))
+            fig.add_trace(go.Scatter(x=time_data, y=step_rewards, mode='lines+markers', name='Step Reward'))
             fig.update_layout(
                 xaxis=dict(type='date', title='Time', autorange=True),
                 yaxis=dict(title='Score', autorange=True),
                 title='Score Over Time',
                 margin=dict(l=40, r=40, t=40, b=0),
+                showlegend=True,
             )
 
             return fig
