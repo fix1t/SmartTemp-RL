@@ -8,10 +8,10 @@ import time
 class Agent:
     # Initial setup of the agent with actor-critic networks and environment
     def __init__(self, actor_network, critic_network, env, **hyperparameters):
-        self.env = env
-        self.actor = actor_network
-        self.critic = critic_network
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.env = env
+        self.actor = actor_network.to(self.device)
+        self.critic = critic_network.to(self.device)
         self._init_hyperparameters(hyperparameters)
         self._init_optimizers()
         self._init_logger()
@@ -68,7 +68,6 @@ class Agent:
         batch_data = self._convert_data_to_tensor(batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens)
 
         self._log_summary(batch_rews)
-
         return batch_data
 
     def _convert_data_to_tensor(self, batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens):
@@ -96,7 +95,8 @@ class Agent:
 
     # Selects an action based on the current policy
     def get_action(self, obs):
-        action_probs = self.actor(torch.tensor(obs, dtype=torch.float).unsqueeze(0))
+        # Assertion for device check before tensor operation
+        action_probs = self.actor(torch.tensor(obs, dtype=torch.float, device=self.device).unsqueeze(0))
         dist = torch.distributions.Categorical(probs=action_probs)
         action = dist.sample()
         return action.item(), dist.log_prob(action)
@@ -231,10 +231,10 @@ class Agent:
         self.logger.log_iteration(avg_ep_rews)
 
     def load_actor(self, path):
-        self.actor.load_state_dict(torch.load(path))
+        self.actor.load_state_dict(torch.load(path, map_location=self.device))
 
     def load_critic(self, path):
-        self.critic.load_state_dict(torch.load(path))
+        self.critic.load_state_dict(torch.load(path, map_location=self.device))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
         print("-------Testing PPO agent-------")

@@ -20,8 +20,8 @@ class Agent():
         self.obs_dim = env.observation_space.shape[0]
         self.act_dim = env.action_space.n
 
-        self.local_qnetwork = local_qnetwork
-        self.target_qnetwork = target_qnetwork
+        self.local_qnetwork = local_qnetwork.to(self.device)
+        self.target_qnetwork = target_qnetwork.to(self.device)
 
         # Optimizer
         self.optimizer = optim.Adam(self.local_qnetwork.parameters(), lr=self.learning_rate)
@@ -177,8 +177,8 @@ class Agent():
     def load_local_qnetwork(self, path):
         self.local_qnetwork.load_state_dict(torch.load(path))
 
-    def save_target_qnetwork(self, path):
-        self.target_qnetwork.save_state_dict(torch.load(path))
+    def load_target_qnetwork(self, path):
+        self.target_qnetwork.load_state_dict(torch.load(path))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
         print("-------Testing DQL agent-------")
