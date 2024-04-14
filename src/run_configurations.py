@@ -6,6 +6,7 @@ from tools.config_generator import generate_configurations
 from tools.config_loader import load_config
 from env.environment import TempRegulationEnv
 from main import load_agent
+import tools.generate_latex_table as glt
 
 def save_agent_info(folder_path, agent, config, elapsed_time):
     os.makedirs(folder_path, exist_ok=True)
@@ -88,6 +89,20 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
         print('--------------------------------')
 
+def generate_table(summary_path, output_folder, rpc):
+    data = glt.get_summary_data_from_file(summary_path)
+
+    entries = glt.parse_configurations(data)
+    latex_table = glt.generate_latex_table(entries, rpc)
+
+    current_time = time.strftime('%Y-%m-%d_%H-%M-%S')
+
+    with open(f"{output_folder}/table_{current_time}.tex", "w") as f:
+        f.write(latex_table)
+
+    print(f"LaTeX table generated at {output_folder}/table_{current_time}.tex")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run configurations for DQL and PPO agents.')
     parser.add_argument('--agent', choices=['DQL', 'PPO'], required=True, type=str, help='Agent type to run configurations for')
@@ -98,3 +113,10 @@ if __name__ == '__main__':
 
     generate_configurations(args.agent, args.folder)
     run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output)
+
+    # Generate table
+    rows_per_column = 50
+    table_output_folder = 'out/generated_configs/tables'
+    os.makedirs(table_output_folder, exist_ok=True)
+
+    generate_table(f"{args.output}/{args.agent.lower()}/summary.txt", table_output_folder, rows_per_column)

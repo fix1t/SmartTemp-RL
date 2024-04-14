@@ -48,6 +48,15 @@ def generate_latex_table(entries, rows_per_column=30):
     latex += "\\end{table}\n"
     return latex
 
+def get_summary_data_from_file(file_path):
+    try:
+        with open(file_path) as f:
+            data = f.read()
+    except FileNotFoundError:
+        print(f"File {file_path} not found")
+        exit(1)
+    return data
+
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(description='Generate LaTeX table from configuration data')
     arg_parser.add_argument('file', type=str, help='File with configuration data')
@@ -55,12 +64,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('--rpc', type=int, default=50, help='Number of rows per column in LaTeX table')
     args = arg_parser.parse_args()
 
-    try:
-        with open(args.file) as f:
-            data = f.read()
-    except FileNotFoundError:
-        print(f"File {args.file} not found")
-        exit(1)
+    data = get_summary_data_from_file(args.file)
 
     os.makedirs(args.output_folder, exist_ok=True)
 

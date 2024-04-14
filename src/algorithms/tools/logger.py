@@ -28,12 +28,14 @@ class Logger():
 
     def log_reward(self, reward, name='Episode', average_over=30):
         self.all_scores.append(reward)
-
-        average_of_episodes, number_of_episodes = self.get_avg_rewards(average_over)
-
         self.iter += 1
         if self.iter % 10 == 0:
-            print(f'\r{name}: {self.iter}\tAverage Score Of Last {number_of_episodes} {name}s: {average_of_episodes:.2f}', end="")
+            if self.iter % 100 == 0:
+                average_of_episodes, number_of_episodes = self.get_avg_rewards(100)
+                print(f'\r{name}: {self.iter}\tAverage Score Of Last 100 {name}s: {average_of_episodes:.2f}')
+            else:
+                average_of_episodes, number_of_episodes = self.get_avg_rewards(average_over)
+                print(f'\r{name}: {self.iter}\tAverage Score Of Last {number_of_episodes} {name}s: {average_of_episodes:.2f}', end="")
 
     def store_loss(self, loss):
         # print(f'\rLoss: {loss:.5f}', end="")
