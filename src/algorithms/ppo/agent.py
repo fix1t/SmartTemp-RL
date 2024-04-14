@@ -43,7 +43,8 @@ class Agent:
         i_so_far = 0
         while t_so_far < total_timesteps:
             batch_data = self.collect_batch_data()
-            t_so_far += np.sum(batch_data[-1])
+            batch_lens = batch_data[-1]
+            t_so_far += np.sum(batch_lens)
             i_so_far += 1
             self.update_policy(batch_data)
 
@@ -64,10 +65,11 @@ class Agent:
                 t += 1
             batch_rews.append(ep_rews)
             batch_lens.append(len(ep_rews))
+            self._log_(batch_rews)
+
         batch_rtgs = self.compute_rtgs(batch_rews)
         batch_data = self._convert_data_to_tensor(batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens)
 
-        self._log_summary(batch_rews)
         return batch_data
 
     def _convert_data_to_tensor(self, batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens):
@@ -128,12 +130,14 @@ class Agent:
             V, curr_log_probs = self.evaluate(batch_obs, batch_acts)
             A_k = batch_rtgs - V.detach()  # Detach V to stop gradients
 
-            # One of the only trick found in https://github.com/ericyangyu/PPO-for-Beginners/blob/master/ppo.py
-            #    "I use that isn't in the pseudocode. Normalizing advantages
+            # Trick found in https://medium.com/@eyyu/coding-ppo-from-scratch-with-pytorch-part-2-4-f9d8b8aa938a article
+            #    "Trick I use that isn't in the pseudocode. Normalizing advantages
             #    isn't theoretically necessary, but in practice it decreases the variance of
             #    our advantages and makes convergence much more stable and faster. I added this because
             #    solving some environments was too unstable without it."
             # And it works well for me too.
+
+            # + 1e-10 is a constant only to prevent division by zero
             A_k = (A_k - A_k.mean()) / (A_k.std() + 1e-10)
             self._update_networks(A_k, batch_log_probs, curr_log_probs, V, batch_rtgs)
 
@@ -225,10 +229,9 @@ class Agent:
         self.logger.store_loss(actor_loss.detach().item())
 
     # Logs summary of training progress
-    def _log_summary(self, batch_rews):
-        # This computes the mean of episode totals, which seems to be your intention
-        avg_ep_rews = np.mean([np.sum(ep) for ep in batch_rews])
-        self.logger.log_iteration(avg_ep_rews)
+    def _log_(self, batch_rews):
+        reward = sum(batch_rews)
+        self.logger.log_reward(reward, name='Episode')
 
     def load_actor(self, path):
         self.actor.load_state_dict(torch.load(path, map_location=self.device))

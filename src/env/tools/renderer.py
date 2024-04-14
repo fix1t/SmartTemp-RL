@@ -50,7 +50,7 @@ class SimulationRenderer:
                 yaxis=dict(title='Score', autorange=True),
                 title='Score Over Time',
                 margin=dict(l=40, r=40, t=40, b=0),
-                showlegend=True,
+                showlegend=False,
             )
 
             return fig

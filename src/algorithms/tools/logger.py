@@ -14,34 +14,26 @@ class Logger():
             cls._instance = super(Logger, cls).__new__(cls)
             cls._instance.all_scores = []
             cls._instance.iter = 0
-            cls._instance.dql = True
         return cls._instance
 
     def reset(self):
-        self.all_scores = []
+        self.all_scores.clear()
         self.iter = 0
-        self.dql = True
 
-    def log_episode(self, score, episode=None):
-        self.all_scores.append(score)
-        if episode is not None:
-            self.iter = episode
-        else:
-            self.iter += 1
-        num_scores = min(10, len(self.all_scores))
-        average_score_of_last_10_episodes = sum(self.all_scores[-num_scores:]) / num_scores
-        print(f'\rEpisode: {self.iter}\tAverage Score Of Last {num_scores}: {average_score_of_last_10_episodes:.2f}', end="")
+    def get_avg_rewards(self, average_over=30):
+        if not self.all_scores:
+            return 0, 0
+        average_over = min(len(self.all_scores), average_over)
+        return sum(self.all_scores[-average_over:]) / average_over, average_over
 
-    def log_iteration(self, score, iter=None):
-        self.dql = False
-        self.all_scores.append(score)
-        if iter is None:
-            self.iter += 1
-        else:
-            self.iter = iter
-        num_scores = min(10, len(self.all_scores))
-        average_score_of_last_10_episodes = sum(self.all_scores[-num_scores:]) / num_scores
-        print(f'\rIteration: {self.iter}\tAverage Score Of Last {num_scores}: {average_score_of_last_10_episodes:.2f}', end="")
+    def log_reward(self, reward, name='Episode', average_over=30):
+        self.all_scores.append(reward)
+
+        average_of_episodes, number_of_episodes = self.get_avg_rewards(average_over)
+
+        self.iter += 1
+        if self.iter % 10 == 0:
+            print(f'\r{name}: {self.iter}\tAverage Score Of Last {number_of_episodes} {name}s: {average_of_episodes:.2f}')
 
     def store_loss(self, loss):
         # print(f'\rLoss: {loss:.5f}', end="")
@@ -71,13 +63,7 @@ class Logger():
 
         plt.figure(figsize=(20, 10))
         plt.plot(self.all_scores)
-        if self.dql:
-            plt.title('Scores over Episodes')
-            plt.xlabel('Episode')
-        else:
-            plt.title('Scores over Iterations')
-            plt.xlabel('Iteration')
-        plt.title('Scores over Episodes')
+        plt.title('Scores over Environment Episodes')
         plt.xlabel('Episode')
         plt.ylabel('Score')
         plt.savefig(file_full_path)

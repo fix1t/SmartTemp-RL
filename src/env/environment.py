@@ -69,14 +69,14 @@ class TempRegulationEnv(gym.Env):
     def calculate_reward(self):
         is_occupied = self.occupacy_manager.is_occupied()
 
-        
+
         # If the house is not occupied, we do not penalize the temperature difference
         if not is_occupied:
             energy_reward = self.energy_reward() # Penalize more when the house is not occupied
             temperature_reward = 0
             reward = energy_reward
         else:
-            COMFORT_TO_COST_PREFERENCE = 0.5
+            COMFORT_TO_COST_PREFERENCE = 0.65
             energy_reward =  (1- COMFORT_TO_COST_PREFERENCE) * self.energy_reward()
             temperature_reward = COMFORT_TO_COST_PREFERENCE * self.temperature_reward()
             reward = energy_reward + temperature_reward

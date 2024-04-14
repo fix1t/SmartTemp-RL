@@ -113,6 +113,22 @@ def load_agent(env, agent_type, config):
         return None
     return agent
 
+def print_training_info(agent, folder_path, elapsed_time):
+    print('-------Training completed-------')
+    print(f"Training took {int(elapsed_time//60)} minutes and {elapsed_time%60:.2f} seconds.")
+    Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
+    Logger().save_trained_agent(agent, folder_path)
+    Logger().plot_scores(folder_path)
+    print(f'Trained model and summary available in {folder_path} folder.')
+    print('--------------------------------')
+    agent.env.close()
+
+def print_start_message(agent, agent_type, mode, total_timesteps):
+    print('--------------------------------')
+    print(f'Starting {agent_type} {mode}ing.')
+    print(f'Total timesteps: {total_timesteps}')
+    print(f'This is an equivalent of {total_timesteps//(4*24)} days - {total_timesteps//agent.env.max_steps_per_episode} environment episodes.')
+    print('--------------------------------')
 
 def main():
     args = get_args()
@@ -131,6 +147,8 @@ def main():
     if agent is None:
         print(f"Could not load agent. Exiting.", flush=True)
         return
+
+    print_start_message(agent, args.algorithm, args.mode, args.total_timesteps)
 
     try:
         if args.algorithm == 'PPO':
@@ -152,15 +170,7 @@ def main():
         # Save the agent and plot the average score overtime
         if args.mode == 'train':
             elapsed_time = time.time() - start_time
-            print('-------Training completed-------')
-            print(f"Training took {int(elapsed_time//60)} minutes and {elapsed_time%60:.2f} seconds.")
-            folder_path = f"out/{args.algorithm.lower()}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
-            Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
-            Logger().save_trained_agent(agent, folder_path)
-            Logger().plot_scores(folder_path)
-            print(f'Trained model and summary available in {folder_path} folder.')
-            print('--------------------------------')
-            env.close()
+            print_training_info(agent, args.output_folder, elapsed_time)
 
 if __name__ == '__main__':
     main()

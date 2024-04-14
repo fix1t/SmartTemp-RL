@@ -2,14 +2,16 @@ SHELL := /bin/bash
 VENV_NAME := venv
 PYTHON := $(VENV_NAME)/bin/python
 SCRIPT := main.py
-SEED := 1
+SEED := 42
 
 # Path for the run configurations script
 CONFIG_SCRIPT := run_configurations.py
 CONFIG_SCRIPT_OUTPUT := out/generated_configs/results
-CONFIG_SCRIPT_FOLDER := out/generated_configs
-CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 14)))))
-TRAINING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 20)))))
+CONFIG_SCRIPT_FOLDER_DQL := out/generated_configs/dql
+CONFIG_SCRIPT_FOLDER_PPO := out/generated_configs/ppo
+CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
+TRAINING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
+TESTING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 7)))))
 
 # Paths for the latest model files
 LATEST_DQL_MODEL := $(shell find ./out/dql -type f -name 'local_qnetwork.pth' | xargs ls -t | head -n 1)
@@ -32,7 +34,7 @@ dql:
 
 dql-test:
 	@echo "Running DQL test script with the latest model..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --local_qnetwork $(LATEST_DQL_MODEL)
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --local_qnetwork $(LATEST_DQL_MODEL) --total_timesteps $(TESTING_TIMESTEPS)
 
 ppo:
 	@echo "Running PPO training script..."
@@ -40,15 +42,15 @@ ppo:
 
 ppo-test:
 	@echo "Running PPO test script with the latest actor and critic models..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm PPO --actor_model $(LATEST_PPO_ACTOR_MODEL) --critic_model $(LATEST_PPO_CRITIC_MODEL)
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm PPO --actor_model $(LATEST_PPO_ACTOR_MODEL) --critic_model $(LATEST_PPO_CRITIC_MODEL) --total_timesteps $(TESTING_TIMESTEPS)
 
 run-configurations-dql:
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER) --output $(CONFIG_SCRIPT_OUTPUT)
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_DQL) --output $(CONFIG_SCRIPT_OUTPUT)
 
 run-configurations-ppo:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER) --output $(CONFIG_SCRIPT_OUTPUT)
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_PPO) --output $(CONFIG_SCRIPT_OUTPUT)
 
 clean:
 	@echo "Cleaning up Python cache files and virtual environment..."

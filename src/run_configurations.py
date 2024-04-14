@@ -32,10 +32,14 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
     # Run each configuration
     try:
+        total_files = len(files)
+        current_file = 1
         for file in files:
-            if file.endswith('.yaml'):
-                print(f"Running configuration: {file}")
 
+            if file.endswith('.yaml'):
+                print(f"Configuration {current_file} of {total_files}: {file}")
+
+                current_file += 1
                 env = TempRegulationEnv(
                     start_from_random_day=True,
                     seed=int(42),
@@ -50,16 +54,17 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
                 training_beginning = time.time()
                 agent.train(total_timesteps)
                 elapsed_time = time.time() - training_beginning
+                print(f"Training time: {elapsed_time/60} minutes.")
 
                 best_last_avg_score[file] = Logger().get_last_avg_score()
-
                 save_agent_info(f"{output_folder}/{agent_type.lower()}/{file.removesuffix('.yaml')}", agent, config, elapsed_time)
 
     except KeyboardInterrupt:
         print('\nInterrupted.')
         elapsed_time = time.time() - training_beginning
-        best_last_avg_score[file] = Logger().get_last_avg_score()
+        print(f"Training time: {elapsed_time/60} minutes.")
 
+        best_last_avg_score[file] = Logger().get_last_avg_score()
         save_agent_info(f"{output_folder}/{agent_type.lower()}/{file.removesuffix('.yaml')}", agent, config, elapsed_time)
 
     finally:

@@ -40,18 +40,17 @@ def generate_configurations(agent_type, output_dir=None):
 
     base_config = base_configs[agent_type]
 
-    learning_rates = [0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003]
+    learning_rates = [0.001, 0.0015, 0.002, 0.0025]
     batch_sizes_dql = [32, 64, 128, 256, 512]
     batch_sizes_ppo = [512, 1024, 2048, 4096, 8192]
-    discount_factors = [0.90, 0.95, 0.99, 0.995, 0.999]
+    discount_factors = [0.90, 0.95, 0.99, 0.995]
 
     if agent_type == 'DQL':
-        batch_sizes = batch_sizes_dql
+        combinations = list(itertools.product(learning_rates, batch_sizes_dql, discount_factors))
     else:  # For PPO
-        batch_sizes = batch_sizes_ppo
+        combinations = list(itertools.product(learning_rates, batch_sizes_ppo, discount_factors))
 
     # Generate combinations
-    combinations = list(itertools.product(learning_rates, batch_sizes, discount_factors))
 
     if output_dir is None:
         output_dir = f"generated_configs/{agent_type.lower()}"

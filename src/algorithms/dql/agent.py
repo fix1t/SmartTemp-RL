@@ -153,26 +153,21 @@ class Agent():
         epsilon_decay_value  = 0.995
         epsilon = epsilon_starting_value
 
-        number_episodes = total_timesteps // self.env.max_steps_per_episode
-        print("-------Training DQL agent-------")
-        print(f"Training for {total_timesteps} timesteps with {self.env.max_steps_per_episode} steps per episode.")
-        print(f"Total number of episodes: {number_episodes}")
-        print("--------------------------------")
-
-        for episode in range(1, number_episodes+1):
+        t_so_far = 0
+        while t_so_far < total_timesteps:
             state, _ = self.env.reset(start_from_random_day=False)
-            score = 0
+            acc_reward = 0
             done = False
             while not done:
                 action = self.get_action(state, epsilon)
                 next_state, reward, done, _, _ = self.env.step(action)
                 self.step(state, action, reward, next_state, done)
                 state = next_state
-                score += reward
+                acc_reward += reward
+                t_so_far += 1
 
             epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
-
-            Logger().log_episode(score, episode)
+            Logger().log_reward(acc_reward)
 
     def load_local_qnetwork(self, path):
         self.local_qnetwork.load_state_dict(torch.load(path))
