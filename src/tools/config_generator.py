@@ -17,7 +17,8 @@ def generate_configurations(agent_type, output_dir=None):
                 'discount_factor': 0.99,
                 'batch_size': 100,
                 'replay_buffer_size': 100000,
-                'interpolation_parameter': 0.001
+                'interpolation_parameter': 0.001,
+                'learn_every_n_steps': 4
             }
         },
         'PPO': {
@@ -41,14 +42,20 @@ def generate_configurations(agent_type, output_dir=None):
     base_config = base_configs[agent_type]
 
     learning_rates = [0.001, 0.0015, 0.002, 0.0025]
-    batch_sizes_dql = [32, 64, 128, 256, 512]
-    batch_sizes_ppo = [512, 1024, 2048, 4096, 8192]
     discount_factors = [0.90, 0.95, 0.99, 0.995]
 
+    # DQL specific hyperparameters
+    batch_sizes_dql = [64, 128, 256, 512]
+    learn_every_n_steps = [2, 4, 8]
+
+    # PPO specific hyperparameters
+    n_updates_per_iteration = [5, 10, 20]
+    batch_sizes_ppo = [512, 1024, 2048, 4096]
+
     if agent_type == 'DQL':
-        combinations = list(itertools.product(learning_rates, batch_sizes_dql, discount_factors))
+        combinations = list(itertools.product(learning_rates, batch_sizes_dql, discount_factors, learn_every_n_steps))
     else:  # For PPO
-        combinations = list(itertools.product(learning_rates, batch_sizes_ppo, discount_factors))
+        combinations = list(itertools.product(learning_rates, batch_sizes_ppo, discount_factors, n_updates_per_iteration))
 
     # Generate combinations
 
