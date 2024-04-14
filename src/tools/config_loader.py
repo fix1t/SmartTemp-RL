@@ -13,7 +13,8 @@ DQL_DEFAULT_CONFIG = {
         'discount_factor': 0.99,
         'batch_size': 100,
         'replay_buffer_size': 100000,
-        'interpolation_parameter': 0.001
+        'interpolation_parameter': 0.001,
+        'learn_every_n_steps': 4
     }
 }
 
@@ -93,6 +94,7 @@ def load_config(file_path, algorithm='DQL', silent=False):
     # Set the activation functions based on the names
     config['network']['activation'] = activation_function(config['network']['activation'])
     config['network']['output_activation'] = activation_function(config['network']['output_activation'])
+    print(f"Configuration loaded: {config}")
     log_progress('------------------------------------', silent=silent)
     return config
 

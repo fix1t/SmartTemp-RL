@@ -65,16 +65,17 @@ def generate_configurations(agent_type, output_dir=None):
     os.makedirs(output_dir, exist_ok=True)
 
     # Generate and save configurations
-    for i, (lr, batch_size, discount_factor) in enumerate(combinations, start=1):
+    for i, (lr, batch_size, discount_factor, n) in enumerate(combinations, start=1):
         config = base_config.copy()
         config['hyperparameters']['learning_rate'] = lr
-        if agent_type == 'DQL':
-            config['hyperparameters']['batch_size'] = batch_size
-        else:  # For PPO
-            config['hyperparameters']['batch_size'] = batch_size
+        config['hyperparameters']['batch_size'] = batch_size
         config['hyperparameters']['discount_factor'] = discount_factor
+        if agent_type == 'DQL':
+            config['hyperparameters']['learn_every_n_steps'] = n
+        else:
+            config['hyperparameters']['n_updates_per_iteration'] = n
 
-        config_filename = f"cfg_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor}.yaml"
+        config_filename = f"cfg_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor}_n_{n}.yaml"
         with open(os.path.join(output_dir, config_filename), 'w') as file:
             yaml.dump(config, file, default_flow_style=False)
 

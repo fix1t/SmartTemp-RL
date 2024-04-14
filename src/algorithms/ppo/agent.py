@@ -65,7 +65,7 @@ class Agent:
                 t += 1
             batch_rews.append(ep_rews)
             batch_lens.append(len(ep_rews))
-            self._log_(batch_rews)
+            self._log_episode(batch_rews)
 
         batch_rtgs = self.compute_rtgs(batch_rews)
         batch_data = self._convert_data_to_tensor(batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens)
@@ -229,8 +229,8 @@ class Agent:
         self.logger.store_loss(actor_loss.detach().item())
 
     # Logs summary of training progress
-    def _log_(self, batch_rews):
-        reward = sum(batch_rews)
+    def _log_episode(self, batch_rews):
+        reward = np.mean([np.sum(ep_rews) for ep_rews in batch_rews])
         self.logger.log_reward(reward, name='Episode')
 
     def load_actor(self, path):

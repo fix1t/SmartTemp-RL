@@ -113,7 +113,7 @@ def load_agent(env, agent_type, config):
         return None
     return agent
 
-def print_training_info(agent, folder_path, elapsed_time):
+def print_training_summary(agent, folder_path, elapsed_time, CONFIG):
     print('-------Training completed-------')
     print(f"Training took {int(elapsed_time//60)} minutes and {elapsed_time%60:.2f} seconds.")
     Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
@@ -170,7 +170,8 @@ def main():
         # Save the agent and plot the average score overtime
         if args.mode == 'train':
             elapsed_time = time.time() - start_time
-            print_training_info(agent, args.output_folder, elapsed_time)
+            folder_path = f"out/{args.algorithm.lower()}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
+            print_training_summary(agent, folder_path, elapsed_time, CONFIG)
 
 if __name__ == '__main__':
     main()

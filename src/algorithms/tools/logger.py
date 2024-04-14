@@ -33,7 +33,7 @@ class Logger():
 
         self.iter += 1
         if self.iter % 10 == 0:
-            print(f'\r{name}: {self.iter}\tAverage Score Of Last {number_of_episodes} {name}s: {average_of_episodes:.2f}')
+            print(f'\r{name}: {self.iter}\tAverage Score Of Last {number_of_episodes} {name}s: {average_of_episodes:.2f}', end="")
 
     def store_loss(self, loss):
         # print(f'\rLoss: {loss:.5f}', end="")
