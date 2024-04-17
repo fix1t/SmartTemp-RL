@@ -2,83 +2,89 @@ import yaml
 import itertools
 import os
 
-def generate_configurations(agent_type, output_dir=None):
-    # Define base configurations for DQL and PPO
-    base_configs = {
-        'DQL': {
-            'network': {
-                'seed': 42,
-                'hidden_layers': [64, 64],
-                'activation': "ReLU",
-                'output_activation': "Softmax"
-            },
-            'hyperparameters': {
-                'learning_rate': 0.0005,
-                'discount_factor': 0.99,
-                'batch_size': 100,
-                'replay_buffer_size': 100000,
-                'interpolation_parameter': 0.001,
-                'learn_every_n_steps': 4
-            }
+def yield_dql_configurations():
+    base_config = {
+        'network': {
+            'seed': 42,
+            'hidden_layers': [64, 64],
+            'activation': "ReLU",
+            'output_activation': "Softmax"
         },
-        'PPO': {
-            'network': {
-                'seed': 42,
-                'hidden_layers': [64, 64],
-                'activation': "ReLU",
-                'output_activation': "Softmax"
-            },
-            'hyperparameters': {
-                'learning_rate': 0.0003,
-                'batch_size': 2048,
-                'max_timesteps_per_episode': 200,
-                'discount_factor': 0.99,
-                'n_updates_per_iteration': 10,
-                'clip': 0.2
-            }
+        'hyperparameters': {
+            'learning_rate': 0.0005,
+            'discount_factor': 0.99,
+            'batch_size': 100,
+            'replay_buffer_size': 100000,
+            'interpolation_parameter': 0.001,
+            'learn_every_n_steps': 4
         }
     }
 
-    base_config = base_configs[agent_type]
-
-    learning_rates = [0.001, 0.0015, 0.002, 0.0025]
-    discount_factors = [0.90, 0.95, 0.99, 0.995]
-
-    # DQL specific hyperparameters
-    batch_sizes_dql = [64, 128, 256, 512]
-    learn_every_n_steps = [2, 4, 8]
-
-    # PPO specific hyperparameters
-    n_updates_per_iteration = [5, 10, 20]
-    batch_sizes_ppo = [512, 1024, 2048, 4096]
-
-    if agent_type == 'DQL':
-        combinations = list(itertools.product(learning_rates, batch_sizes_dql, discount_factors, learn_every_n_steps))
-    else:  # For PPO
-        combinations = list(itertools.product(learning_rates, batch_sizes_ppo, discount_factors, n_updates_per_iteration))
+    learning_rates = [0.0005, 0.001, 0.002]
+    discount_factors = [0.90, 0.95, 0.99]
+    batch_sizes = [128, 256, 512]
+    learn_every_n_steps = [5, 10, 20]
+    interpolation_parameters = [0.001, 0.002, 0.003]
 
     # Generate combinations
-
-    if output_dir is None:
-        output_dir = f"generated_configs/{agent_type.lower()}"
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Generate and save configurations
-    for i, (lr, batch_size, discount_factor, n) in enumerate(combinations, start=1):
+    for lr, batch_size, discount_factor, n, i in itertools.product(learning_rates, batch_sizes, discount_factors, learn_every_n_steps, interpolation_parameters):
         config = base_config.copy()
         config['hyperparameters']['learning_rate'] = lr
         config['hyperparameters']['batch_size'] = batch_size
         config['hyperparameters']['discount_factor'] = discount_factor
-        if agent_type == 'DQL':
-            config['hyperparameters']['learn_every_n_steps'] = n
-        else:
-            config['hyperparameters']['n_updates_per_iteration'] = n
+        config['hyperparameters']['learn_every_n_steps'] = n
+        config['hyperparameters']['interpolation_parameter'] = i
+        file_name = f"dql_lr_{lr}_bs_{batch_size}_df_{discount_factor}_n_{n}_i_{i}.yaml"
+        yield config, file_name
 
-        config_filename = f"cfg_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor}_n_{n}.yaml"
-        with open(os.path.join(output_dir, config_filename), 'w') as file:
-            yaml.dump(config, file, default_flow_style=False)
+def yield_ppo_configurations():
+    base_config = {
+        'network': {
+            'seed': 42,
+            'hidden_layers': [64, 64],
+            'activation': "ReLU",
+            'output_activation': "Softmax"
+        },
+        'hyperparameters': {
+            'learning_rate': 0.0003,
+            'batch_size': 2048,
+            'max_timesteps_per_episode': 200,
+            'discount_factor': 0.99,
+            'n_updates_per_iteration': 10,
+            'clip': 0.2
+        }
+    }
 
-        print(f"Configuration {i:03d} for {agent_type} saved to {config_filename}")
+    learning_rates = [0.0003, 0.0005, 0.0007]
+    discount_factors = [0.90, 0.95, 0.99]
+    batch_sizes = [1024, 2048, 4096]
+    n_updates_per_iteration = [5, 10, 20]
+    clip = [0.1, 0.2, 0.3]
 
-    print(f"Generated {i} configurations for {agent_type} in '{output_dir}' directory.")
+    # Generate combinations
+    for lr, batch_size, discount_factor, n, c in itertools.product(learning_rates, batch_sizes, discount_factors, n_updates_per_iteration, clip):
+        config = base_config.copy()
+        config['hyperparameters']['learning_rate'] = lr
+        config['hyperparameters']['batch_size'] = batch_size
+        config['hyperparameters']['discount_factor'] = discount_factor
+        config['hyperparameters']['n_updates_per_iteration'] = n
+        config['hyperparameters']['clip'] = c
+        file_name = f"ppo_lr_{lr}_bs_{batch_size}_df_{discount_factor}_n_{n}_c_{c}.yaml"
+        yield config, file_name
+
+def generate_configurations(agent_type, output_dir=None):
+    if output_dir is None:
+        output_dir = f"generated_configs/{agent_type.lower()}"
+
+    os.makedirs(output_dir, exist_ok=True)
+    index = 0
+    for config, filen_name in yield_dql_configurations() if agent_type == "DQL" else yield_ppo_configurations():
+        index += 1
+        if output_dir:
+            with open(os.path.join(output_dir, filen_name), 'w') as file:
+                yaml.dump(config, file)
+        print(f"Generated configuration {index} for {agent_type} to {filen_name}")
+
+if __name__ == "__main__":
+    generate_configurations("DQL")
+    generate_configurations("PPO")
