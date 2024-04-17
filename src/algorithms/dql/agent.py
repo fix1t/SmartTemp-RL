@@ -17,8 +17,6 @@ class Agent():
         self.init_hyperparameters(hyperparameters)
 
         self.env = env
-        self.obs_dim = env.observation_space.shape[0]
-        self.act_dim = env.action_space.n
 
         self.local_qnetwork = local_qnetwork.to(self.device)
         self.target_qnetwork = target_qnetwork.to(self.device)
@@ -40,13 +38,13 @@ class Agent():
 
     def step(self, state, action, reward, next_state, done):
         """
-        Stores experience in replay memory and learns every 4 steps.
+        Stores experience in replay memory and learns every N steps.
 
         Parameters:
-            state (array_like): The current state.
+            state (array): The current state.
             action (int): The action taken.
             reward (float): The reward received.
-            next_state (array_like): The next state.
+            next_state (array): The next state.
             done (bool): Whether the episode has ended.
         """
         # Save experience in replay memory
@@ -63,7 +61,7 @@ class Agent():
         Returns actions for given state following the current policy.
 
         Parameters:
-            state (array_like): Current state.
+            state (array): Current state.
             epsilon (float): Epsilon, for epsilon-greedy action selection.
 
         Returns:
@@ -79,7 +77,7 @@ class Agent():
         if random.random() > epsilon:
             return np.argmax(action_values.cpu().data.numpy())  # Exploit
         else:
-            return random.choice(np.arange(self.act_dim))  # Explore
+            return random.choice(np.arange(self.env.action_space.n))  # Explore
 
     def update_policy(self, experiences, discount_factor):
         """
@@ -121,9 +119,9 @@ class Agent():
         self.optimizer.step()
 
         # Update the weights of the target network to slowly track the learned Q-values
-        self._update_network(self.local_qnetwork, self.target_qnetwork, self.interpolation_parameter)
+        self._soft_update_network(self.local_qnetwork, self.target_qnetwork, self.interpolation_parameter)
 
-    def _update_network(self, local_model, target_model, interpolation_parameter):
+    def _soft_update_network(self, local_model, target_model, interpolation_parameter):
         """
         Performs a soft update on the target network's parameters. This method blends the parameters
         of the local Q-network and the target Q-network using an interpolation parameter, τ (tau), to
@@ -176,9 +174,6 @@ class Agent():
         self.target_qnetwork.load_state_dict(torch.load(path))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
-        print("-------Testing DQL agent-------")
-        print(f"Testing for {total_timesteps} timesteps = {total_timesteps//(4*24)} days.")
-        print("--------------------------------")
         t_so_far = 0
         self.env.set_max_steps_per_episode(total_timesteps)
         obs, _ = self.env.reset()
@@ -195,3 +190,4 @@ class Agent():
         print("Done testing.")
         print("--------------------------------")
         sleep(5*60)
+        self.env.close()

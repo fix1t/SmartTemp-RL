@@ -240,9 +240,6 @@ class Agent:
         self.critic.load_state_dict(torch.load(path, map_location=self.device))
 
     def test_policy(self, total_timesteps=4*24*180, render=True):
-        print("-------Testing PPO agent-------")
-        print(f"Testing for {total_timesteps} timesteps.")
-        print("--------------------------------")
         t_so_far = 0
         self.env.set_max_steps_per_episode(total_timesteps)
         obs, _ = self.env.reset()
