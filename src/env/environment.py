@@ -23,7 +23,7 @@ class TempRegulationEnv(gym.Env):
         if seed is not None:
             np.random.seed(seed)
 
-        indoor_temp, outoor_temp, occupancy, heat_energy, hour, weekday, month = {}, {}, {}, {}, {}, {}, {}
+        indoor_temp, outoor_temp, occupancy, heat_energy, hour, weekday = {}, {}, {}, {}, {}, {}
         indoor_temp['min'], indoor_temp['max'] = 0, 30
         outoor_temp['min'], outoor_temp['max'] = -30, 40
         occupancy['min'], occupancy['max'] = 0, 1
@@ -152,8 +152,7 @@ class TempRegulationEnv(gym.Env):
         heat_energy = self.heating_system.get_heat_energy()
         hour = TimeManager().get_current_hour()
         weekday = TimeManager().get_weekday()
-        month = TimeManager().get_current_month()
-        return np.array([cur_temp, out_temp, occ, heat_energy, hour, weekday, month]).astype(np.float32)
+        return np.array([cur_temp, out_temp, occ, heat_energy, hour, weekday]).astype(np.float32)
 
     def render(self, mode='web'):
         if mode == 'web':
