@@ -14,7 +14,7 @@ DQL_DEFAULT_CONFIG = {
         'batch_size': 100,
         'replay_buffer_size': 100000,
         'interpolation_parameter': 0.001,
-        'learn_every_n_steps': 4
+        'target_update_frequency': 4
     }
 }
 

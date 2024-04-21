@@ -9,6 +9,7 @@ CONFIG_SCRIPT := run_configurations.py
 CONFIG_SCRIPT_OUTPUT := out/generated_configs/results
 CONFIG_SCRIPT_FOLDER_DQL := out/generated_configs/dql
 CONFIG_SCRIPT_FOLDER_PPO := out/generated_configs/ppo
+CONFIG_SCRIPT_FOLDER_NN := out/generated_configs/nn
 CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
 TRAINING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
 TESTING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 7)))))
@@ -46,11 +47,22 @@ ppo-test:
 
 run-configurations-dql:
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_DQL) --output $(CONFIG_SCRIPT_OUTPUT)
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_DQL) --output out/generated_configs/results/dql
 
 run-configurations-ppo:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_PPO) --output $(CONFIG_SCRIPT_OUTPUT)
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_PPO) --output out/generated_configs/results/ppo
+
+run-configurations-nn-dql:
+	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output out/generated_configs/results/nn/dql
+run-configurations-nn-ppo:
+	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output out/generated_configs/results/nn/ppo
+
+run_nn_configs: run-configurations-nn-ppo run-configurations-nn-dql 
+
+run_configs: run-configurations-dql run-configurations-ppo
 
 clean:
 	@echo "Cleaning up Python cache files and virtual environment..."

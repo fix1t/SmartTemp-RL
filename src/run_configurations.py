@@ -2,7 +2,7 @@ import argparse
 import os
 import time
 from algorithms.tools.logger import Logger
-from tools.config_generator import generate_configurations
+from tools.config_generator import generate_hp_configurations
 from tools.config_loader import load_config
 from env.environment import TempRegulationEnv
 from main import load_agent
@@ -111,7 +111,9 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
     args = parser.parse_args()
 
-    generate_configurations(args.agent, args.folder)
+    # generate_hp_configurations(args.agent, args.folder)
+    os.makedirs(args.output, exist_ok=True)
+
     run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output)
 
     # Generate table

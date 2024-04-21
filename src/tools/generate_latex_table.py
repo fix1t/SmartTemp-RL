@@ -3,7 +3,7 @@ import os
 import argparse
 
 # Function to parse configuration data
-def parse_configurations(data):
+def parse_hp_configurations(data):
     pattern = r"cfg_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)"
     scores_pattern = r"Average score of last 10: (?P<score>-?\d+\.\d+)"
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     os.makedirs(args.output_folder, exist_ok=True)
 
-    entries = parse_configurations(data)
+    entries = parse_hp_configurations(data)
     latex_table = generate_latex_table(entries, args.rpc)
 
     with open(f"{args.output_folder}/table.tex", "w") as f:
