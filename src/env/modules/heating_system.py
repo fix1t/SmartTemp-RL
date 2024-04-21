@@ -20,7 +20,6 @@ class HeatingSystem:
         elif action == 4:  # Cooling off
             self.H_energy = max(self.H_energy - self.H_cool, 0)
         # 0 action means maintain, so no change to H_energy.H_cool, 0)
-        # else 1: # mantain the same temperature
 
     def get_temperature_change(self, T_current):
         """

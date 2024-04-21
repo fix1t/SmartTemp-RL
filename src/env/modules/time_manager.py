@@ -15,7 +15,7 @@ class TimeManager:
         return cls._instance
 
     def load_configuration(self):
-        self.current_time = ConfigurationManager().get_settings_config("start_of_simulation")
+        self.current_time = None
         self.final_time = None
         self.time_history = []
         self.time_history.append(self.current_time)

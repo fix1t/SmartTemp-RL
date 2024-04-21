@@ -4,13 +4,11 @@ CONFIG = {
     "settings": {
         'minutes_per_step': 15,                     # how long a step is in minutes
         'outside_temperature_record_step': 60,      # how often the outside temperature is recorded in minutes
-        'start_of_simulation': datetime(2013, 1, 1, 0, 0),# starting time of the simulation
         'temperature_data_file': 'data/basel_10_years_hourly.csv',  # file with the temperature data
     },
 
     "temperature": {
         'starting_temperature': 20,                 # degrees Celsius
-        'outside_temperature': 10,                  # degrees Celsius
         'target_temperature': 22,                   # degrees Celsius
         'insulation_quality': 0.95,                 # coefficient ranging from 0 (no insulation) to 1 (perfect insulation)
         'heater_at_max': 40,                        # maximum temperature output of the heater

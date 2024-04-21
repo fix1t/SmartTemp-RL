@@ -34,7 +34,7 @@ class Agent():
         self.discount_factor = hyperparameters.get('discount_factor', 0.99)
         self.replay_buffer_size = hyperparameters.get('replay_buffer_size', int(1e5))
         self.interpolation_parameter = hyperparameters.get('interpolation_parameter', 1e-3)
-        self.learn_every_n_steps = hyperparameters.get('learn_every_n_steps', 4)
+        self.target_update_frequency = hyperparameters.get('target_update_frequency', 4)
 
     def step(self, state, action, reward, next_state, done):
         """
@@ -50,7 +50,7 @@ class Agent():
         # Save experience in replay memory
         self.memory.push((state, action, reward, next_state, done))
 
-        self.t_step = (self.t_step + 1) % self.learn_every_n_steps
+        self.t_step = (self.t_step + 1) % self.target_update_frequency
 
         if self.t_step == 0 and len(self.memory.memory) > self.batch_size:
             experiences = self.memory.sample(self.batch_size)

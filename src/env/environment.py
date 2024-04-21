@@ -30,10 +30,9 @@ class TempRegulationEnv(gym.Env):
         heat_energy['min'], heat_energy['max'] = 0, 5
         hour['min'], hour['max'] = 0, 24
         weekday['min'], weekday['max'] = 0, 6
-        month['min'], month['max'] = 1, 12
 
-        low = np.array([indoor_temp['min'], outoor_temp['min'], occupancy['min'], heat_energy['min'], hour['min'], weekday['min'], month['min']])
-        high = np.array([indoor_temp['max'], outoor_temp['max'], occupancy['max'], heat_energy['max'], hour['max'], weekday['max'], month['max']])
+        low = np.array([indoor_temp['min'], outoor_temp['min'], occupancy['min'], heat_energy['min'], hour['min'], weekday['min']])
+        high = np.array([indoor_temp['max'], outoor_temp['max'], occupancy['max'], heat_energy['max'], hour['max'], weekday['max']])
 
         self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
 
