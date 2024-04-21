@@ -34,7 +34,7 @@ class Agent():
         self.discount_factor = hyperparameters.get('discount_factor', 0.99)
         self.replay_buffer_size = hyperparameters.get('replay_buffer_size', int(1e5))
         self.interpolation_parameter = hyperparameters.get('interpolation_parameter', 1e-3)
-        self.learn_every_n_steps = hyperparameters.get('learn_every_n_steps', 4)
+        self.target_update_frequency = hyperparameters.get('target_update_frequency', 100)
 
     def step(self, state, action, reward, next_state, done):
         """
@@ -50,11 +50,15 @@ class Agent():
         # Save experience in replay memory
         self.memory.push((state, action, reward, next_state, done))
 
-        self.t_step = (self.t_step + 1) % self.learn_every_n_steps
-
-        if self.t_step == 0 and len(self.memory.memory) > self.batch_size:
+        if len(self.memory.memory) > self.batch_size:
             experiences = self.memory.sample(self.batch_size)
-            self.update_policy(experiences, self.discount_factor)
+            self.t_step = (self.t_step + 1) % self.target_update_frequency
+
+            if self.t_step % self.target_update_frequency/10 == 0:
+                self.update_policy(experiences, self.discount_factor)
+
+            if self.t_step == 0:
+                self.soft_update_target_network(self.local_qnetwork, self.target_qnetwork, self.interpolation_parameter)
 
     def get_action(self, state, epsilon=0.):
         """
@@ -100,8 +104,6 @@ class Agent():
         4. Calculate the loss between the expected Q-values and the Q-targets using mean squared error (MSE),
         which represents the temporal difference error.
         5. Backpropagate the loss to update the weights of the local Q-network.
-        6. Periodically, the target Q-network is softly updated with weights from the local Q-network to slowly
-        track the learned value function, improving stability.
         """
         states, next_states, actions, rewards, dones = experiences
 
@@ -118,10 +120,7 @@ class Agent():
         loss.backward()
         self.optimizer.step()
 
-        # Update the weights of the target network to slowly track the learned Q-values
-        self._soft_update_network(self.local_qnetwork, self.target_qnetwork, self.interpolation_parameter)
-
-    def _soft_update_network(self, local_model, target_model, interpolation_parameter):
+    def soft_update_target_network(self, local_model, target_model, interpolation_parameter):
         """
         Performs a soft update on the target network's parameters. This method blends the parameters
         of the local Q-network and the target Q-network using an interpolation parameter, τ (tau), to
