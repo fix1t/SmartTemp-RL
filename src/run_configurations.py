@@ -14,7 +14,7 @@ def save_agent_info(folder_path, agent, config, elapsed_time):
     Logger().plot_scores(f"{folder_path}")
     print('\n--------------------------------')
 
-def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL', output_folder='generated_configs/results'):
+def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL', output_folder='generated_configs/results', skip=0):
     """
     Run all configurations in a folder.
     """
@@ -38,9 +38,16 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
         for file in files:
 
             if file.endswith('.yaml'):
-                print(f"Configuration {current_file} of {total_files}: {file}")
-
                 current_file += 1
+
+
+                if skip > 1:
+                    print(f"Configuration {current_file} of {total_files}: {file} -- Skipped")
+                    skip -= 1
+                    continue
+                else:
+                    print(f"Configuration {current_file} of {total_files}: {file}")
+
                 env = TempRegulationEnv(
                     start_from_random_day=True,
                     seed=int(42),
@@ -109,12 +116,13 @@ if __name__ == '__main__':
     parser.add_argument('--folder', required=True, type=str, help='Folder with configurations')
     parser.add_argument('--timesteps', required=False, default=4*24*360*20, type=int, help='Total timesteps to train the agent')
     parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
+    parser.add_argument('--skip', required=False, default=0, type=int, help='Skip fir n configurations')
     args = parser.parse_args()
 
     # generate_hp_configurations(args.agent, args.folder)
     os.makedirs(args.output, exist_ok=True)
 
-    run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output)
+    run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output, skip=args.skip)
 
     # Generate table
     rows_per_column = 50
