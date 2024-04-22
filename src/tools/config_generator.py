@@ -14,7 +14,7 @@ def yield_dql_hp_configuration():
         }
     }
 
-    learning_rates = [0.0005, 0.001, 0.002]
+    learning_rates = [0.0005, 0.0015]
     discount_factors = [0.90, 0.95, 0.99]
     batch_sizes = [128, 256, 512]
     target_update_frequency = [5, 10, 20]
@@ -43,7 +43,7 @@ def yield_ppo_hp_configuration():
         }
     }
 
-    learning_rates = [0.0005, 0.001, 0.002]
+    learning_rates = [0.0005, 0.0015]
     discount_factors = [0.90, 0.95, 0.99]
     batch_sizes = [1024, 2048, 4096]
     n_updates_per_iteration = [5, 10, 20]

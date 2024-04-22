@@ -35,6 +35,7 @@ class Agent():
         self.replay_buffer_size = hyperparameters.get('replay_buffer_size', int(1e5))
         self.interpolation_parameter = hyperparameters.get('interpolation_parameter', 1e-3)
         self.target_update_frequency = hyperparameters.get('target_update_frequency', 100)
+        self.local_update_frequency = hyperparameters.get('local_update_frequency', self.target_update_frequency//2)
 
     def step(self, state, action, reward, next_state, done):
         """
@@ -54,11 +55,11 @@ class Agent():
             experiences = self.memory.sample(self.batch_size)
             self.t_step = (self.t_step + 1) % self.target_update_frequency
 
-            if self.t_step % self.target_update_frequency/10 == 0:
+            if self.t_step % self.local_update_frequency == 0:
                 self.update_policy(experiences, self.discount_factor)
 
             if self.t_step == 0:
-                self.soft_update_target_network(self.local_qnetwork, self.target_qnetwork, self.interpolation_parameter)
+                self.soft_update_target_network()
 
     def get_action(self, state, epsilon=0.):
         """
@@ -120,7 +121,7 @@ class Agent():
         loss.backward()
         self.optimizer.step()
 
-    def soft_update_target_network(self, local_model, target_model, interpolation_parameter):
+    def soft_update_target_network(self):
         """
         Performs a soft update on the target network's parameters. This method blends the parameters
         of the local Q-network and the target Q-network using an interpolation parameter, τ (tau), to
@@ -141,8 +142,8 @@ class Agent():
         is gradual and keeps the target network's output stable, which is crucial for the convergence
         of the DQL algorithm.
         """
-        for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
-            target_param.data.copy_(interpolation_parameter * local_param.data + (1.0 - interpolation_parameter) * target_param.data)
+        for target_param, local_param in zip(self.target_qnetwork.parameters(), self.local_qnetwork.parameters()):
+            target_param.data.copy_(self.interpolation_parameter * local_param.data + (1.0 - self.interpolation_parameter) * target_param.data)
 
     def train(self, total_timesteps=4*24*365*10):
         epsilon_starting_value  = 1.0
