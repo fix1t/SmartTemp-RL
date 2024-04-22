@@ -47,18 +47,18 @@ ppo-test:
 
 run-configurations-dql:
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_DQL) --output out/generated_configs/results/dql
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_DQL) --output ${CONFIG_SCRIPT_OUTPUT}
 
 run-configurations-ppo:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_PPO) --output out/generated_configs/results/ppo
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_PPO) --output ${CONFIG_SCRIPT_OUTPUT}
 
 run-configurations-nn-dql:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output out/generated_configs/results/nn/dql --skip 30
+	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output ${CONFIG_SCRIPT_OUTPUT}/nn
 run-configurations-nn-ppo:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output out/generated_configs/results/nn/ppo
+	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output ${CONFIG_SCRIPT_OUTPUT}/nn
 
 run_nn_configs: run-configurations-nn-ppo run-configurations-nn-dql 
 

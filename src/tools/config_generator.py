@@ -18,7 +18,7 @@ def yield_dql_hp_configuration():
     discount_factors = [0.90, 0.95, 0.99]
     batch_sizes = [128, 256, 512]
     target_update_frequency = [5, 10, 20]
-    interpolation_parameters = [0.001, 0.005, 0.01]
+    interpolation_parameters = [0.001, 0.005, 0.025]
 
     # Generate combinations
     for lr, batch_size, discount_factor, n, i in itertools.product(learning_rates, batch_sizes, discount_factors, target_update_frequency, interpolation_parameters):
@@ -43,7 +43,7 @@ def yield_ppo_hp_configuration():
         }
     }
 
-    learning_rates = [0.0003, 0.0005, 0.0007]
+    learning_rates = [0.0005, 0.001, 0.002]
     discount_factors = [0.90, 0.95, 0.99]
     batch_sizes = [1024, 2048, 4096]
     n_updates_per_iteration = [5, 10, 20]
@@ -57,7 +57,7 @@ def yield_ppo_hp_configuration():
         config['hyperparameters']['discount_factor'] = discount_factor
         config['hyperparameters']['n_updates_per_iteration'] = n
         config['hyperparameters']['clip'] = c
-        file_name = f"ppo_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor:.2f}_n_{n}_c_{c:.1f}.yaml"
+        file_name = f"ppo_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor:.2f}_nu_{n}_cl_{c:.1f}.yaml"
         yield config, file_name
 
 def yield_nn_configuration():
@@ -76,9 +76,8 @@ def yield_nn_configuration():
         for hidden_layer in itertools.product(hidden_layers, repeat=length):
             config = base_config.copy()
             config['network']['hidden_layers'] = list(hidden_layer)
-            file_name = '_'.join(f"nn_hidden_{x}" for x in hidden_layer) + ".yaml"
+            file_name = 'nn_' + '_'.join(map(str, hidden_layer)) + ".yaml"
             yield config, file_name
-
 
 def generate_hp_configurations(agent_type, output_dir=None):
     if output_dir is None:

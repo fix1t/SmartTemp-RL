@@ -4,7 +4,7 @@ import torch
 DQL_DEFAULT_CONFIG = {
     'network': {
         'seed': 42,
-        'hidden_layers': [64, 64],
+        'hidden_layers': [128, 32, 128],
         'activation': 'ReLU',
         'output_activation': 'Softmax'
     },
@@ -21,7 +21,7 @@ DQL_DEFAULT_CONFIG = {
 PPO_DEFAULT_CONFIG = {
     'network': {
         'seed': 42,
-        'hidden_layers': [64, 64],
+        'hidden_layers': [32, 128, 256],
         'activation': 'ReLU',
         'output_activation': 'Softmax'
     },

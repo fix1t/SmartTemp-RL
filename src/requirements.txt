@@ -14,3 +14,4 @@ tensorflow
 tensorflow-estimator
 Werkzeug
 zipp
+python-dotenv

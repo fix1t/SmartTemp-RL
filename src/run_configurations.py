@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 from algorithms.tools.logger import Logger
+from tools.config_generator import generate_nn_configurations
 from tools.config_generator import generate_hp_configurations
 from tools.config_loader import load_config
 from env.environment import TempRegulationEnv
@@ -96,11 +97,9 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
         print('--------------------------------')
 
-def generate_table(summary_path, output_folder, rpc):
-    data = glt.get_summary_data_from_file(summary_path)
+def generate_table(summary_path, output_folder, rpc, nn=False, isDql=True):
 
-    entries = glt.parse_configurations(data)
-    latex_table = glt.generate_latex_table(entries, rpc)
+    latex_table = glt.generate_latex_table(summary_path, nn, isDql, rpc)
 
     current_time = time.strftime('%Y-%m-%d_%H-%M-%S')
 
@@ -117,11 +116,15 @@ if __name__ == '__main__':
     parser.add_argument('--timesteps', required=False, default=4*24*360*20, type=int, help='Total timesteps to train the agent')
     parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
     parser.add_argument('--skip', required=False, default=0, type=int, help='Skip fir n configurations')
+    parser.add_argument('-nn', action='store_true', help='Flag to parse neural network configurations')
     args = parser.parse_args()
 
-    # generate_hp_configurations(args.agent, args.folder)
-    os.makedirs(args.output, exist_ok=True)
+    if args.nn:
+        generate_nn_configurations(args.folder)
+    else:
+        generate_hp_configurations(args.agent, args.folder)
 
+    os.makedirs(args.output, exist_ok=True)
     run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output, skip=args.skip)
 
     # Generate table
@@ -129,4 +132,4 @@ if __name__ == '__main__':
     table_output_folder = 'out/generated_configs/tables'
     os.makedirs(table_output_folder, exist_ok=True)
 
-    generate_table(f"{args.output}/{args.agent.lower()}/summary.txt", table_output_folder, rows_per_column)
+    generate_table(f"{args.output}/{args.agent.lower()}/summary.txt", table_output_folder, rows_per_column, args.nn, args.agent == 'DQL')
