@@ -28,7 +28,7 @@ def yield_dql_hp_configuration():
         config['hyperparameters']['discount_factor'] = discount_factor
         config['hyperparameters']['target_update_frequency'] = n
         config['hyperparameters']['interpolation_parameter'] = i
-        file_name = f"dql_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor:.2f}_n_{n}_i_{i:.3f}.yaml"
+        file_name = f"dql_lr_{lr:.4f}_bs_{batch_size}_df_{discount_factor:.2f}_nu_{n}_it_{i:.3f}.yaml"
         yield config, file_name
 
 def yield_ppo_hp_configuration():

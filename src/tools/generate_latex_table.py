@@ -5,17 +5,14 @@ import argparse
 # Function to parse configuration data
 def parse_hp_configurations(data, isDql=False):
     if isDql:
-        pattern = r"dql_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_in_(?P<it>\d+\.\d+)"
+        pattern = r"dql_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_it_(?P<it>\d+\.\d+)"
     else:
         pattern = r"ppo_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_cl_(?P<cl>\d+\.\d+)"
-
     scores_pattern = r"Average score of last 10: (?P<score>-?\d+\.\d+)"
     entries = []
     for line in data.split("\n"):
-        print(f"Line: {line}")
         config_match = re.search(pattern, line)
         score_match = re.search(scores_pattern, line)
-        print
         if config_match and score_match:
             lr = config_match.group('lr')
             bs = config_match.group('bs')
@@ -51,7 +48,6 @@ def parse_configurations(data, nn=False, isDql=False):
 def generate_latex_table(file, nn, isDql, rows_per_column=30, header=None):
     data = get_summary_data_from_file(file)
     entries = parse_configurations(data, nn, isDql)
-    print(f"Entries: {entries}")
 
     if nn:
         header = "Network Layers & Score"
@@ -77,7 +73,6 @@ def generate_latex_table(file, nn, isDql, rows_per_column=30, header=None):
         for j in range(num_columns):
             index = i + j * rows_per_column
             if index < len(entries):
-                print(f"Index: {index}")
                 if nn:
                     config, score = entries[index]
                     row_data.append(f"{config} & {score}")
