@@ -115,8 +115,8 @@ def activation_function(name):
     if name in activations:
         return activations[name]
     else:
-        print(f"Warning: Activation function '{name}' not recognized. Defaulting to ReLU.")
-        return torch.nn.ReLU()
+        log_progress(f"Warning: Activation function '{name}' not recognized. Defaulting to ReLU.")
+        return torch.nn.ReLU
 
 
 if __name__ == '__main__':
