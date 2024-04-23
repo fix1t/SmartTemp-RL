@@ -35,7 +35,7 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
     # Run each configuration
     try:
         total_files = len(files)
-        current_file = 1
+        current_file = 0
         for file in files:
 
             if file.endswith('.yaml'):
