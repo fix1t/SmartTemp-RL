@@ -129,13 +129,6 @@ class Agent():
         stability in learning by ensuring that the target values change slowly over time, reducing
         the risk of divergence.
 
-        Parameters:
-            local_model (PyTorch model): The local (policy) network, from which weights are copied.
-            target_model (PyTorch model): The target network, to which weights are updated.
-            interpolation_parameter (float): The interpolation parameter τ (tau), typically a small
-                                            value (e.g., 0.001), controlling the extent to which the
-                                            target network is updated.
-
         The update formula is as follows:
         θ_target = τ*θ_local + (1 - τ)*θ_target
         This formula is applied to each parameter of the target network, ensuring that the update

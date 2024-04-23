@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Dz_2yA55jdN7624_FX1W" name="Page-1">
-        <mxGraphModel dx="1059" dy="695" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1010" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -62,8 +62,8 @@
                 <mxCell id="88" value="Environment" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#BF0816;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=15;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.fleet_management;fontFamily=Georgia;" parent="1" vertex="1">
                     <mxGeometry x="322" y="260" width="166" height="166" as="geometry"/>
                 </mxCell>
-                <mxCell id="89" value="Agent" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#067F68;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=15;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.sagemaker_model;fontFamily=Georgia;" parent="1" vertex="1">
-                    <mxGeometry x="60" y="285.5" width="115" height="115" as="geometry"/>
+                <mxCell id="89" value="Agent" style="sketch=0;outlineConnect=0;fontColor=#ffffff;fillColor=#666666;strokeColor=#006EAF;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=15;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.sagemaker_model;fontFamily=Georgia;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="280.5" width="125" height="125" as="geometry"/>
                 </mxCell>
                 <mxCell id="188" value="singleton&lt;br&gt;config_mng" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=default;rounded=1;swimlaneLine=0;glass=0;shadow=0;arcSize=0;fontFamily=Georgia;opacity=0;" parent="1" vertex="1">
                     <mxGeometry x="409.99943127962086" y="40.0012244897959" width="100" height="150" as="geometry"/>
