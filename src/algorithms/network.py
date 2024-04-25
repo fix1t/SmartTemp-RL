@@ -1,3 +1,9 @@
+"""
+    File: network.py
+    Author: Gabriel Biel
+
+    Description: A customizable Feed Forward Neural Network.
+"""
 
 import torch
 from torch import nn

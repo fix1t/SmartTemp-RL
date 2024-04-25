@@ -1,3 +1,12 @@
+"""
+    File: ppo/agent.py
+    Author: Gabriel Biel
+
+    Description: This file contains the implementation of the PPO agent class. The agent
+    is responsible for training the actor and critic networks using the Proximal Policy
+    Optimization (PPO) algorithm.
+"""
+
 import numpy as np
 import torch
 import torch.nn as nn

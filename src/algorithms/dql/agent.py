@@ -1,3 +1,12 @@
+"""
+    File: agent.py
+    Author: Gabriel Biel
+
+    Description: This file contains the implementation of the Agent class, which represents
+    the agent that interacts with the environment and learns using the Deep Q-Learning (DQL)
+    algorithm.
+"""
+
 import random
 from time import sleep
 import numpy as np
@@ -26,7 +35,7 @@ class Agent():
 
         # Replay memory
         self.memory = ReplayMemory(self.replay_buffer_size)  # Replay memory to store experiences
-        self.t_step = 0  # Counter to track steps for updating
+        self.t_step = 1  # Counter to track steps for updating
 
     def init_hyperparameters(self, hyperparameters):
         self.learning_rate = hyperparameters.get('learning_rate', 5e-4)
@@ -35,7 +44,7 @@ class Agent():
         self.replay_buffer_size = hyperparameters.get('replay_buffer_size', int(1e5))
         self.interpolation_parameter = hyperparameters.get('interpolation_parameter', 1e-3)
         self.target_update_frequency = hyperparameters.get('target_update_frequency', 100)
-        self.local_update_frequency = hyperparameters.get('local_update_frequency', self.target_update_frequency//2)
+        self.local_update_frequency = hyperparameters.get('local_update_frequency', self.target_update_frequency//4)
 
     def step(self, state, action, reward, next_state, done):
         """

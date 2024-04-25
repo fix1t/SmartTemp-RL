@@ -1,3 +1,11 @@
+"""
+    File: logger.py
+    Author: Gabriel Biel
+
+    Description: Logger singleton class to log the progress of the training
+    and store the training information.
+"""
+
 import os
 import matplotlib.pyplot as plt
 import torch
@@ -39,7 +47,6 @@ class Logger():
 
     def store_loss(self, loss):
         # print(f'\rLoss: {loss:.5f}', end="")
-        # TODO?
         pass
 
     @staticmethod

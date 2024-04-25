@@ -1,3 +1,10 @@
+"""
+    File: memory.py
+    Author: Gabriel Biel
+
+    Description: ReplayMemory class to store the experiences of the agent.
+"""
+
 import torch
 import random
 from collections import deque
