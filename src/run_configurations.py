@@ -40,8 +40,7 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
             if file.endswith('.yaml'):
                 current_file += 1
-
-
+                # Skip first n configurations
                 if skip > 1:
                     print(f"Configuration {current_file} of {total_files}: {file} -- Skipped")
                     skip -= 1

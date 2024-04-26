@@ -1,5 +1,6 @@
 import yaml
 import torch
+import copy
 
 DQL_DEFAULT_CONFIG = {
     'network': {
@@ -58,7 +59,7 @@ def load_config(file_path, algorithm='DQL', silent=False):
         dict: Configuration dictionary with all necessary values set, using defaults where required.
     """
     log_progress('---------------CONFIG---------------', silent=silent)
-    config = DQL_DEFAULT_CONFIG.copy() if algorithm == 'DQL' else PPO_DEFAULT_CONFIG.copy()
+    config = copy.deepcopy(DQL_DEFAULT_CONFIG if algorithm == 'DQL' else PPO_DEFAULT_CONFIG)
 
     if file_path != '':
         load = True
