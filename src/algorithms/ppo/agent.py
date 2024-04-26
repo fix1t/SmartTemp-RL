@@ -32,9 +32,6 @@ class Agent:
         self.clip = hyperparameters.get('clip', 0.2)
         self.batch_size = hyperparameters.get('batch_size', 4800)
         self.n_updates_per_iteration = hyperparameters.get('n_updates_per_iteration', 5)
-        self.seed = hyperparameters.get('seed', None)
-        if self.seed:
-            torch.manual_seed(self.seed)
 
     # Initializes optimizers for both actor and critic networks
     def _init_optimizers(self):

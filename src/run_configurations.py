@@ -15,7 +15,8 @@ def save_agent_info(folder_path, agent, config, elapsed_time):
     Logger().plot_scores(f"{folder_path}")
     print('\n--------------------------------')
 
-def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL', output_folder='generated_configs/results', skip=0):
+def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL',
+                       output_folder='generated_configs/results', skip=0, seed=42):
     """
     Run all configurations in a folder.
     """
@@ -50,7 +51,7 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
                 env = TempRegulationEnv(
                     start_from_random_day=True,
-                    seed=int(42),
+                    seed=int(seed),
                     max_steps_per_episode=4*24*14,
                 )
                 Logger().reset()
@@ -116,15 +117,23 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
     parser.add_argument('--skip', required=False, default=0, type=int, help='Skip fir n configurations')
     parser.add_argument('-nn', action='store_true', help='Flag to parse neural network configurations')
+    parser.add_argument('-hp', action='store_true', help='Flag to parse hyperparameter configurations')
+    parser.add_argument('--seed', required=False, default=42, type=int, help='Seed for the environment')
     args = parser.parse_args()
 
-    if args.nn:
+    if args.nn and args.hp:
+        print("Error: Cannot parse neural network and hyperparameter configurations at the same time.")
+        exit(1)
+    elif args.nn:
         generate_nn_configurations(args.folder)
-    else:
+    elif args.hp:
         generate_hp_configurations(args.agent, args.folder)
 
     os.makedirs(args.output, exist_ok=True)
-    run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output, skip=args.skip)
+
+    # Run configurations from folder
+    run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output,
+                       skip=args.skip, seed=args.seed)
 
     # Generate table
     rows_per_column = 50
