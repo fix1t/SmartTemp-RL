@@ -1,76 +1,83 @@
 # SmartTemp-RL
 
-## Run simulation
+## Overview
 
-creating python virtual environment and installing required dependencies:
+SmartTemp-RL is a research project focused on applying deep reinforcement learning algorithms to optimize temperature control systems. The project utilizes two main RL algorithms: Deep Q-Learning (DQL) and Proximal Policy Optimization (PPO). This README provides instructions on how to set up the environment, run training sessions, test models, and evaluate different configurations as discussed in the thesis.
+
+## Repository Structure
+
+- **src/**: Contains all the source code for the SmartTemp-RL project.
+- **doc/**: Contains diagrams of different moduls.
+- **results/**: Contains data from configurations testing and final evaluation of algorithms.
+
+## Getting Started
+
+### Prerequisites
+
+Before running the scripts, ensure that you have Python and Make installed on your system. The project's dependencies are managed using a virtual environment.
+
+### Setup
+
+Navigate to the source code directory:
+
 ```shell
-cd src && make install
+cd src
 ```
 
-run agent training:
+Create a Python virtual environment and install the required dependencies:
+
 ```shell
-cd src && make run
+make install
 ```
 
-## Architecture overview
-1. **Temperature Update Rule**:
-   The temperature in the room approaches the outside temperature over time, influenced by the insulation quality.
+To activate the environment for running scripts directly run command:
 
-2. **Actions**:
-   - **Heating/Cooling Meter**: Variable for each that represents the current power level of the heating and cooling system.
-   - **Action Dynamics**:
-   - Pressing the heating button increases the **heating meter** by a certain amount each minute until a maximum value is reached.
-   - Releasing the heating button decreases the heating meter gradually, representing the system cooling down.
-   - Similarly, pressing the cooling button increases the **cooling meter**, and releasing it causes the meter to decrease over time.
-
-- **Temperature Adjustment**:
-  - The rate of temperature change is proportional to the heating or cooling meter value.
-  - This change is applied to the current temperature each minute, considering insulation and outside temperature.
-
-3. **Delay in Action Effects**:
-   There's a lag between the action (pressing a lever) and the effect on temperature due to the time it takes for the HVAC system to heat up/cool down.
-
-4. **Step Timing**:
-   Each step in the simulation represents **one minute** of real-time.
-
-5. **Goal**:
-   Maintain the temperature as close to the user-preferred temperature (`user_preference`) as possible.
-
-6. **Temperature Dynamics**:
-   A simple formula for the temperature change:
-
-   ```python
-   current_temperature += (outside_temperature - current_temperature) * insulation_factor * time_factor
-   ```
-
-   where `insulation_factor` is a measure of how well insulated the room is and `time_factor` dilutes the outside temperature's influence to represent a minute-by-minute simulation.
-
-7. **Heating/Cooling Effects**:
-   Apply a predefined amount of temperature change when heating or cooling is turned on, with a delay factor to simulate system response time.
-
-## Daily Schedule and Random Events
-
-### Weekly Schedule
-The simulation incorporates a detailed weekly schedule for each family member (father, mother, child), including their daily routines from Monday to Sunday. This schedule includes specific leave and return times on weekdays, with a variance to account for unpredictability in their routine. On weekends, it is assumed they are at home.
-
-```python
-{
-    "weekly_schedule": {
-        "Monday": {
-            "father": {"leave": "08:00", "return": "18:00", "variance": 60},
-            ... # Rest of the people.
-        },
-        # Rest of the week.
-    },
-    "random_event_chance": 0.05,       # 5% chance someone stays home or has an irregular schedule
-    "random_event_max_duration": 180,  # Implies only to early/late leave/arrival
-    "random_event": {
-        "sick-day": 0.05,              # 5% chance someone stays home sick
-        "vacation": 0.05,              # 5% chance someone stays home on vacation
-        ... # Others..
-    }
-}
+```shell
+source venv/bin/activate
 ```
 
-### Random Events
-The simulation also includes a probability model for random events that can affect the daily routine of the family members. These events include sick days, vacation days, early or late returns, early or late departures, out-of-town trips, and holidays. Each event has a specified probability and a maximum duration, adding an element of unpredictability and realism to the simulation.
+### Running the Algorithms
+
+To train the models using the default configurations for DQL and PPO, use the following commands:
+
+```shell
+make dql
+make ppo
+```
+
+To test the latest learned models:
+
+```shell
+make dql-test
+make ppo-test
+```
+
+### Parameter Tuning
+
+Run all the configurations used in the Parameter Tuning section of the thesis:
+
+```shell
+make run-configurations-dql # For Hyperparameter combinations
+make run-configurations-ppo
+
+make run-configurations-nn-dql # For Neural Network architecture combinations
+make run-configurations-nn-ppo
+
+make run-configurations-top-dql # Run combinations of best performing
+make run-configurations-top-ppo # configurations (Hyperparameters + NN)
+```
+
+### Final Evaluation
+
+To run the final evaluation script for the DQL algorithm:
+
+```shell
+make final-evaluation-dql
+make final-evaluation-ppo
+```
+
+## Additional Information
+
+The Makefile automates the setup, training, testing, and evaluation processes, ensuring that the project can be run with minimal manual setup. For more detailed information on the specific parameters and configurations, please refer to the thesis document or the source code comments.
+
+For usage of a specific script run `python3 <path-to-script> --help`
