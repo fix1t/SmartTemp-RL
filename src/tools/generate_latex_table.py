@@ -2,61 +2,71 @@ import re
 import os
 import argparse
 
-# Function to parse configuration data
-def parse_hp_configurations(data, isDql=False):
-    if isDql:
-        pattern = r"dql_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_it_(?P<it>\d+\.\d+)"
-    else:
-        pattern = r"ppo_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_cl_(?P<cl>\d+\.\d+)"
-    scores_pattern = r"Average score of last 10: (?P<score>-?\d+\.\d+)"
+# # Function to parse configuration data
+# def parse_hp_configurations(data, isDql=False):
+#     if isDql:
+#         pattern = r"(?P<x1>\)(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_it_(?P<it>\d+\.\d+)"
+#     else:
+#         pattern = r"ppo_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_cl_(?P<cl>\d+\.\d+)"
+#     scores_pattern = r"Average score of last 10: (?P<score>-?\d+\.\d+)"
+#     entries = []
+#     for line in data.split("\n"):
+#         config_match = re.search(pattern, line)
+#         score_match = re.search(scores_pattern, line)
+#         if config_match and score_match:
+#             lr = config_match.group('lr')
+#             bs = config_match.group('bs')
+#             df = config_match.group('df')
+#             nu = config_match.group('nu')
+#             score = score_match.group('score')
+#             if isDql:
+#                 it = config_match.group('it')
+#                 entries.append((lr, bs, df, nu, it, score))
+#             else:
+#                 cl = config_match.group('cl')
+#                 entries.append((lr, bs, df, nu, cl, score))
+#     return entries
+
+# # Function to parse neural network configuration data
+# def parse_nn_configurations(data):
+#     pattern = r"Configuration: nn_(\d+(?:_\d+)*)\.yaml, Average score of last 10: (-?\d+\.\d+)"
+#     entries = []
+#     for line in data.split("\n"):
+#         match = re.search(pattern, line)
+#         if match:
+#             config = match.group(1).replace('_', ':')
+#             score = match.group(2)
+#             entries.append((config, score))
+#     return entries
+
+# def parse_configurations(data, nn=False, isDql=False):
+#     if nn:
+#         return parse_nn_configurations(data)
+#     return parse_hp_configurations(data, isDql)
+
+def parse_configurations(data):
+    # Updated pattern to include list values in brackets
+    pattern = r"(\w+):([\d\.]+|\[[\d\.,\s]+\])"
     entries = []
-    for line in data.split("\n"):
-        config_match = re.search(pattern, line)
-        score_match = re.search(scores_pattern, line)
-        if config_match and score_match:
-            lr = config_match.group('lr')
-            bs = config_match.group('bs')
-            df = config_match.group('df')
-            nu = config_match.group('nu')
-            score = score_match.group('score')
-            if isDql:
-                it = config_match.group('it')
-                entries.append((lr, bs, df, nu, it, score))
-            else:
-                cl = config_match.group('cl')
-                entries.append((lr, bs, df, nu, cl, score))
+    for line in data.replace('+', ' ').split("\n"):
+        matches = re.findall(pattern, line)
+        if matches:
+            entry = {key: parse_value(value) for key, value in matches}
+            entries.append(entry)
     return entries
 
-# Function to parse neural network configuration data
-def parse_nn_configurations(data):
-    pattern = r"Configuration: nn_(\d+(?:_\d+)*)\.yaml, Average score of last 10: (-?\d+\.\d+)"
-    entries = []
-    for line in data.split("\n"):
-        match = re.search(pattern, line)
-        if match:
-            config = match.group(1).replace('_', ':')
-            score = match.group(2)
-            entries.append((config, score))
-    return entries
-
-def parse_configurations(data, nn=False, isDql=False):
-    if nn:
-        return parse_nn_configurations(data)
-    return parse_hp_configurations(data, isDql)
+def parse_value(value):
+    # Helper function to parse values into float or list of floats
+    if value.startswith('[') and value.endswith(']'):
+        return [float(x.strip()) for x in value[1:-1].split(',')]
+    return float(value)
 
 # Function to generate LaTeX table with wrapped columns
 def generate_latex_table(file, nn, isDql, rows_per_column=30, header=None):
-    data = get_summary_data_from_file(file)
-    entries = parse_configurations(data, nn, isDql)
+    data = get_summary_data_from_file(args.file)
+    entries = parse_configurations(data)
 
-    if nn:
-        header = "Network Layers & Score"
-        # column_format = "|c|c"
-    else:
-        if isDql:
-            header = "Learning Rate & Batch Size & Discount Factor & N Updates & Iterations & Score"
-        else:
-            header = "Learning Rate & Batch Size & Discount Factor & N Updates & Clip & Score"
+    header = header if header else " & ".join(entries[0].keys())
 
     number_of_columns = header.count('&') + 1
     column_format = "|c" * number_of_columns
@@ -73,15 +83,7 @@ def generate_latex_table(file, nn, isDql, rows_per_column=30, header=None):
         for j in range(num_columns):
             index = i + j * rows_per_column
             if index < len(entries):
-                if nn:
-                    config, score = entries[index]
-                    row_data.append(f"{config} & {score}")
-                else:
-                    row = ""
-                    for item in entries[index]:
-                        # item & item & item
-                        row += item + " & " if item != entries[index][-1] else item
-                    row_data.append(row)
+                row_data.append(" & ".join(str(value) for value in entries[index].values()))
             else:
                 num_empty = 2 if nn else 4  # Number of columns in each configuration
                 row_data.append(" & ".join([""] * num_empty))  # Empty cell for alignment
@@ -111,12 +113,43 @@ if __name__ == "__main__":
     arg_parser.add_argument('-nn', action='store_true', help='Flag to parse neural network configurations')
     args = arg_parser.parse_args()
 
-    data = get_summary_data_from_file(args.file)
-
     os.makedirs(args.output_folder, exist_ok=True)
 
-    latex_table = generate_latex_table(data, args.nn, args.rpc)
+    latex_table = generate_latex_table(args.file, args.nn, args.rpc)
     with open(f"{args.output_folder}/table.tex", "w") as f:
         f.write(latex_table)
 
     print(f"LaTeX table generated at {args.output_folder}/table.tex")
+# Example data string with multiple lines and varying numbers of name-value pairs
+# import re
+
+# def parse_dynamic_configurations(data):
+#     # Updated pattern to include list values in brackets
+#     pattern = r"(\w+):([\d\.]+|\[[\d\.,\s]+\])"
+#     entries = []
+#     for line in data.replace('+', ' ').split("\n"):
+#         matches = re.findall(pattern, line)
+#         if matches:
+#             entry = {key: parse_value(value) for key, value in matches}
+#             entries.append(entry)
+#     return entries
+
+# def parse_value(value):
+#     # Helper function to parse values into float or list of floats
+#     if value.startswith('[') and value.endswith(']'):
+#         return [float(x.strip()) for x in value[1:-1].split(',')]
+#     return float(value)
+
+# # Example data string with lines having both scalar and list values
+# data = """
+# lr:0.01+bs:32+df:0.99+nu:5+cl:[10.2, 123.5]
+# lr:0.02+bs:64+df:0.95+nu:3+it:7.5
+# lr:0.03+bs:48+df:0.98+nu:4+cl:1]
+# """
+
+# # Using the function to parse the provided example data
+# parsed_data = parse_dynamic_configurations(data)
+
+# # Printing the results
+# for config in parsed_data:
+#     print(config)
