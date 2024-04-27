@@ -62,6 +62,47 @@ dql_top_parameters = {
     ]
 }
 
+ppo_top_parameters = {
+    "hidden_layers": [[32,128,256],[128,32,256],[256,128,128],[128,256,64],[128,256,128]],
+    "hyperparametrs": [
+        {
+        "learning_rate": 0.0005,
+        "discount_factor": 0.95,
+        "batch_size": 4096,
+        "n_updates_per_iteration": 20,
+        "clip": 0.3,
+    },
+        {
+        "learning_rate": 0.0015,
+        "discount_factor": 0.95,
+        "batch_size": 4096,
+        "n_updates_per_iteration": 10,
+        "clip": 0.2,
+    },
+        {
+        "learning_rate": 0.0005,
+        "discount_factor": 0.95,
+        "batch_size": 1024,
+        "n_updates_per_iteration": 10,
+        "clip": 0.3,
+    },
+        {
+        "learning_rate": 0.0015,
+        "discount_factor": 0.95,
+        "batch_size": 1024,
+        "n_updates_per_iteration": 10,
+        "clip": 0.3,
+    },
+        {
+        "learning_rate": 0.0005,
+        "discount_factor": 0.90,
+        "batch_size": 4096,
+        "n_updates_per_iteration": 20,
+        "clip": 0.3,
+    }
+    ]
+}
+
 def initialize_sections_from_structure(config_structure):
     """Initialize configuration base with sections from the config structure."""
     return {section: {} for section in set(config_structure.values())}
@@ -146,7 +187,7 @@ def generate_hp_configurations(agent_type, output_dir=None, top=False):
         output_dir = f"out/generated_configs/{agent_type.lower()}"
 
     if top:
-        parameters = dql_top_parameters if agent_type == "DQL" else None
+        parameters = dql_top_parameters if agent_type == "DQL" else ppo_top_parameters if agent_type == "PPO" else None
     else:
         parameters = dql_parameters if agent_type == "DQL" else ppo_parameters if agent_type == "PPO" else None
 
@@ -176,6 +217,6 @@ def generate_nn_configurations(output_dir=None):
         print(f"Generated configuration {index} for NN to {filen_name}")
 
 if __name__ == "__main__":
-    generate_hp_configurations("DQL", top=False)
-    generate_hp_configurations("PPO")
-    generate_nn_configurations()
+    # generate_hp_configurations("DQL", top=False)
+    generate_hp_configurations("PPO", top=True)
+    # generate_nn_configurations()

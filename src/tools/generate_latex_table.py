@@ -73,7 +73,9 @@ def parse_value(value):
 def generate_latex_table(file, nn, rows_per_column=30, header=None):
     data = get_summary_data_from_file(file)
     entries = parse_configurations(data)
-
+    if not entries:
+        print(f"No configurations found in {file}")
+        exit(1)
     header = header if header else " & ".join(entries[0].keys())
 
     number_of_columns = header.count('&') + 1
@@ -128,52 +130,3 @@ if __name__ == "__main__":
         f.write(latex_table)
 
     print(f"LaTeX table generated at {args.output_folder}/table.tex")
-# Example data string with multiple lines and varying numbers of name-value pairs
-# import re
-
-# def parse_dynamic_configurations(data):
-#     # Updated pattern to include list values in brackets
-#     pattern = r"(\w+):([\d\.]+|\[[\d\.,\s]+\])"
-#     entries = []
-#     for line in data.replace('+', ' ').split("\n"):
-#         matches = re.findall(pattern, line)
-#         if matches:
-#             entry = {key: parse_value(value) for key, value in matches}
-#             entries.append(entry)
-#     return entries
-
-# def parse_value(value):
-#     # Helper function to parse values into float or list of floats
-#     if value.startswith('[') and value.endswith(']'):
-#         return [float(x.strip()) for x in value[1:-1].split(',')]
-#     return float(value)
-
-# # Example data string with lines having both scalar and list values
-# data = """
-# lr:0.01+bs:32+df:0.99+nu:5+cl:[10.2, 123.5]
-# lr:0.02+bs:64+df:0.95+nu:3+it:7.5
-# lr:0.03+bs:48+df:0.98+nu:4+cl:1]
-# """
-
-# # Using the function to parse the provided example data
-# parsed_data = parse_dynamic_configurations(data)
-
-# # Printing the results
-# for config in parsed_data:
-#     print(config)
-
-
-
-
-data2 ="""
-Summary:
-Total time: 48 hours, 6 minutes, 48.79 seconds
-Total configurations run 141 of 162
-
-Configurations results from best to worst:
-1. Configuration: dql_lr_0.0015_bs_128_df_0.99_nu_20_it_0.025.yaml, Average score of last 10: 93.82
-2. Configuration: dql_lr_0.0005_bs_128_df_0.95_nu_20_it_0.025.yaml, Average score of last 10: -104.28
-3. Configuration: dql_lr_0.0005_bs_96_df_0.95_nu_10_it_0.001.yaml, Average score of last 10: -209.94
-4. Configuration: dql_lr_0.0005_bs_96_df_0.90_nu_5_it_0.005.yaml, Average score of last 10: -233.19
-5. Configuration: dql_lr_0.0005_bs_128_df_0.95_nu_10_it_0.005.yaml, Average score of last 10: -420.48
-"""
