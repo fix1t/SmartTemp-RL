@@ -1,28 +1,167 @@
 Summary:
-Total time: 9 hours, 58 minutes, 25.61 seconds
-Total configurations run 23 of 162
+Total time: 2 days, 10:05:14.400000
+Total configurations run 162 of 162
 
 Configurations results from best to worst:
-1. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_20_it_0.005.yaml, Average score of last 10: -1846.45
-2. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_20_it_0.025.yaml, Average score of last 10: -5879.49
-3. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_5_it_0.001.yaml, Average score of last 10: -6137.25
-4. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_5_it_0.001.yaml, Average score of last 10: -6137.25
-5. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_5_it_0.025.yaml, Average score of last 10: -6137.25
-6. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_10_it_0.001.yaml, Average score of last 10: -9844.50
-7. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_20_it_0.025.yaml, Average score of last 10: -9844.50
-8. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_5_it_0.005.yaml, Average score of last 10: -9844.50
-9. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_5_it_0.025.yaml, Average score of last 10: -9844.50
-10. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_20_it_0.005.yaml, Average score of last 10: -9844.50
-11. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_20_it_0.001.yaml, Average score of last 10: -10732.43
-12. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_20_it_0.005.yaml, Average score of last 10: -11284.49
-13. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_5_it_0.001.yaml, Average score of last 10: -11284.49
-14. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_5_it_0.025.yaml, Average score of last 10: -11284.49
-15. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_10_it_0.025.yaml, Average score of last 10: -11284.49
-16. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_20_it_0.001.yaml, Average score of last 10: -11284.49
-17. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_10_it_0.005.yaml, Average score of last 10: -11284.49
-18. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_10_it_0.025.yaml, Average score of last 10: -11284.49
-19. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_20_it_0.025.yaml, Average score of last 10: -11324.42
-20. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_5_it_0.005.yaml, Average score of last 10: -11324.42
-21. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_10_it_0.001.yaml, Average score of last 10: -11324.42
-22. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_5_it_0.005.yaml, Average score of last 10: -11324.42
-23. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_10_it_0.005.yaml, Average score of last 10: -11328.69
+1. Configuration: lr:0.0015+bs:128+df:0.99+freq:20+int:0.025+score:93.82
+2. Configuration: lr:0.0005+bs:128+df:0.95+freq:20+int:0.025+score:-104.28
+3. Configuration: lr:0.0005+bs:96+df:0.95+freq:10+int:0.001+score:-209.94
+4. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.005+score:-233.19
+5. Configuration: lr:0.0005+bs:128+df:0.95+freq:10+int:0.005+score:-420.48
+6. Configuration: lr:0.0005+bs:64+df:0.95+freq:20+int:0.005+score:-444.62
+7. Configuration: lr:0.0005+bs:128+df:0.95+freq:10+int:0.001+score:-556.39
+8. Configuration: lr:0.0005+bs:128+df:0.99+freq:10+int:0.025+score:-561.41
+9. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.005+score:-844.20
+10. Configuration: lr:0.0005+bs:128+df:0.90+freq:20+int:0.005+score:-875.26
+11. Configuration: lr:0.0005+bs:128+df:0.99+freq:20+int:0.025+score:-940.67
+12. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.005+score:-1056.03
+13. Configuration: lr:0.0005+bs:96+df:0.95+freq:10+int:0.025+score:-1143.06
+14. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.025+score:-1224.92
+15. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.025+score:-1237.49
+16. Configuration: lr:0.0005+bs:128+df:0.90+freq:10+int:0.001+score:-1263.50
+17. Configuration: lr:0.0005+bs:64+df:0.90+freq:20+int:0.005+score:-1268.41
+18. Configuration: lr:0.0005+bs:96+df:0.95+freq:20+int:0.005+score:-1402.07
+19. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.025+score:-1413.01
+20. Configuration: lr:0.0005+bs:96+df:0.99+freq:20+int:0.001+score:-1483.45
+21. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.025+score:-1545.55
+22. Configuration: lr:0.0015+bs:128+df:0.95+freq:20+int:0.005+score:-1576.91
+23. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.005+score:-1580.62
+24. Configuration: lr:0.0005+bs:128+df:0.95+freq:20+int:0.005+score:-1621.71
+25. Configuration: lr:0.0005+bs:96+df:0.90+freq:20+int:0.025+score:-1640.16
+26. Configuration: lr:0.0005+bs:96+df:0.95+freq:10+int:0.005+score:-1654.38
+27. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.001+score:-1654.77
+28. Configuration: lr:0.0005+bs:128+df:0.90+freq:10+int:0.005+score:-1677.54
+29. Configuration: lr:0.0005+bs:64+df:0.95+freq:20+int:0.001+score:-1741.66
+30. Configuration: lr:0.0015+bs:96+df:0.95+freq:20+int:0.005+score:-1846.45
+31. Configuration: lr:0.0015+bs:64+df:0.99+freq:20+int:0.025+score:-1873.08
+32. Configuration: lr:0.0015+bs:128+df:0.95+freq:20+int:0.001+score:-1910.75
+33. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.025+score:-1932.62
+34. Configuration: lr:0.0005+bs:64+df:0.99+freq:10+int:0.025+score:-2117.35
+35. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.025+score:-2126.16
+36. Configuration: lr:0.0005+bs:64+df:0.90+freq:20+int:0.001+score:-2188.23
+37. Configuration: lr:0.0005+bs:64+df:0.99+freq:20+int:0.001+score:-2213.71
+38. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.025+score:-2240.35
+39. Configuration: lr:0.0005+bs:96+df:0.90+freq:20+int:0.001+score:-2242.89
+40. Configuration: lr:0.0005+bs:96+df:0.90+freq:10+int:0.001+score:-2245.16
+41. Configuration: lr:0.0015+bs:64+df:0.99+freq:20+int:0.001+score:-2247.17
+42. Configuration: lr:0.0005+bs:128+df:0.90+freq:20+int:0.001+score:-2314.06
+43. Configuration: lr:0.0005+bs:64+df:0.90+freq:10+int:0.001+score:-2323.90
+44. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.001+score:-2439.78
+45. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.005+score:-2440.75
+46. Configuration: lr:0.0015+bs:64+df:0.90+freq:20+int:0.001+score:-2471.76
+47. Configuration: lr:0.0015+bs:128+df:0.95+freq:20+int:0.025+score:-2487.84
+48. Configuration: lr:0.0005+bs:96+df:0.99+freq:20+int:0.005+score:-2487.88
+49. Configuration: lr:0.0005+bs:64+df:0.95+freq:10+int:0.001+score:-2515.90
+50. Configuration: lr:0.0015+bs:64+df:0.90+freq:20+int:0.005+score:-2529.08
+51. Configuration: lr:0.0005+bs:64+df:0.99+freq:10+int:0.005+score:-2616.63
+52. Configuration: lr:0.0005+bs:128+df:0.99+freq:20+int:0.005+score:-2689.49
+53. Configuration: lr:0.0005+bs:96+df:0.99+freq:10+int:0.001+score:-2737.68
+54. Configuration: lr:0.0005+bs:64+df:0.90+freq:10+int:0.025+score:-2774.08
+55. Configuration: lr:0.0005+bs:96+df:0.90+freq:10+int:0.005+score:-2808.52
+56. Configuration: lr:0.0005+bs:96+df:0.95+freq:20+int:0.025+score:-2822.59
+57. Configuration: lr:0.0005+bs:128+df:0.99+freq:10+int:0.001+score:-2863.70
+58. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.005+score:-2928.68
+59. Configuration: lr:0.0005+bs:64+df:0.95+freq:10+int:0.025+score:-2973.73
+60. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.001+score:-3043.41
+61. Configuration: lr:0.0005+bs:96+df:0.99+freq:10+int:0.025+score:-3072.05
+62. Configuration: lr:0.0005+bs:96+df:0.95+freq:20+int:0.001+score:-3074.36
+63. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.001+score:-3142.88
+64. Configuration: lr:0.0005+bs:128+df:0.95+freq:20+int:0.001+score:-3340.80
+65. Configuration: lr:0.0005+bs:96+df:0.99+freq:20+int:0.025+score:-3764.18
+66. Configuration: lr:0.0005+bs:64+df:0.99+freq:10+int:0.001+score:-3831.07
+67. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.005+score:-3839.77
+68. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.001+score:-3924.94
+69. Configuration: lr:0.0005+bs:64+df:0.95+freq:20+int:0.025+score:-3991.99
+70. Configuration: lr:0.0005+bs:64+df:0.90+freq:20+int:0.025+score:-4195.46
+71. Configuration: lr:0.0005+bs:64+df:0.90+freq:10+int:0.005+score:-4375.59
+72. Configuration: lr:0.0005+bs:96+df:0.90+freq:10+int:0.025+score:-4480.21
+73. Configuration: lr:0.0005+bs:64+df:0.99+freq:20+int:0.025+score:-4694.18
+74. Configuration: lr:0.0015+bs:128+df:0.90+freq:20+int:0.005+score:-4841.76
+75. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.001+score:-4847.50
+76. Configuration: lr:0.0005+bs:128+df:0.99+freq:20+int:0.001+score:-4898.58
+77. Configuration: lr:0.0005+bs:128+df:0.90+freq:10+int:0.025+score:-4947.40
+78. Configuration: lr:0.0005+bs:64+df:0.95+freq:10+int:0.005+score:-5022.15
+79. Configuration: lr:0.0015+bs:64+df:0.95+freq:20+int:0.005+score:-5413.66
+80. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.005+score:-5442.81
+81. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.001+score:-5638.40
+82. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.005+score:-5741.27
+83. Configuration: lr:0.0005+bs:128+df:0.99+freq:10+int:0.005+score:-5743.45
+84. Configuration: lr:0.0005+bs:64+df:0.99+freq:20+int:0.005+score:-5770.53
+85. Configuration: lr:0.0005+bs:128+df:0.90+freq:20+int:0.025+score:-5866.66
+86. Configuration: lr:0.0015+bs:96+df:0.99+freq:20+int:0.025+score:-5879.49
+87. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.025+score:-6032.73
+88. Configuration: lr:0.0015+bs:64+df:0.99+freq:10+int:0.001+score:-6109.74
+89. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.001+score:-6137.25
+90. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.001+score:-6137.25
+91. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.025+score:-6137.25
+92. Configuration: lr:0.0015+bs:96+df:0.90+freq:10+int:0.005+score:-6137.25
+93. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.005+score:-6149.05
+94. Configuration: lr:0.0015+bs:128+df:0.99+freq:10+int:0.001+score:-6149.05
+95. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.001+score:-6410.70
+96. Configuration: lr:0.0005+bs:96+df:0.90+freq:20+int:0.005+score:-6590.53
+97. Configuration: lr:0.0015+bs:128+df:0.90+freq:10+int:0.005+score:-7996.06
+98. Configuration: lr:0.0005+bs:128+df:0.95+freq:10+int:0.025+score:-8712.33
+99. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.025+score:-9453.63
+100. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.001+score:-9680.17
+101. Configuration: lr:0.0015+bs:64+df:0.90+freq:10+int:0.005+score:-9680.17
+102. Configuration: lr:0.0015+bs:64+df:0.90+freq:10+int:0.025+score:-9680.17
+103. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.025+score:-9680.17
+104. Configuration: lr:0.0015+bs:64+df:0.95+freq:20+int:0.025+score:-9680.17
+105. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.005+score:-9680.17
+106. Configuration: lr:0.0015+bs:64+df:0.99+freq:20+int:0.005+score:-9680.17
+107. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.005+score:-9680.17
+108. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.005+score:-9836.52
+109. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.025+score:-9836.52
+110. Configuration: lr:0.0015+bs:128+df:0.99+freq:10+int:0.025+score:-9836.52
+111. Configuration: lr:0.0015+bs:128+df:0.99+freq:20+int:0.005+score:-9836.52
+112. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.025+score:-9836.52
+113. Configuration: lr:0.0015+bs:96+df:0.95+freq:10+int:0.001+score:-9844.50
+114. Configuration: lr:0.0015+bs:96+df:0.95+freq:20+int:0.025+score:-9844.50
+115. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.005+score:-9844.50
+116. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.025+score:-9844.50
+117. Configuration: lr:0.0015+bs:96+df:0.99+freq:20+int:0.005+score:-9844.50
+118. Configuration: lr:0.0005+bs:96+df:0.99+freq:10+int:0.005+score:-9844.50
+119. Configuration: lr:0.0015+bs:96+df:0.99+freq:20+int:0.001+score:-10732.43
+120. Configuration: lr:0.0015+bs:64+df:0.90+freq:10+int:0.001+score:-11270.13
+// 121. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.005+score:-11270.13
+// 122. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.001+score:-11270.13
+// 123. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.025+score:-11270.13
+// 124. Configuration: lr:0.0015+bs:64+df:0.99+freq:10+int:0.005+score:-11270.13
+// 125. Configuration: lr:0.0015+bs:64+df:0.99+freq:10+int:0.025+score:-11270.13
+// 126. Configuration: lr:0.0015+bs:128+df:0.90+freq:10+int:0.001+score:-11277.23
+// 127. Configuration: lr:0.0015+bs:128+df:0.90+freq:10+int:0.025+score:-11277.23
+// 128. Configuration: lr:0.0015+bs:128+df:0.90+freq:20+int:0.025+score:-11277.23
+// 129. Configuration: lr:0.0015+bs:128+df:0.95+freq:10+int:0.005+score:-11277.23
+// 130. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.001+score:-11277.23
+// 131. Configuration: lr:0.0015+bs:128+df:0.99+freq:20+int:0.001+score:-11277.23
+// 132. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.001+score:-11277.23
+// 133. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.005+score:-11284.49
+// 134. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.001+score:-11284.49
+// 135. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.025+score:-11284.49
+// 136. Configuration: lr:0.0015+bs:96+df:0.95+freq:10+int:0.025+score:-11284.49
+// 137. Configuration: lr:0.0015+bs:96+df:0.95+freq:20+int:0.001+score:-11284.49
+// 138. Configuration: lr:0.0015+bs:96+df:0.99+freq:10+int:0.005+score:-11284.49
+// 139. Configuration: lr:0.0015+bs:96+df:0.99+freq:10+int:0.025+score:-11284.49
+// 140. Configuration: lr:0.0015+bs:96+df:0.90+freq:10+int:0.025+score:-11284.49
+// 141. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.001+score:-11284.49
+// 142. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.005+score:-11284.49
+// 143. Configuration: lr:0.0015+bs:64+df:0.90+freq:20+int:0.025+score:-11314.70
+// 144. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.001+score:-11314.70
+// 145. Configuration: lr:0.0015+bs:64+df:0.95+freq:10+int:0.025+score:-11314.70
+// 146. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.025+score:-11317.02
+// 147. Configuration: lr:0.0015+bs:128+df:0.90+freq:20+int:0.001+score:-11317.02
+// 148. Configuration: lr:0.0015+bs:128+df:0.95+freq:10+int:0.025+score:-11317.02
+// 149. Configuration: lr:0.0015+bs:128+df:0.99+freq:10+int:0.005+score:-11317.02
+// 150. Configuration: lr:0.0015+bs:64+df:0.95+freq:10+int:0.001+score:-11320.28
+// 151. Configuration: lr:0.0015+bs:64+df:0.95+freq:10+int:0.005+score:-11320.28
+// 152. Configuration: lr:0.0015+bs:64+df:0.95+freq:20+int:0.001+score:-11320.28
+// 153. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.001+score:-11320.28
+// 154. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.025+score:-11320.28
+// 155. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.001+score:-11321.65
+// 156. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.025+score:-11321.65
+// 157. Configuration: lr:0.0015+bs:128+df:0.95+freq:10+int:0.001+score:-11321.65
+// 158. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.025+score:-11324.42
+// 159. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.005+score:-11324.42
+// 160. Configuration: lr:0.0015+bs:96+df:0.99+freq:10+int:0.001+score:-11324.42
+// 161. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.005+score:-11324.42
+// 162. Configuration: lr:0.0015+bs:96+df:0.95+freq:10+int:0.005+score:-11328.69
