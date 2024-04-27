@@ -2,49 +2,6 @@ import re
 import os
 import argparse
 
-# # Function to parse configuration data
-# def parse_hp_configurations(data, isDql=False):
-#     if isDql:
-#         pattern = r"(?P<x1>\)(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_it_(?P<it>\d+\.\d+)"
-#     else:
-#         pattern = r"ppo_lr_(?P<lr>\d+\.\d+)_bs_(?P<bs>\d+)_df_(?P<df>\d+\.\d+)_nu_(?P<nu>\d+)_cl_(?P<cl>\d+\.\d+)"
-#     scores_pattern = r"Average score of last 10: (?P<score>-?\d+\.\d+)"
-#     entries = []
-#     for line in data.split("\n"):
-#         config_match = re.search(pattern, line)
-#         score_match = re.search(scores_pattern, line)
-#         if config_match and score_match:
-#             lr = config_match.group('lr')
-#             bs = config_match.group('bs')
-#             df = config_match.group('df')
-#             nu = config_match.group('nu')
-#             score = score_match.group('score')
-#             if isDql:
-#                 it = config_match.group('it')
-#                 entries.append((lr, bs, df, nu, it, score))
-#             else:
-#                 cl = config_match.group('cl')
-#                 entries.append((lr, bs, df, nu, cl, score))
-#     return entries
-
-# # Function to parse neural network configuration data
-# def parse_nn_configurations(data):
-#     pattern = r"Configuration: nn_(\d+(?:_\d+)*)\.yaml, Average score of last 10: (-?\d+\.\d+)"
-#     entries = []
-#     for line in data.split("\n"):
-#         match = re.search(pattern, line)
-#         if match:
-#             config = match.group(1).replace('_', ':')
-#             score = match.group(2)
-#             entries.append((config, score))
-#     return entries
-
-# def parse_configurations(data, nn=False, isDql=False):
-#     if nn:
-#         return parse_nn_configurations(data)
-#     return parse_hp_configurations(data, isDql)
-
-
 def parse_configurations(data):
     # Pattern to exactly match lines starting with "1. Configuration:" and similar
     config_line_pattern = r"^\d+\.\sConfiguration:"
