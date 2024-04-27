@@ -6,10 +6,8 @@ SEED := 42
 
 # Path for the run configurations script
 CONFIG_SCRIPT := run_configurations.py
-CONFIG_SCRIPT_OUTPUT := out/generated_configs/results
-CONFIG_SCRIPT_FOLDER_DQL := out/generated_configs/dql
-CONFIG_SCRIPT_FOLDER_PPO := out/generated_configs/ppo
-CONFIG_SCRIPT_FOLDER_NN := out/generated_configs/nn
+CONFIG_SCRIPT_OUTPUT := out/results
+CONFIG_SCRIPT_FOLDER := out/generated_configs
 CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
 TRAINING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
 TESTING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 7)))))
@@ -47,18 +45,26 @@ ppo-test:
 
 run-configurations-dql:
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -hp --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_DQL) --output ${CONFIG_SCRIPT_OUTPUT}
+	$(PYTHON) $(CONFIG_SCRIPT) -hp --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 81  --folder $(CONFIG_SCRIPT_FOLDER)/hp/dql --output ${CONFIG_SCRIPT_OUTPUT}/hp/dql
 
 run-configurations-ppo:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -hp --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_PPO) --output ${CONFIG_SCRIPT_OUTPUT}
+	$(PYTHON) $(CONFIG_SCRIPT) -hp --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 81  --folder $(CONFIG_SCRIPT_FOLDER)/hp/ppo --output ${CONFIG_SCRIPT_OUTPUT}/hp/ppo
 
 run-configurations-nn-dql:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output ${CONFIG_SCRIPT_OUTPUT}/nn
+	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/dql
 run-configurations-nn-ppo:
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --folder $(CONFIG_SCRIPT_FOLDER_NN) --output ${CONFIG_SCRIPT_OUTPUT}/nn
+	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/ppo
+
+run-configurations-top-dql:
+	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
+	$(PYTHON) $(CONFIG_SCRIPT) -top --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25  --folder $(CONFIG_SCRIPT_FOLDER)/top/dql --output ${CONFIG_SCRIPT_OUTPUT}/top/dql
+	
+run-configurations-top-ppo:
+	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
+	$(PYTHON) $(CONFIG_SCRIPT) -top --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25 --folder $(CONFIG_SCRIPT_FOLDER)/top/ppo --output ${CONFIG_SCRIPT_OUTPUT}/top/ppo
 
 clean:
 	@echo "Cleaning up Python cache files and virtual environment..."
