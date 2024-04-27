@@ -1,0 +1,28 @@
+Summary:
+Total time: 9 hours, 58 minutes, 25.61 seconds
+Total configurations run 23 of 162
+
+Configurations results from best to worst:
+1. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_20_it_0.005.yaml, Average score of last 10: -1846.45
+2. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_20_it_0.025.yaml, Average score of last 10: -5879.49
+3. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_5_it_0.001.yaml, Average score of last 10: -6137.25
+4. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_5_it_0.001.yaml, Average score of last 10: -6137.25
+5. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_5_it_0.025.yaml, Average score of last 10: -6137.25
+6. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_10_it_0.001.yaml, Average score of last 10: -9844.50
+7. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_20_it_0.025.yaml, Average score of last 10: -9844.50
+8. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_5_it_0.005.yaml, Average score of last 10: -9844.50
+9. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_5_it_0.025.yaml, Average score of last 10: -9844.50
+10. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_20_it_0.005.yaml, Average score of last 10: -9844.50
+11. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_20_it_0.001.yaml, Average score of last 10: -10732.43
+12. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_20_it_0.005.yaml, Average score of last 10: -11284.49
+13. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_5_it_0.001.yaml, Average score of last 10: -11284.49
+14. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_5_it_0.025.yaml, Average score of last 10: -11284.49
+15. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_10_it_0.025.yaml, Average score of last 10: -11284.49
+16. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_20_it_0.001.yaml, Average score of last 10: -11284.49
+17. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_10_it_0.005.yaml, Average score of last 10: -11284.49
+18. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_10_it_0.025.yaml, Average score of last 10: -11284.49
+19. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_20_it_0.025.yaml, Average score of last 10: -11324.42
+20. Configuration: dql_lr_0.0015_bs_96_df_0.90_nu_5_it_0.005.yaml, Average score of last 10: -11324.42
+21. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_10_it_0.001.yaml, Average score of last 10: -11324.42
+22. Configuration: dql_lr_0.0015_bs_96_df_0.99_nu_5_it_0.005.yaml, Average score of last 10: -11324.42
+23. Configuration: dql_lr_0.0015_bs_96_df_0.95_nu_10_it_0.005.yaml, Average score of last 10: -11328.69
