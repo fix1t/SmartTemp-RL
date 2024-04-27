@@ -76,7 +76,8 @@ def generate_latex_table(file, nn, rows_per_column=30, header=None):
     if not entries:
         print(f"No configurations found in {file}")
         exit(1)
-    header = header if header else " & ".join(entries[0].keys())
+
+    header = header if header else " & ".join(key.replace('_', ' ').title() for key in entries[0].keys())
 
     number_of_columns = header.count('&') + 1
     column_format = "|c" * number_of_columns
