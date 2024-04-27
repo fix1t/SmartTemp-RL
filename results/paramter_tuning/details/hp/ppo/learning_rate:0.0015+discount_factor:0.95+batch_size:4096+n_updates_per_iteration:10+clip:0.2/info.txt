@@ -1,0 +1,77 @@
+---------------Training summary---------------------
+
+Average over last 10 episodes: !!python/object/apply:numpy.core.multiarray.scalar
+- &id001 !!python/object/apply:numpy.dtype
+  args:
+  - f8
+  - false
+  - true
+  state: !!python/tuple
+  - 3
+  - <
+  - null
+  - null
+  - null
+  - -1
+  - -1
+  - 0
+- !!binary |
+  jZDV2Ax9nkA=
+Elapsed Time: 394.91020941734314
+Max reward per episode: !!python/object/apply:numpy.core.multiarray.scalar
+- *id001
+- !!binary |
+  eBALJhqAq0A=
+Total episodes/iterations: 392
+Total steps: 526848
+
+
+---------------Agent's configuration----------------
+
+hyperparameters:
+  batch_size: 4096
+  clip: 0.2
+  discount_factor: 0.95
+  learning_rate: 0.0015
+  max_timesteps_per_episode: 200
+  n_updates_per_iteration: 10
+network:
+  activation: !!python/name:torch.nn.modules.activation.ReLU ''
+  hidden_layers:
+  - 32
+  - 128
+  - 256
+  output_activation: !!python/name:tools.config_loader.%3Clambda%3E ''
+  seed: 42
+
+
+---------------Agent's network----------------------
+
+Actor network:
+Network(
+  (layers): Sequential(
+    (0): Linear(in_features=6, out_features=32, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=32, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=256, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=256, out_features=5, bias=True)
+    (7): Softmax(dim=-1)
+  )
+)
+
+Critic network:
+Network(
+  (layers): Sequential(
+    (0): Linear(in_features=6, out_features=32, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=32, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=256, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=256, out_features=1, bias=True)
+    (7): Softmax(dim=-1)
+  )
+)
+
