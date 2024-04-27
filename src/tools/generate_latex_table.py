@@ -44,15 +44,23 @@ import argparse
 #         return parse_nn_configurations(data)
 #     return parse_hp_configurations(data, isDql)
 
+
 def parse_configurations(data):
-    # Updated pattern to include list values in brackets
-    pattern = r"(\w+):([\d\.]+|\[[\d\.,\s]+\])"
+    # Pattern to exactly match lines starting with "1. Configuration:" and similar
+    config_line_pattern = r"^\d+\.\sConfiguration:"
+    param_pattern = r"(\w+):(-?[\d\.]+|\[[-\d\.,\s]+\])"
     entries = []
-    for line in data.replace('+', ' ').split("\n"):
-        matches = re.findall(pattern, line)
-        if matches:
-            entry = {key: parse_value(value) for key, value in matches}
-            entries.append(entry)
+
+    # Split data into lines and process each line
+    for line in data.split("\n"):
+        if re.match(config_line_pattern, line):
+            # Remove '.yaml' and other unnecessary parts for cleaner parsing
+            line = re.sub(r'\.yaml,.*', '', line)  # Removes the '.yaml' and everything after it
+            # Find all matches of parameter-value pairs
+            matches = re.findall(param_pattern, line)
+            if matches:
+                entry = {key: parse_value(value) for key, value in matches}
+                entries.append(entry)
     return entries
 
 def parse_value(value):
@@ -62,8 +70,8 @@ def parse_value(value):
     return float(value)
 
 # Function to generate LaTeX table with wrapped columns
-def generate_latex_table(file, nn, isDql, rows_per_column=30, header=None):
-    data = get_summary_data_from_file(args.file)
+def generate_latex_table(file, nn, rows_per_column=30, header=None):
+    data = get_summary_data_from_file(file)
     entries = parse_configurations(data)
 
     header = header if header else " & ".join(entries[0].keys())
@@ -85,7 +93,7 @@ def generate_latex_table(file, nn, isDql, rows_per_column=30, header=None):
             if index < len(entries):
                 row_data.append(" & ".join(str(value) for value in entries[index].values()))
             else:
-                num_empty = 2 if nn else 4  # Number of columns in each configuration
+                num_empty = 2 if nn else 5  # Number of columns in each configuration
                 row_data.append(" & ".join([""] * num_empty))  # Empty cell for alignment
         latex += " & ".join(row_data) + " \\\\\n"
         latex += "\\hline\n"
@@ -115,7 +123,7 @@ if __name__ == "__main__":
 
     os.makedirs(args.output_folder, exist_ok=True)
 
-    latex_table = generate_latex_table(args.file, args.nn, args.rpc)
+    latex_table = generate_latex_table(args.file, args.nn, rows_per_column=args.rpc)
     with open(f"{args.output_folder}/table.tex", "w") as f:
         f.write(latex_table)
 
@@ -153,3 +161,19 @@ if __name__ == "__main__":
 # # Printing the results
 # for config in parsed_data:
 #     print(config)
+
+
+
+
+data2 ="""
+Summary:
+Total time: 48 hours, 6 minutes, 48.79 seconds
+Total configurations run 141 of 162
+
+Configurations results from best to worst:
+1. Configuration: dql_lr_0.0015_bs_128_df_0.99_nu_20_it_0.025.yaml, Average score of last 10: 93.82
+2. Configuration: dql_lr_0.0005_bs_128_df_0.95_nu_20_it_0.025.yaml, Average score of last 10: -104.28
+3. Configuration: dql_lr_0.0005_bs_96_df_0.95_nu_10_it_0.001.yaml, Average score of last 10: -209.94
+4. Configuration: dql_lr_0.0005_bs_96_df_0.90_nu_5_it_0.005.yaml, Average score of last 10: -233.19
+5. Configuration: dql_lr_0.0005_bs_128_df_0.95_nu_10_it_0.005.yaml, Average score of last 10: -420.48
+"""

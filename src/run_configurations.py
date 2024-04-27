@@ -66,7 +66,7 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
                 print(f"Training time: {elapsed_time/60} minutes.")
 
                 best_last_avg_score[file] = Logger().get_last_avg_score()
-                save_agent_info(f"{output_folder}/{agent_type.lower()}/{file.removesuffix('.yaml')}", agent, config, elapsed_time)
+                save_agent_info(f"{output_folder}/{file.removesuffix('.yaml')}", agent, config, elapsed_time)
 
     except KeyboardInterrupt:
         print('\nInterrupted.')
@@ -74,20 +74,23 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
         print(f"Training time: {elapsed_time/60} minutes.")
 
         best_last_avg_score[file] = Logger().get_last_avg_score()
-        save_agent_info(f"{output_folder}/{agent_type.lower()}/{file.removesuffix('.yaml')}", agent, config, elapsed_time)
+        save_agent_info(f"{output_folder}/{file.removesuffix('.yaml')}", agent, config, elapsed_time)
 
     finally:
         total_time = time.time() - start_time
         sorted_scores = sorted(best_last_avg_score.items(), key=lambda x: x[1], reverse=True)
 
-        with open(f"{output_folder}/{agent_type.lower()}/summary.txt", 'w') as f:
+        with open(f"{output_folder}/summary.txt", 'w') as f:
             f.write('Summary:\n')
             f.write(f"Total time: {int(total_time//3600)} hours, {int(total_time%3600//60)} minutes, {total_time%60:.2f} seconds\n")
             f.write(f"Total configurations run {len(sorted_scores)} of {len(files)}\n\n")
 
             f.write("Configurations results from best to worst:\n")
             for i, (config, score) in enumerate(sorted_scores, start=1):
-                f.write(f"{i}. Configuration: {config}, Average score of last 10: {score:.2f}\n")
+                #strip .yaml from the file name
+                config = config.removesuffix('.yaml')
+
+                f.write(f"{i}. Configuration: {config}+score:{score:.2f}\n")
 
         print('Summary:')
         print(f"Total time: {int(total_time//3600)} hours, {int(total_time%3600//60)} minutes, {int(total_time%60)} seconds")
@@ -97,11 +100,11 @@ def run_configurations(folder_path, total_timesteps=4*24*360*15, agent_type='DQL
 
         print('--------------------------------')
 
-def generate_table(summary_path, output_folder, rpc, nn=False, isDql=True):
+def generate_table(summary_path, output_folder, rpc, nn=False):
 
-    latex_table = glt.generate_latex_table(summary_path, nn, isDql, rpc)
+    latex_table = glt.generate_latex_table(summary_path, nn, rpc)
 
-    current_time = time.strftime('%Y-%m-%d_%H-%M-%S')
+    current_time = time.strftime('%Y-%m-%d_%H-%M')
 
     with open(f"{output_folder}/table_{current_time}.tex", "w") as f:
         f.write(latex_table)
@@ -112,18 +115,23 @@ def generate_table(summary_path, output_folder, rpc, nn=False, isDql=True):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run configurations for DQL and PPO agents.')
     parser.add_argument('--agent', choices=['DQL', 'PPO'], required=True, type=str, help='Agent type to run configurations for')
-    parser.add_argument('--folder', required=True, type=str, help='Folder with configurations')
+    parser.add_argument('--folder', required=False, type=str, help='Folder with configurations - else generates configurations')
     parser.add_argument('--timesteps', required=False, default=4*24*360*20, type=int, help='Total timesteps to train the agent')
     parser.add_argument('--output', required=False, default='generated_configs/results', type=str, help='Output folder to save results')
-    parser.add_argument('--skip', required=False, default=0, type=int, help='Skip fir n configurations')
-    parser.add_argument('-nn', action='store_true', help='Flag to parse neural network configurations')
-    parser.add_argument('-hp', action='store_true', help='Flag to parse hyperparameter configurations')
+    parser.add_argument('--skip', required=False, default=0, type=int, help='Skip first n configurations')
+    parser.add_argument('--rpc', required=False, default=50, type=int, help='Rows per column in the table')
+    parser.add_argument('-nn', action='store_true', help='Flag to generate neural network configurations to --folder')
+    parser.add_argument('-hp', action='store_true', help='Flag to generate hyperparameter configurations to --folder')
+    parser.add_argument('-top', action='store_true', help='Flag to generate and parse top hp and nn configurations to --folder')
+
     parser.add_argument('--seed', required=False, default=42, type=int, help='Seed for the environment')
     args = parser.parse_args()
 
-    if args.nn and args.hp:
+    if args.nn and args.hp :
         print("Error: Cannot parse neural network and hyperparameter configurations at the same time.")
         exit(1)
+    elif args.top:
+        generate_hp_configurations(args.agent, args.folder, top=True)
     elif args.nn:
         generate_nn_configurations(args.folder)
     elif args.hp:
@@ -135,9 +143,7 @@ if __name__ == '__main__':
     run_configurations(args.folder, args.timesteps, agent_type=args.agent, output_folder=args.output,
                        skip=args.skip, seed=args.seed)
 
-    # Generate table
-    rows_per_column = 50
-    table_output_folder = 'out/generated_configs/tables'
+    table_output_folder = 'out/generated_configs/tables' if not args.output else f"{args.output}"
     os.makedirs(table_output_folder, exist_ok=True)
 
-    generate_table(f"{args.output}/{args.agent.lower()}/summary.txt", table_output_folder, rows_per_column, args.nn, args.agent == 'DQL')
+    generate_table(f"{args.output}/summary.txt", table_output_folder, args.rpc, args.nn)
