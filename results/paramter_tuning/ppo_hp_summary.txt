@@ -1,0 +1,10 @@
+Summary:
+Total time: 18 hours, 1 minutes, 31.92 seconds
+Total configurations run 162 of 162
+
+Configurations results from best to worst:
+1. Configuration: learning_rate:0.0005+discount_factor:0.95+batch_size:4096+n_updates_per_iteration:20+clip:0.3+score:2057.90
+2. Configuration: learning_rate:0.0015+discount_factor:0.95+batch_size:4096+n_updates_per_iteration:10+clip:0.2+score:1951.26
+3. Configuration: learning_rate:0.0005+discount_factor:0.95+batch_size:1024+n_updates_per_iteration:10+clip:0.3+score:1849.28
+4. Configuration: learning_rate:0.0015+discount_factor:0.95+batch_size:1024+n_updates_per_iteration:10+clip:0.3+score:1656.19
+5. Configuration: learning_rate:0.0005+discount_factor:0.9+batch_size:4096+n_updates_per_iteration:20+clip:0.3+score:1643.64
