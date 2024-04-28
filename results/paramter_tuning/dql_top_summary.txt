@@ -52,3 +52,12 @@ Total configurations run 1 of 25
 
 Configurations results from best to worst:
 1. Configuration: layers:[128,256,64]+learning_rate:0.0015+batch_size:128+discount_factor:0.99+target_update_frequency:20+interpolation_parameter:0.025+score:-1656.72
+
+Summary:
+Total time: 2 hours, 52 minutes, 38 seconds
+Top 5 configurations with the best last average scores:
+1. Configuration: layers:[128,32,32]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+target_update_frequency:10+interpolation_parameter:0.005.yaml, Average score of last 10: -1017.22
+2. Configuration: layers:[128,32,32]+learning_rate:0.0005+batch_size:96+discount_factor:0.9+target_update_frequency:5+interpolation_parameter:0.005.yaml, Average score of last 10: -1388.21
+3. Configuration: layers:[128,32,32]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+target_update_frequency:20+interpolation_parameter:0.025.yaml, Average score of last 10: -3534.00
+4. Configuration: layers:[128,32,128]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+target_update_frequency:20+interpolation_parameter:0.025.yaml, Average score of last 10: -4297.00
+5. Configuration: layers:[128,32,128]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+target_update_frequency:10+interpolation_parameter:0.001.yaml, Average score of last 10: -5044.84
