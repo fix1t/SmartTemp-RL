@@ -80,7 +80,7 @@ def test_dql(agent:DQLAgent, local_qnetwork, total_timesteps=None):
 def load_agent(env, agent_type, config):
     NETWORK = config['network']
     HYPERPARAMETERS = config['hyperparameters']
-    if agent_type == 'PPO':
+    if agent_type.upper() == 'PPO':
         actor = Network(
             env.observation_space.shape[0],
             env.action_space.n,
@@ -94,7 +94,7 @@ def load_agent(env, agent_type, config):
             NETWORK['activation'],
             NETWORK['output_activation'])
         agent = PPOAgent(env=env, actor_network=actor, critic_network=critic, **HYPERPARAMETERS)
-    elif agent_type == 'DQL':
+    elif agent_type.upper() == 'DQL':
         local_qnetwork = Network(
             env.observation_space.shape[0],
             env.action_space.n,

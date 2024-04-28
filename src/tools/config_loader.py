@@ -26,14 +26,13 @@ PPO_DEFAULT_CONFIG = {
         'activation': 'ReLU',
         'output_activation': 'Softmax'
     },
-    'hyperparameters': {
-        'batch_size': 2048,
-        'max_timesteps_per_episode': 200,
-        'discount_factor': 0.99,
-        'n_updates_per_iteration': 10,
-        'learning_rate': 3e-4,
-        'clip': 0.2
-        }
+    "hyperparameters": {
+        "batch_size": 4096,
+        "clip": 0.3,
+        "discount_factor": 0.95,
+        "learning_rate": 0.0005,
+        "n_updates_per_iteration": 20
+    }
 }
 
 def log_progress(message, silent=False):

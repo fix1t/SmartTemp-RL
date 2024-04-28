@@ -84,7 +84,7 @@ class Logger():
             return 0
         return sum(self.all_scores[-num_scores:]) / num_scores
 
-    def save_agent_info(self, folder, agent, config, elapsed_time):
+    def save_agent_info(self, folder, agent, config, elapsed_time, extra_text=""):
         if not os.path.exists(folder):
             os.makedirs(folder)
 
@@ -121,3 +121,5 @@ class Logger():
                 f.write(f"{agent.local_qnetwork}\n\n")
                 f.write(f"Target Q-network:\n")
                 f.write(f"{agent.target_qnetwork}\n")
+            f.write("\n\n")
+            f.write(extra_text)
