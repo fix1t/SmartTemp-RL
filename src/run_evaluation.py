@@ -19,6 +19,7 @@ def get_args():
 def save_agent_info(folder_path, agent, config, elapsed_time, extra_text=""):
     os.makedirs(folder_path, exist_ok=True)
     Logger().save_agent_info(f"{folder_path}", agent, config, elapsed_time, extra_text)
+    Logger().save_trained_agent(f"{folder_path}", agent)
     Logger().plot_scores(f"{folder_path}")
 
 def get_enviroment(seed):

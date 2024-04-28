@@ -38,7 +38,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     ax.fill_between(time, target_min, target_max, where=occupancy, color='moccasin', alpha=0.8, label='Target Temp (Occupied)')
 
     # Setting up heater status color gradient line
-    cmap = LinearSegmentedColormap.from_list("heater_cmap", ["blue", "white", "red"])
+    cmap = LinearSegmentedColormap.from_list("heater_cmap", ["white", "red"])
     norm = plt.Normalize(0, 5)
     heater_values = np.full_like(time, (np.max(inside_temp) + np.min(outside_temp)) / 2, dtype=float)
 

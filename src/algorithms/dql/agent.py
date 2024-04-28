@@ -147,10 +147,16 @@ class Agent():
         for target_param, local_param in zip(self.target_qnetwork.parameters(), self.local_qnetwork.parameters()):
             target_param.data.copy_(self.interpolation_parameter * local_param.data + (1.0 - self.interpolation_parameter) * target_param.data)
 
+    @staticmethod
+    def calculate_decaying_val(epsilon_end_val, total_timesteps):
+        return epsilon_end_val ** (1 / total_timesteps)
+
     def train(self, total_timesteps=4*24*365*10):
         epsilon_starting_value  = 1.0
         epsilon_ending_value  = 0.01
         epsilon_decay_value  = 0.995
+        epsilon_decay_value = self.calculate_decaying_val(epsilon_ending_value, total_timesteps)
+
         epsilon = epsilon_starting_value
 
         t_so_far = 0

@@ -135,7 +135,6 @@ def main():
 
     CONFIG = load_config(args.config, args.algorithm)
 
-
     env = TempRegulationEnv(
         start_from_random_day=True,
         seed=int(args.seed),
