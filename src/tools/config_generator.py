@@ -1,3 +1,4 @@
+import argparse
 import yaml
 import itertools
 import os
@@ -186,6 +187,8 @@ def generate_hp_configurations(agent_type, output_dir=None, top=False):
     if output_dir is None:
         output_dir = f"out/generated_configs/{agent_type.lower()}"
 
+    agent_type = agent_type.upper()
+
     if top:
         parameters = dql_top_parameters if agent_type == "DQL" else ppo_top_parameters if agent_type == "PPO" else None
     else:
@@ -217,6 +220,19 @@ def generate_nn_configurations(output_dir=None):
         print(f"Generated configuration {index} for NN to {filen_name}")
 
 if __name__ == "__main__":
-    # generate_hp_configurations("DQL", top=False)
-    generate_hp_configurations("PPO", top=True)
-    # generate_nn_configurations()
+    parser = argparse.ArgumentParser(description="Generate configurations for DQL, PPO, and NN agents.")
+    parser.add_argument('--agent', choices=['DQL', 'PPO', 'dql', 'ppo'], required=True, help='Agent type to run configurations for')
+    parser.add_argument("--output", default='out/generated_configs', type=str, help="The output directory to save the generated configurations.")
+    parser.add_argument("--top", action="store_true", help="Generate top configurations with predefined hyperparameters.")
+    parser.add_argument("--hp", action="store_true", help="Generate hp configurations with predefined hyperparameters.")
+    parser.add_argument("--nn", action="store_true", help="Generate nn configurations with predefined hyperparameters.")
+    args = parser.parse_args()
+
+    if args.hp:
+        generate_hp_configurations(args.agent, args.output, top=False)
+    elif args.top:
+        generate_hp_configurations(args.agent, args.output, top=True)
+    elif args.nn:
+        generate_nn_configurations(args.output)
+    else:
+        raise ValueError("Please specify a configuration type to generate: --hp, --top, or --nn.")

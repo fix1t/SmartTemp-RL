@@ -27,7 +27,7 @@ def parse_value(value):
     return float(value)
 
 # Function to generate LaTeX table with wrapped columns
-def generate_latex_table(file, nn, rows_per_column=30, header=None):
+def generate_latex_table(file, nn=False, rows_per_column=30, header=None):
     data = get_summary_data_from_file(file)
     entries = parse_configurations(data)
     if not entries:

@@ -6,6 +6,7 @@ SEED := 42
 
 # Path for the run configurations script
 CONFIG_SCRIPT := run_configurations.py
+CONFIG_GENERATE_SCRIPT := tools/config_generator.py
 CONFIG_SCRIPT_OUTPUT := out/results
 CONFIG_SCRIPT_FOLDER := out/generated_configs
 CONFIG_SCRIPT_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
@@ -16,6 +17,8 @@ TESTING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 7)))))
 LATEST_DQL_MODEL := $(shell find ./out/dql -type f -name 'local_qnetwork.pth' | xargs ls -t | head -n 1)
 LATEST_PPO_ACTOR_MODEL := $(shell find ./out/ppo -type f -name 'actor_model.pth' | xargs ls -t | head -n 1)
 LATEST_PPO_CRITIC_MODEL := $(shell find ./out/ppo -type f -name 'critic_model.pth' | xargs ls -t | head -n 1)
+
+TIMESTAMP := $(shell date +'%Y-%m-%d_%H-%M')
 
 .PHONY: all clean install run dql dql-test ppo ppo-test
 
@@ -43,28 +46,55 @@ ppo-test:
 	@echo "Running PPO test script with the latest actor and critic models..."
 	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm PPO --actor_model $(LATEST_PPO_ACTOR_MODEL) --critic_model $(LATEST_PPO_CRITIC_MODEL) --total_timesteps $(TESTING_TIMESTEPS)
 
-run-configurations-dql:
+run-configurations-dql: generate-hp-dql
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -hp --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 81  --folder $(CONFIG_SCRIPT_FOLDER)/hp/dql --output ${CONFIG_SCRIPT_OUTPUT}/hp/dql
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 81  --folder $(CONFIG_SCRIPT_FOLDER)/hp/dql --output ${CONFIG_SCRIPT_OUTPUT}/hp/dql/$(TIMESTAMP)
 
-run-configurations-ppo:
+run-configurations-ppo: generate-hp-ppo
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -hp --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 81  --folder $(CONFIG_SCRIPT_FOLDER)/hp/ppo --output ${CONFIG_SCRIPT_OUTPUT}/hp/ppo
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 81  --folder $(CONFIG_SCRIPT_FOLDER)/hp/ppo --output ${CONFIG_SCRIPT_OUTPUT}/hp/ppo/$(TIMESTAMP)
 
-run-configurations-nn-dql:
+run-configurations-nn-dql: generate-nn
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/dql
-run-configurations-nn-ppo:
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/dql/$(TIMESTAMP)
+run-configurations-nn-ppo: generate-nn
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -nn --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/ppo
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/ppo/$(TIMESTAMP)
 
-run-configurations-top-dql:
+run-configurations-top-dql: generate-top-dql
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -top --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25  --folder $(CONFIG_SCRIPT_FOLDER)/top/dql --output ${CONFIG_SCRIPT_OUTPUT}/top/dql
+	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25  --folder $(CONFIG_SCRIPT_FOLDER)/top/dql --output ${CONFIG_SCRIPT_OUTPUT}/top/dql/$(TIMESTAMP)  -s
 	
-run-configurations-top-ppo:
+run-configurations-top-ppo: generate-top-ppo
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
-	$(PYTHON) $(CONFIG_SCRIPT) -top --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25 --folder $(CONFIG_SCRIPT_FOLDER)/top/ppo --output ${CONFIG_SCRIPT_OUTPUT}/top/ppo
+	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25 --folder $(CONFIG_SCRIPT_FOLDER)/top/ppo --output ${CONFIG_SCRIPT_OUTPUT}/top/ppo/$(TIMESTAMP) -s
+
+generate-nn:
+	@echo "Generating NN configurations..."
+	rm -rf $(CONFIG_SCRIPT_FOLDER)/nn
+	$(PYTHON) $(CONFIG_GENERATE_SCRIPT) --nn --agent DQL --output $(CONFIG_SCRIPT_FOLDER)/nn
+
+generate-hp-dql:
+	@echo "Generating DQL configurations..."
+	rm -rf $(CONFIG_SCRIPT_FOLDER)/hp/dql
+	$(PYTHON) $(CONFIG_GENERATE_SCRIPT) --hp --agent DQL --output $(CONFIG_SCRIPT_FOLDER)/hp/dql
+
+generate-hp-ppo:
+	@echo "Generating PPO configurations..."
+	rm -rf $(CONFIG_SCRIPT_FOLDER)/hp/ppo
+	$(PYTHON) $(CONFIG_GENERATE_SCRIPT) --hp --agent PPO --output $(CONFIG_SCRIPT_FOLDER)/hp/ppo
+
+generate-top-dql:
+	@echo "Generating DQL configurations..."
+	rm -rf $(CONFIG_SCRIPT_FOLDER)/top/dql
+
+	$(PYTHON) $(CONFIG_GENERATE_SCRIPT) --top --agent DQL --output $(CONFIG_SCRIPT_FOLDER)/top/dql
+
+generate-top-ppo:	
+	@echo "Generating PPO configurations..."
+	rm -rf $(CONFIG_SCRIPT_FOLDER)/top/ppo
+
+	$(PYTHON) $(CONFIG_GENERATE_SCRIPT) --top --agent PPO --output $(CONFIG_SCRIPT_FOLDER)/top/ppo
 
 clean:
 	@echo "Cleaning up Python cache files and virtual environment..."
