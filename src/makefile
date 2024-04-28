@@ -18,6 +18,9 @@ LATEST_DQL_MODEL := $(shell find ./out/dql -type f -name 'local_qnetwork.pth' | 
 LATEST_PPO_ACTOR_MODEL := $(shell find ./out/ppo -type f -name 'actor_model.pth' | xargs ls -t | head -n 1)
 LATEST_PPO_CRITIC_MODEL := $(shell find ./out/ppo -type f -name 'critic_model.pth' | xargs ls -t | head -n 1)
 
+LATEST_DQL_CONFIG:= $(shell find ./out/dql -type f -name 'config.yaml' | xargs ls -t | head -n 1)
+LATEST_PPO_CONFIG:= $(shell find ./out/ppo -type f -name 'config.yaml' | xargs ls -t | head -n 1)
+
 TIMESTAMP := $(shell date +'%Y-%m-%d_%H-%M')
 
 .PHONY: all clean install run dql dql-test ppo ppo-test
@@ -36,11 +39,11 @@ dql:
 
 dql-test:
 	@echo "Running DQL test script with the latest model..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --local_qnetwork $(LATEST_DQL_MODEL) --total_timesteps $(TESTING_TIMESTEPS)
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --local_qnetwork $(LATEST_DQL_MODEL) --total_timesteps $(TESTING_TIMESTEPS) --config $(LATEST_DQL_CONFIG)
 
 ppo:
 	@echo "Running PPO training script..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm PPO --total_timesteps $(TRAINING_TIMESTEPS)
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm PPO --total_timesteps $(TRAINING_TIMESTEPS) --config $(LATEST_PPO_CONFIG)
 
 ppo-test:
 	@echo "Running PPO test script with the latest actor and critic models..."

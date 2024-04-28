@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import torch
 import yaml
 
+import tools.plotter as plotter
 class Logger():
     """
     Logger singleton class to log the progress of the training.
@@ -123,3 +124,23 @@ class Logger():
                 f.write(f"{agent.target_qnetwork}\n")
             f.write("\n\n")
             f.write(extra_text)
+
+    @staticmethod
+    def plot_all_in_one(env, folder='out/plots'):
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        time, indoor_temp, outdoor_temp = env.get_temperature_data()
+        _, heating = env.get_heating_data()
+        _, occupancy = env.get_occupancy_data()
+        occupancy = occupancy['father']
+
+        target_length = min(len(outdoor_temp), len(indoor_temp), len(occupancy), len(heating), len(time))
+        # Truncate arrays to the shortest length among them
+        outdoor_temp = outdoor_temp[:target_length]
+        indoor_temp = indoor_temp[:target_length]
+        occupancy = occupancy[:target_length]
+        heating = heating[:target_length]
+        time = time[:target_length]
+
+        plotter.plot_all_in_one(outdoor_temp, indoor_temp, occupancy, heating, time, output_dir=folder)

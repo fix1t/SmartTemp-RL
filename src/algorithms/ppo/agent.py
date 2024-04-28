@@ -260,5 +260,8 @@ class Agent:
         print(f"Total timesteps: {t_so_far}")
         print("Done testing.")
         print("--------------------------------")
+
+        self.logger.plot_all_in_one(self.env)
+
         time.sleep(5*60)
         self.env.close()

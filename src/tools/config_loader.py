@@ -46,6 +46,15 @@ def log_progress(message, silent=False):
     if not silent:
         print(f"Config loader: {message}")
 
+def validate_yaml(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            yaml_content = yaml.load(file, Loader=yaml.FullLoader)
+            print("YAML is valid.")
+            print(yaml_content)
+    except yaml.YAMLError as exc:
+        print("Error in configuration file:", exc)
+
 def load_config(file_path, algorithm='DQL', silent=False):
     """
     Load configuration from a YAML file, validate completeness, and set defaults for missing values.
@@ -64,6 +73,7 @@ def load_config(file_path, algorithm='DQL', silent=False):
         load = True
 
         try:
+            validate_yaml(file_path)
             with open(file_path, 'r') as file:
                 loaded_config = yaml.load(file, Loader=yaml.FullLoader)
         except FileNotFoundError:

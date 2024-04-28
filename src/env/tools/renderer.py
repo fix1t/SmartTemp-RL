@@ -125,7 +125,6 @@ class SimulationRenderer:
         for _ in range(4 * 24 * 30):
             action = self.simulation.action_space.sample()
             self.simulation.step(action)
-            time.sleep(0.01)
 
     def run_server(self):
         self.thread = threading.Thread(target=lambda: self.app.run_server(debug=False), daemon=True)
