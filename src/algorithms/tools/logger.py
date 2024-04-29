@@ -8,6 +8,7 @@
 
 import os
 import matplotlib.pyplot as plt
+from env.environment import TempRegulationEnv
 import torch
 import yaml
 
@@ -126,7 +127,21 @@ class Logger():
             f.write(extra_text)
 
     @staticmethod
-    def plot_all_in_one(env, folder='out/plots'):
+    def plot_all_in_one(agent, folder='out/plots'):
+        # Regular environment with good seed: mon - sunday at May
+        env = TempRegulationEnv(
+        start_from_random_day=True,
+        seed=int(42),
+        max_steps_per_episode=4*24*7,
+        )
+
+        # Simulate the agent in the environment for a week
+        obs, _ = env.reset()
+        done = False
+        while not done:
+            action, _ = agent.get_action(obs)
+            obs, _, done, _, _ = env.step(action)
+
         if not os.path.exists(folder):
             os.makedirs(folder)
 

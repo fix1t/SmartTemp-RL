@@ -14,6 +14,7 @@ def save_agent_info(folder_path, agent, config, elapsed_time, save):
     if save:
         Logger().save_trained_agent(agent, folder_path)
     Logger().plot_scores(folder_path)
+    Logger().plot_all_in_one(agent, folder_path)
     print('\n--------------------------------')
 
 def run_configuration(file, folder_path, agent_type, output_folder, total_timesteps, seed, save):

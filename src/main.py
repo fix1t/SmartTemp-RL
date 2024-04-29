@@ -120,6 +120,7 @@ def print_training_summary(agent, folder_path, elapsed_time, CONFIG):
     Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
     Logger().save_trained_agent(agent, folder_path)
     Logger().plot_scores(folder_path)
+    Logger().plot_all_in_one(agent, f"{folder_path}")
     print(f'Trained model and summary available in {folder_path} folder.')
     print('--------------------------------')
     agent.env.close()

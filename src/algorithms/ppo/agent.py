@@ -261,7 +261,7 @@ class Agent:
         print("Done testing.")
         print("--------------------------------")
 
-        self.logger.plot_all_in_one(self.env)
+        self.logger.plot_all_in_one(self, folder='out/plots')
 
         time.sleep(5*60)
         self.env.close()

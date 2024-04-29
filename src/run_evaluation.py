@@ -21,6 +21,7 @@ def save_agent_info(folder_path, agent, config, elapsed_time, extra_text=""):
     Logger().save_agent_info(f"{folder_path}", agent, config, elapsed_time, extra_text)
     Logger().save_trained_agent(agent, folder_path)
     Logger().plot_scores(f"{folder_path}")
+    Logger().plot_all_in_one(agent, f"{folder_path}")
     config_to_yaml(config, f"{folder_path}/config.yaml")
 
 def get_enviroment(seed):
