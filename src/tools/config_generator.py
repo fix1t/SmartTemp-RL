@@ -10,7 +10,7 @@ dql_parameters = {
     "learning_rate": [0.0005, 0.0015],
     "discount_factor": [0.90, 0.95, 0.99],
     "batch_size": [64, 96, 128],
-    "target_update_frequency": [5, 10, 20],
+    "learning_freqency": [4, 8, 16],
     "interpolation_parameter": [0.001, 0.005, 0.025],
 }
 
@@ -29,35 +29,35 @@ dql_top_parameters = {
         "learning_rate": 0.0015,
         "batch_size": 128,
         "discount_factor": 0.99,
-        "target_update_frequency": 20,
+        "learning_freqency": 20,
         "interpolation_parameter": 0.025,
     },
         {
         "learning_rate": 0.0005,
         "batch_size": 128,
         "discount_factor": 0.95,
-        "target_update_frequency": 20,
+        "learning_freqency": 20,
         "interpolation_parameter": 0.025,
     },
         {
         "learning_rate": 0.0005,
         "batch_size": 96,
         "discount_factor": 0.95,
-        "target_update_frequency": 10,
+        "learning_freqency": 10,
         "interpolation_parameter": 0.001,
     },
         {
         "learning_rate": 0.0005,
         "batch_size": 96,
         "discount_factor": 0.90,
-        "target_update_frequency": 5,
+        "learning_freqency": 5,
         "interpolation_parameter": 0.005,
     },
         {
         "learning_rate": 0.0005,
         "batch_size": 128,
         "discount_factor": 0.95,
-        "target_update_frequency": 10,
+        "learning_freqency": 10,
         "interpolation_parameter": 0.005,
     }
     ]
@@ -117,7 +117,7 @@ def yield_dynamic_configuration(parameters):
         'discount_factor': 'hyperparameters',
         'max_timesteps_per_episode': 'hyperparameters',
         'n_updates_per_iteration': 'hyperparameters',
-        'target_update_frequency': 'hyperparameters',
+        'learning_freqency': 'hyperparameters',
         'clip': 'hyperparameters',
 
         'hidden_layers': 'network',

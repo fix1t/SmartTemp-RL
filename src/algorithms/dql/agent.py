@@ -1,12 +1,3 @@
-"""
-    File: agent.py
-    Author: Gabriel Biel
-
-    Description: This file contains the implementation of the Agent class, which represents
-    the agent that interacts with the environment and learns using the Deep Q-Learning (DQL)
-    algorithm.
-"""
-
 import random
 from time import sleep
 import numpy as np
@@ -43,8 +34,19 @@ class Agent():
         self.discount_factor = hyperparameters.get('discount_factor', 0.99)
         self.replay_buffer_size = hyperparameters.get('replay_buffer_size', int(1e5))
         self.interpolation_parameter = hyperparameters.get('interpolation_parameter', 1e-3)
-        self.target_update_frequency = hyperparameters.get('target_update_frequency', 100)
-        self.local_update_frequency = hyperparameters.get('local_update_frequency', self.target_update_frequency//4)
+        self.learning_freqency = hyperparameters.get('learning_freqency', 4)
+
+        hyperparameters = {
+            'learning_rate': self.learning_rate,
+            'batch_size': self.batch_size,
+            'discount_factor': self.discount_factor,
+            'replay_buffer_size': self.replay_buffer_size,
+            'interpolation_parameter': self.interpolation_parameter,
+            'learning_freqency': self.learning_freqency
+        }
+
+        print(f"AGENT COFIGURATION HYPERPARAMETERS:\n{hyperparameters}")
+
 
     def step(self, state, action, reward, next_state, done):
         """
@@ -60,15 +62,11 @@ class Agent():
         # Save experience in replay memory
         self.memory.push((state, action, reward, next_state, done))
 
-        if len(self.memory.memory) > self.batch_size:
+        self.t_step = (self.t_step + 1) % self.learning_freqency
+
+        if self.t_step == 0 and len(self.memory.memory) > self.batch_size:
             experiences = self.memory.sample(self.batch_size)
-            self.t_step = (self.t_step + 1) % self.target_update_frequency
-
-            if self.t_step % self.local_update_frequency == 0:
-                self.update_policy(experiences, self.discount_factor)
-
-            if self.t_step == 0:
-                self.soft_update_target_network()
+            self.update_policy(experiences, self.discount_factor)
 
     def get_action(self, state, epsilon=0.):
         """
@@ -114,6 +112,8 @@ class Agent():
         4. Calculate the loss between the expected Q-values and the Q-targets using mean squared error (MSE),
         which represents the temporal difference error.
         5. Backpropagate the loss to update the weights of the local Q-network.
+        6. Periodically, the target Q-network is softly updated with weights from the local Q-network to slowly
+        track the learned value function, improving stability.
         """
         states, next_states, actions, rewards, dones = experiences
 
@@ -130,7 +130,10 @@ class Agent():
         loss.backward()
         self.optimizer.step()
 
-    def soft_update_target_network(self):
+        # Update the weights of the target network to slowly track the learned Q-values
+        self._soft_update_network(self.local_qnetwork, self.target_qnetwork, self.interpolation_parameter)
+
+    def _soft_update_network(self, local_model, target_model, interpolation_parameter):
         """
         Performs a soft update on the target network's parameters. This method blends the parameters
         of the local Q-network and the target Q-network using an interpolation parameter, τ (tau), to
@@ -138,25 +141,36 @@ class Agent():
         stability in learning by ensuring that the target values change slowly over time, reducing
         the risk of divergence.
 
+        Parameters:
+            local_model (PyTorch model): The local (policy) network, from which weights are copied.
+            target_model (PyTorch model): The target network, to which weights are updated.
+            interpolation_parameter (float): The interpolation parameter τ (tau), typically a small
+                                            value (e.g., 0.001), controlling the extent to which the
+                                            target network is updated.
+
         The update formula is as follows:
         θ_target = τ*θ_local + (1 - τ)*θ_target
         This formula is applied to each parameter of the target network, ensuring that the update
         is gradual and keeps the target network's output stable, which is crucial for the convergence
         of the DQL algorithm.
         """
-        for target_param, local_param in zip(self.target_qnetwork.parameters(), self.local_qnetwork.parameters()):
-            target_param.data.copy_(self.interpolation_parameter * local_param.data + (1.0 - self.interpolation_parameter) * target_param.data)
+        for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
+            target_param.data.copy_(interpolation_parameter * local_param.data + (1.0 - interpolation_parameter) * target_param.data)
 
-    @staticmethod
-    def calculate_decaying_val(epsilon_end_val, total_timesteps):
-        return epsilon_end_val ** (1 / total_timesteps)
+    def _periodic_update_target_network(self):
+        """
+        Periodically updates the target network with the weights from the local network.
+        This method is called every few steps (as specified by the learning_freqency parameter)
+        to ensure that the target network tracks the learned Q-values from the local network.
+        """
+        self.t_step = (1 + self.t_step) % self.learning_freqency
+        if self.t_step == 0:
+            self.target_qnetwork.load_state_dict(self.local_qnetwork.state_dict())
 
     def train(self, total_timesteps=4*24*365*10):
         epsilon_starting_value  = 1.0
         epsilon_ending_value  = 0.01
         epsilon_decay_value  = 0.995
-        epsilon_decay_value = self.calculate_decaying_val(epsilon_ending_value, total_timesteps)
-
         epsilon = epsilon_starting_value
 
         t_so_far = 0
@@ -197,8 +211,5 @@ class Agent():
         print(f"Total timesteps: {t_so_far}")
         print("Done testing.")
         print("--------------------------------")
-
-        Logger().plot_all_in_one(self.env)
-
         sleep(5*60)
         self.env.close()

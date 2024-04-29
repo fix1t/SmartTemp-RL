@@ -24,7 +24,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     fig, ax = plt.subplots(figsize=(12, 6))
 
     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
 
     # Plotting temperature data
     ax.plot(time, outside_temp, label='Outside Temperature', color='grey')
@@ -51,7 +51,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     # Additional plot settings
     ax.set_xlabel('Time')
     ax.set_ylabel('Temperature (°C)')
-    ax.legend(loc='upper right')
+    ax.legend(bbox_to_anchor = (1.15, -0.01), loc='upper right')
     ax.set_ylim(y_limit)
     ax.set_xlim(x_limit)
 
@@ -93,7 +93,7 @@ def plot_variance(all_data):
     plt.yticks(fontsize=12)
 
     # Add a legend with a shadow
-    legend = plt.legend(frameon=True, loc='lower right', fontsize=20)
+    legend = plt.legend(frameon=True, bbox_to_anchor = (1.15, 0), loc='upper right', fontsize=12)
     frame = legend.get_frame()
     frame.set_facecolor('white')
     frame.set_edgecolor('black')
