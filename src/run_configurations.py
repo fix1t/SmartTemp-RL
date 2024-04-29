@@ -53,6 +53,7 @@ def run_configurations(args):
     signal.signal(signal.SIGINT, lambda signum, frame: handle_interrupt(signum, frame, args, start_time, best_last_avg_score))
 
     files = [f for f in os.listdir(args.folder) if f.endswith('.yaml')]
+    files.sort()
     if not files:
         print(f"Error: No files found in '{args.folder}'.")
         return
