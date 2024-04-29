@@ -1,10 +1,11 @@
+import os
 import torch
 import time
 
 from env.environment import TempRegulationEnv
 
 from algorithms.tools.logger import Logger
-from tools.config_loader import load_config
+from tools.config_loader import load_config, config_to_yaml
 from tools.arguments_parser import get_args
 
 from algorithms.network import Network as Network
@@ -170,6 +171,9 @@ def main():
         if args.mode == 'train':
             elapsed_time = time.time() - start_time
             folder_path = f"out/{args.algorithm.lower()}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
+            os.makedirs(folder_path, exist_ok=True)
+            # Copy config file to the output folder
+            config_to_yaml(CONFIG, f"{folder_path}/config.yaml")
             print_training_summary(agent, folder_path, elapsed_time, CONFIG)
 
 if __name__ == '__main__':

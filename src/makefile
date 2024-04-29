@@ -37,17 +37,17 @@ dql:
 	@echo "Running DQL training script..."
 	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm DQL --total_timesteps $(TRAINING_TIMESTEPS)
 
-dql-test:
-	@echo "Running DQL test script with the latest model..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --local_qnetwork $(LATEST_DQL_MODEL) --total_timesteps $(TESTING_TIMESTEPS) --config $(LATEST_DQL_CONFIG)
-
 ppo:
 	@echo "Running PPO training script..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm PPO --total_timesteps $(TRAINING_TIMESTEPS) --config $(LATEST_PPO_CONFIG)
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode train --algorithm PPO --total_timesteps $(TRAINING_TIMESTEPS)
+
+dql-test:
+	@echo "Running DQL test script with the latest model..."
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm DQL --total_timesteps $(TESTING_TIMESTEPS) --config $(LATEST_DQL_CONFIG) --local_qnetwork $(LATEST_DQL_MODEL)
 
 ppo-test:
 	@echo "Running PPO test script with the latest actor and critic models..."
-	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm PPO --actor_model $(LATEST_PPO_ACTOR_MODEL) --critic_model $(LATEST_PPO_CRITIC_MODEL) --total_timesteps $(TESTING_TIMESTEPS)
+	$(PYTHON) $(SCRIPT) --seed $(SEED) --mode test --algorithm PPO --total_timesteps $(TESTING_TIMESTEPS) --config $(LATEST_PPO_CONFIG) --actor_model $(LATEST_PPO_ACTOR_MODEL) --critic_model $(LATEST_PPO_CRITIC_MODEL)
 
 run-configurations-dql: generate-hp-dql
 	@echo "Running dql configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."

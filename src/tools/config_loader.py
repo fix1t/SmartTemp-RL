@@ -15,7 +15,7 @@ DQL_DEFAULT_CONFIG = {
         'batch_size': 100,
         'replay_buffer_size': 100000,
         'interpolation_parameter': 0.001,
-        'target_update_frequency': 4
+        'learning_freqency': 4
     }
 }
 
@@ -50,8 +50,6 @@ def validate_yaml(file_path):
     try:
         with open(file_path, 'r') as file:
             yaml_content = yaml.load(file, Loader=yaml.FullLoader)
-            print("YAML is valid.")
-            print(yaml_content)
     except yaml.YAMLError as exc:
         print("Error in configuration file:", exc)
 
@@ -67,6 +65,7 @@ def load_config(file_path, algorithm='DQL', silent=False):
         dict: Configuration dictionary with all necessary values set, using defaults where required.
     """
     log_progress('---------------CONFIG---------------', silent=silent)
+    algorithm = algorithm.upper()
     config = copy.deepcopy(DQL_DEFAULT_CONFIG if algorithm == 'DQL' else PPO_DEFAULT_CONFIG)
 
     if file_path != '':
@@ -104,10 +103,16 @@ def load_config(file_path, algorithm='DQL', silent=False):
     # Set the activation functions based on the names
     config['network']['activation'] = activation_function(config['network']['activation'])
     config['network']['output_activation'] = activation_function(config['network']['output_activation'])
-    print(f"Configuration loaded: {config}")
+    log_progress(f"Configuration loaded: {config}", silent=silent)
     log_progress('------------------------------------', silent=silent)
     return config
 
+activations = {
+    'ReLU': torch.nn.ReLU,
+    'Sigmoid': torch.nn.Sigmoid,
+    'Tanh': torch.nn.Tanh,
+    'Softmax': lambda : torch.nn.Softmax(dim=-1)
+}
 def activation_function(name):
     """
     Get the activation function from the name.
@@ -116,19 +121,39 @@ def activation_function(name):
     Returns:
         A PyTorch activation function.
     """
-    activations = {
-        'ReLU': torch.nn.ReLU,
-        'Sigmoid': torch.nn.Sigmoid,
-        'Tanh': torch.nn.Tanh,
-        'Softmax': lambda : torch.nn.Softmax(dim=-1)
-    }
+
     if name in activations:
         return activations[name]
-    else:
-        log_progress(f"Warning: Activation function '{name}' not recognized. Defaulting to ReLU.")
-        return torch.nn.ReLU
+    log_progress(f"Warning: Activation function '{name}' not recognized. Defaulting to ReLU.")
+    return torch.nn.ReLU
 
+def activation_function_name(activation):
+    """
+    Get the name of the activation function.
+    Parameters:
+        activation (function): The activation function.
+    Returns:
+        str: Name of the activation function.
+    """
+    for name, func in activations.items():
+        if func == activation:
+            return name
+    return 'Custom'
+
+def config_to_yaml(config, file_path):
+    """
+    Save a configuration dictionary to a YAML file.
+
+    Parameters:
+        config (dict): The configuration dictionary to save.
+        file_path (str): The path to save the configuration to.
+    """
+    # Activation and output activation functions are not serializable, so we need to save their names
+    config['network']['activation'] = activation_function_name(config['network']['activation'])
+    config['network']['output_activation'] = activation_function_name(config['network']['output_activation'])
+    with open(file_path, 'w') as file:
+        yaml.dump(config, file)
 
 if __name__ == '__main__':
     config = load_config('algorithms/dql/configurations/default.yaml', 'DQL')
-    print(config)
+    config_to_yaml(config, 'test.yaml')

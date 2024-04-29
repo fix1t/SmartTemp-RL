@@ -3,40 +3,38 @@ import os
 import time
 import signal
 from algorithms.tools.logger import Logger
-from tools.config_generator import generate_nn_configurations, generate_hp_configurations
-from tools.config_loader import load_config
+from tools.config_loader import load_config, config_to_yaml
 from env.environment import TempRegulationEnv
 from main import load_agent
 import tools.generate_latex_table as glt
 
 def save_agent_info(folder_path, agent, config, elapsed_time, save):
     os.makedirs(folder_path, exist_ok=True)
-    logger = Logger()
-    logger.save_agent_info(folder_path, agent, config, elapsed_time)
+    Logger().save_agent_info(folder_path, agent, config, elapsed_time)
     if save:
-        logger.save_trained_agent(agent, folder_path)
-    logger.plot_scores(folder_path)
+        Logger().save_trained_agent(agent, folder_path)
+    Logger().plot_scores(folder_path)
     print('\n--------------------------------')
 
 def run_configuration(file, folder_path, agent_type, output_folder, total_timesteps, seed, save):
     env = TempRegulationEnv(start_from_random_day=True, seed=int(seed), max_steps_per_episode=4*24*14)
-    logger = Logger()
-    logger.reset()
+    Logger().reset()
 
     config = load_config(os.path.join(folder_path, file), agent_type, silent=True)
     agent = load_agent(env, agent_type, config)
 
     training_beginning = time.time()
+
     agent.train(total_timesteps)
+
     elapsed_time = time.time() - training_beginning
     print(f"Training time: {elapsed_time / 60} minutes.")
+    last_avg_score = Logger().get_last_avg_score()
 
-    last_avg_score = logger.get_last_avg_score()
+    # Save agent info and config
     print(f">>>{file.removesuffix('.yaml')}+score:{last_avg_score:.2f}")
     save_agent_info(f"{output_folder}/{file.removesuffix('.yaml')}", agent, config, elapsed_time, save)
-
-    # Copy config file to the output folder
-    os.system(f"cp {os.path.join(folder_path, file)} {output_folder}/config.yaml")
+    config_to_yaml(config, f"{output_folder}/{file.removesuffix('.yaml')}/config.yaml")
 
     env.close()
     del agent, env

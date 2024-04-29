@@ -4,7 +4,7 @@ import argparse
 from algorithms.tools.logger import Logger
 from env.environment import TempRegulationEnv
 from main import load_agent
-from tools.config_loader import load_config
+from tools.config_loader import load_config, config_to_yaml
 
 def print_line():
     print("========================================", flush=True)
@@ -19,8 +19,9 @@ def get_args():
 def save_agent_info(folder_path, agent, config, elapsed_time, extra_text=""):
     os.makedirs(folder_path, exist_ok=True)
     Logger().save_agent_info(f"{folder_path}", agent, config, elapsed_time, extra_text)
-    Logger().save_trained_agent(f"{folder_path}", agent)
+    Logger().save_trained_agent(agent, folder_path)
     Logger().plot_scores(f"{folder_path}")
+    config_to_yaml(config, f"{folder_path}/config.yaml")
 
 def get_enviroment(seed):
     return TempRegulationEnv(
@@ -51,7 +52,8 @@ def main():
     results = {}
     env = None
     agent = None
-    config = load_config(args.config, args.algorithm)
+
+    config = load_config(args.config, args.algorithm, silent=True)
 
     try:
         for seed in seeds:
