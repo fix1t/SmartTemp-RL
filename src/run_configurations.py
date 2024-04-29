@@ -35,6 +35,9 @@ def run_configuration(file, folder_path, agent_type, output_folder, total_timest
     print(f">>>{file.removesuffix('.yaml')}+score:{last_avg_score:.2f}")
     save_agent_info(f"{output_folder}/{file.removesuffix('.yaml')}", agent, config, elapsed_time, save)
 
+    # Copy config file to the output folder
+    os.system(f"cp {os.path.join(folder_path, file)} {output_folder}/config.yaml")
+
     env.close()
     del agent, env
 
