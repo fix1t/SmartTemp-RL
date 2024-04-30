@@ -1,83 +1,12 @@
-# SmartTemp-RL
+# Results Branch Overview
 
-## Overview
+This branch serves as a comprehensive repository for all outputs and data derived from the parameter tuning and evaluation sections of the reinforcement learning algorithms studied. This branch is meticulously organized to ensure ease of access and analysis of the data. Below is a detailed description of the contents and structure of this branch:
 
-SmartTemp-RL is a research project focused on applying deep reinforcement learning algorithms to optimize temperature control systems. The project utilizes two main RL algorithms: Deep Q-Learning (DQL) and Proximal Policy Optimization (PPO). This README provides instructions on how to set up the environment, run training sessions, test models, and evaluate different configurations as discussed in the thesis.
+## Directory Structure
 
-## Repository Structure
+The branch is structured into several key directories and files, each serving a specific purpose in the storage and presentation of results:
 
-- **src/**: Contains all the source code for the SmartTemp-RL project.
-- **doc/**: Contains diagrams of different moduls.
-- **results/**: Contains data from configurations testing and final evaluation of algorithms.
-
-## Getting Started
-
-### Prerequisites
-
-Before running the scripts, ensure that you have Python and Make installed on your system. The project's dependencies are managed using a virtual environment.
-
-### Setup
-
-Navigate to the source code directory:
-
-```shell
-cd src
-```
-
-Create a Python virtual environment and install the required dependencies:
-
-```shell
-make install
-```
-
-To activate the environment for running scripts directly run command:
-
-```shell
-source venv/bin/activate
-```
-
-### Running the Algorithms
-
-To train the models using the default configurations for DQL and PPO, use the following commands:
-
-```shell
-make dql
-make ppo
-```
-
-To test the latest learned models:
-
-```shell
-make dql-test
-make ppo-test
-```
-
-### Parameter Tuning
-
-Run all the configurations used in the Parameter Tuning section of the thesis:
-
-```shell
-make run-configurations-dql # For Hyperparameter combinations
-make run-configurations-ppo
-
-make run-configurations-nn-dql # For Neural Network architecture combinations
-make run-configurations-nn-ppo
-
-make run-configurations-top-dql # Run combinations of best performing
-make run-configurations-top-ppo # configurations (Hyperparameters + NN)
-```
-
-### Final Evaluation
-
-To run the final evaluation script for the DQL algorithm:
-
-```shell
-make final-evaluation-dql
-make final-evaluation-ppo
-```
-
-## Additional Information
-
-The Makefile automates the setup, training, testing, and evaluation processes, ensuring that the project can be run with minimal manual setup. For more detailed information on the specific parameters and configurations, please refer to the thesis document or the source code comments.
-
-For usage of a specific script run `python3 <path-to-script> --help`
+- Details Folder: This directory contains detailed textual descriptions and summaries for each parameter combination tested. Each file within this folder provides insights into the setup, execution, and immediate outcomes of the tests.
+- Score Plot: For each combination of parameters, a plot file is stored illustrating the progression of scores achieved by the agent during training. These plots are crucial for visualizing the learning effectiveness and stability over time.
+- Behaviour Plot: Accompanying each score plot, the behaviour plot provides a visual representation of the agent's decision-making process in the environment. This may include actions taken at various states, changes in strategy, or responses to specific environmental cues, offering a deeper understanding of how parameter changes impact the agent's behaviour.
+- Saved Model: Each set of parameters that undergoes evaluation has its corresponding model saved at the conclusion of training. These saved models allow for post-hoc analysis and further experimentation or demonstration without the need to retrain.

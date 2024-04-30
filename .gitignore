@@ -1,7 +1,0 @@
-**/__pycache__/*
-**/*.pth
-logs
-venv
-out
-.vscode
-**/*generated*
