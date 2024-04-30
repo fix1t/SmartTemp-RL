@@ -1,16 +1,16 @@
 Results:
-Seed: 1, Learning length: 25 years. Last average score: 1767.0946546948107
-Seed: 1, Learning length: 50 years. Last average score: 2301.335684804574
-Seed: 1, Learning length: 100 years. Last average score: 621.673053976234
-Seed: 2, Learning length: 25 years. Last average score: 2484.091129485337
-Seed: 2, Learning length: 50 years. Last average score: 1543.5598528464034
-Seed: 2, Learning length: 100 years. Last average score: 1917.6222775593058
-Seed: 3, Learning length: 25 years. Last average score: 2552.913091215888
-Seed: 3, Learning length: 50 years. Last average score: 1818.442519391474
-Seed: 3, Learning length: 100 years. Last average score: 1434.6516046566362
-Seed: 4, Learning length: 25 years. Last average score: 2136.7287384309834
-Seed: 4, Learning length: 50 years. Last average score: 1644.5422966561734
-Seed: 4, Learning length: 100 years. Last average score: 2587.338001282503
-Seed: 5, Learning length: 25 years. Last average score: 1786.5393599827487
-Seed: 5, Learning length: 50 years. Last average score: 2425.591980328265
-Seed: 5, Learning length: 100 years. Last average score: 1772.9275745083185
+Environment:1+Learning_time:25+Score:1767.09
+Environment:1+Learning_time:50+Score:2301.33
+Environment:1+Learning_time:100+Score:621.67
+Environment:2+Learning_time:25+Score:2484.09
+Environment:2+Learning_time:50+Score:1543.55
+Environment:2+Learning_time:100+Score:1917.62
+Environment:3+Learning_time:25+Score:2552.91
+Environment:3+Learning_time:50+Score:1818.44
+Environment:3+Learning_time:100+Score:1434.65
+Environment:4+Learning_time:25+Score:2136.72
+Environment:4+Learning_time:50+Score:1644.54
+Environment:4+Learning_time:100+Score:2587.33
+Environment:5+Learning_time:25+Score:1786.53
+Environment:5+Learning_time:50+Score:2425.59
+Environment:5+Learning_time:100+Score:1772.92

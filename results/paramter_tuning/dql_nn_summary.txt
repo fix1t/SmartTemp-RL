@@ -1,89 +1,89 @@
 Summary:
-Total time: 25 hours, 53 minutes, 40.45 seconds
-Total configurations run 84 of 84
+Total time: 15:07:38.960000
+Total configurations run: 84
 
 Configurations results from best to worst:
-1. Configuration: nn_128_32_128.yaml, Average score of last 10: -689.47
-2. Configuration: nn_128_32.yaml, Average score of last 10: -777.09
-3. Configuration: nn_128_256_32.yaml, Average score of last 10: -1476.7
-4. Configuration: nn_128_32_32.yaml, Average score of last 10: -1479.95
-5. Configuration: nn_128_256_64.yaml, Average score of last 10: -1496.26
-6. Configuration: nn_128_64_32.yaml, Average score of last 10: -1839.71
-7. Configuration: nn_128_32_256.yaml, Average score of last 10: -2040.4
-8. Configuration: nn_256_256.yaml, Average score of last 10: -2087.38
-9. Configuration: nn_256_128_128.yaml, Average score of last 10: -2174.67
-10. Configuration: nn_128_256_128.yaml, Average score of last 10: -2366.25
-11. Configuration: nn_256_128_32.yaml, Average score of last 10: -2492.96
-12. Configuration: nn_128_64_128.yaml, Average score of last 10: -2711.54
-13. Configuration: nn_128_32_64.yaml, Average score of last 10: -2781.04
-14. Configuration: nn_128_128_128.yaml, Average score of last 10: -3069.67
-15. Configuration: nn_128_64.yaml, Average score of last 10: -3760.16
-16. Configuration: nn_128.yaml, Average score of last 10: -3962.04
-17. Configuration: nn_128_128_64.yaml, Average score of last 10: -4008.32
-18. Configuration: nn_128_64_64.yaml, Average score of last 10: -4162.35
-19. Configuration: nn_128_64_256.yaml, Average score of last 10: -4331.84
-20. Configuration: nn_256_256_256.yaml, Average score of last 10: -2577.2999999999997
-21. Configuration: nn_256.yaml, Average score of last 10: -4616.24
-22. Configuration: nn_256_128_64.yaml, Average score of last 10: -4842.47
-23. Configuration: nn_128_128_256.yaml, Average score of last 10: -4976.84
-24. Configuration: nn_128_128_32.yaml, Average score of last 10: -5052.69
-25. Configuration: nn_256_128.yaml, Average score of last 10: -5121.2
-26. Configuration: nn_128_128.yaml, Average score of last 10: -5973.48
-27. Configuration: nn_256_256_32.yaml, Average score of last 10: -5031.82
-28. Configuration: nn_128_256.yaml, Average score of last 10: -11281.72
-29. Configuration: nn_128_256_256.yaml, Average score of last 10: -11281.72
-30. Configuration: nn_256_128_256.yaml, Average score of last 10: -11320.9
-31. Configuration: nn_256_256_128.yaml, Average score of last 10: -11320.9
-32. Configuration: nn_256_64_128.yaml, Average score of last 10: -644.66
-33. Configuration: nn_64_32.yaml, Average score of last 10: -736.23
-34. Configuration: nn_64_128.yaml, Average score of last 10: -805.12
-35. Configuration: nn_32_32_128.yaml, Average score of last 10: -825.48
-36. Configuration: nn_32_128_256.yaml, Average score of last 10: -843.9
-37. Configuration: nn_64_64.yaml, Average score of last 10: -997.34
-38. Configuration: nn_32_256_32.yaml, Average score of last 10: -1221.61
-39. Configuration: nn_64_128_32.yaml, Average score of last 10: -1353.98
-40. Configuration: nn_32_64.yaml, Average score of last 10: -1405.15
-41. Configuration: nn_32.yaml, Average score of last 10: -1528.4
-42. Configuration: nn_256_32_128.yaml, Average score of last 10: -1559.53
-43. Configuration: nn_256_32.yaml, Average score of last 10: -1607.85
-44. Configuration: nn_256_32_256.yaml, Average score of last 10: -1733.39
-45. Configuration: nn_32_32_32.yaml, Average score of last 10: -1840.61
-46. Configuration: nn_64_32_64.yaml, Average score of last 10: -1842.32
-47. Configuration: nn_64_256_32.yaml, Average score of last 10: -1899.14
-48. Configuration: nn_32_256_256.yaml, Average score of last 10: -1968.04
-49. Configuration: nn_32_128_64.yaml, Average score of last 10: -1995.95
-50. Configuration: nn_256_64_32.yaml, Average score of last 10: -2009.29
-51. Configuration: nn_64_128_256.yaml, Average score of last 10: -2030.04
-52. Configuration: nn_64_256_256.yaml, Average score of last 10: -2169.83
-53. Configuration: nn_32_256_64.yaml, Average score of last 10: -2260.79
-54. Configuration: nn_32_128.yaml, Average score of last 10: -2296.78
-55. Configuration: nn_64_32_128.yaml, Average score of last 10: -2508.04
-56. Configuration: nn_256_256_64.yaml, Average score of last 10: -2516.93
-57. Configuration: nn_64_32_32.yaml, Average score of last 10: -2687.54
-58. Configuration: nn_32_128_32.yaml, Average score of last 10: -2745.7
-59. Configuration: nn_64_32_256.yaml, Average score of last 10: -2749.08
-60. Configuration: nn_32_32_64.yaml, Average score of last 10: -2885.2
-61. Configuration: nn_256_64_64.yaml, Average score of last 10: -3049.4
-62. Configuration: nn_32_256_128.yaml, Average score of last 10: -3052.2
-63. Configuration: nn_256_32_32.yaml, Average score of last 10: -3063.08
-64. Configuration: nn_64_64_256.yaml, Average score of last 10: -3163.98
-65. Configuration: nn_32_64_64.yaml, Average score of last 10: -3266.71
-66. Configuration: nn_32_128_128.yaml, Average score of last 10: -3334.59
-67. Configuration: nn_64_128_64.yaml, Average score of last 10: -3335.62
-68. Configuration: nn_32_64_32.yaml, Average score of last 10: -3490.12
-69. Configuration: nn_32_64_256.yaml, Average score of last 10: -3802.37
-70. Configuration: nn_64_64_64.yaml, Average score of last 10: -3857.71
-71. Configuration: nn_256_64_256.yaml, Average score of last 10: -4149.95
-72. Configuration: nn_64_256_64.yaml, Average score of last 10: -4264.94
-73. Configuration: nn_32_64_128.yaml, Average score of last 10: -4282.41
-74. Configuration: nn_256_64.yaml, Average score of last 10: -4346.12
-75. Configuration: nn_64_256.yaml, Average score of last 10: -4456.38
-76. Configuration: nn_32_32_256.yaml, Average score of last 10: -4461.76
-77. Configuration: nn_32_32.yaml, Average score of last 10: -4575.52
-78. Configuration: nn_64_64_128.yaml, Average score of last 10: -4728.74
-79. Configuration: nn_256_32_64.yaml, Average score of last 10: -5471.37
-80. Configuration: nn_64.yaml, Average score of last 10: -5474.6
-81. Configuration: nn_64_64_32.yaml, Average score of last 10: -5475.88
-82. Configuration: nn_64_128_128.yaml, Average score of last 10: -5634.03
-83. Configuration: nn_32_256.yaml, Average score of last 10: -5787.64
-84. Configuration: nn_64_256_128.yaml, Average score of last 10: -6210.74
+1. hidden_layers:[32,256]+score:-220.92
+2. hidden_layers:[32,32,128]+score:-415.15
+3. hidden_layers:[256,128,256]+score:-517.21
+4. hidden_layers:[32,64,32]+score:-904.48
+5. hidden_layers:[32,64]+score:-912.12
+6. hidden_layers:[64,32,256]+score:-952.51
+7. hidden_layers:[64,256,64]+score:-953.06
+8. hidden_layers:[128,32,256]+score:-970.95
+9. hidden_layers:[64,128,32]+score:-1016.24
+10. hidden_layers:[64,128,128]+score:-1017.16
+11. hidden_layers:[64,32,64]+score:-1126.67
+12. hidden_layers:[256,64,32]+score:-1145.94
+13. hidden_layers:[64,64,32]+score:-1219.11
+14. hidden_layers:[256,128,32]+score:-1343.23
+15. hidden_layers:[64,64,64]+score:-1355.17
+16. hidden_layers:[128,64,256]+score:-1528.08
+17. hidden_layers:[64]+score:-1536.71
+18. hidden_layers:[128,128,64]+score:-1566.17
+19. hidden_layers:[32,32]+score:-1610.54
+20. hidden_layers:[128]+score:-1643.38
+21. hidden_layers:[64,256,256]+score:-1688.85
+22. hidden_layers:[32,256,32]+score:-1794.28
+23. hidden_layers:[64,128,256]+score:-1799.48
+24. hidden_layers:[256,32]+score:-1887.25
+25. hidden_layers:[32,256,64]+score:-1899.95
+26. hidden_layers:[32,256,128]+score:-1917.25
+27. hidden_layers:[128,256,32]+score:-1923.76
+28. hidden_layers:[128,32,128]+score:-1973.57
+29. hidden_layers:[128,32,64]+score:-2017.45
+30. hidden_layers:[256,32,32]+score:-2091.22
+31. hidden_layers:[32,64,64]+score:-2107.57
+32. hidden_layers:[32,32,64]+score:-2115.63
+33. hidden_layers:[256,256,64]+score:-2134.44
+34. hidden_layers:[32,32,32]+score:-2180.98
+35. hidden_layers:[128,256,64]+score:-2249.50
+36. hidden_layers:[32]+score:-2338.35
+37. hidden_layers:[256,32,64]+score:-2418.74
+38. hidden_layers:[64,32,32]+score:-2433.67
+39. hidden_layers:[32,32,256]+score:-2493.51
+40. hidden_layers:[64,64,128]+score:-2502.71
+41. hidden_layers:[256,128,64]+score:-2704.02
+42. hidden_layers:[32,128,64]+score:-2859.39
+43. hidden_layers:[256,64,256]+score:-2880.79
+44. hidden_layers:[64,64,256]+score:-2977.11
+45. hidden_layers:[256,32,128]+score:-3019.66
+46. hidden_layers:[32,64,256]+score:-3039.40
+47. hidden_layers:[64,128,64]+score:-3056.13
+48. hidden_layers:[128,64]+score:-3077.94
+49. hidden_layers:[32,128,256]+score:-3091.94
+50. hidden_layers:[128,32]+score:-3192.72
+51. hidden_layers:[128,32,32]+score:-3204.90
+52. hidden_layers:[128,128]+score:-3292.61
+53. hidden_layers:[32,128,32]+score:-3299.39
+54. hidden_layers:[256,32]+score:-3309.35
+55. hidden_layers:[256,128]+score:-3365.99
+56. hidden_layers:[32,64,128]+score:-3559.21
+57. hidden_layers:[32,128]+score:-3569.67
+58. hidden_layers:[32,256,256]+score:-3595.80
+59. hidden_layers:[64,32]+score:-3717.57
+60. hidden_layers:[64,64]+score:-3963.38
+61. hidden_layers:[128,64,32]+score:-4096.07
+62. hidden_layers:[32,128,128]+score:-4219.97
+63. hidden_layers:[128,128,128]+score:-4296.39
+64. hidden_layers:[256,128,128]+score:-4389.15
+65. hidden_layers:[64,256,128]+score:-4649.28
+66. hidden_layers:[128,64,64]+score:-4832.71
+67. hidden_layers:[128,128,32]+score:-4928.41
+68. hidden_layers:[64,32,128]+score:-5086.66
+69. hidden_layers:[128,64,128]+score:-5121.68
+70. hidden_layers:[256,256,32]+score:-5185.89
+71. hidden_layers:[256,64]+score:-5187.42
+72. hidden_layers:[64,256,32]+score:-5293.00
+73. hidden_layers:[64,128]+score:-5699.99
+74. hidden_layers:[64,256]+score:-5752.42
+75. hidden_layers:[256,64,64]+score:-5853.35
+76. hidden_layers:[128,256,256]+score:-9597.62
+77. hidden_layers:[128,128,256]+score:-11274.01
+78. hidden_layers:[256,32,256]+score:-11274.01
+79. hidden_layers:[256,256,128]+score:-11274.01
+80. hidden_layers:[128,256,256]+score:-11274.01
+81. hidden_layers:[128,256]+score:-11323.70
+82. hidden_layers:[256,256]+score:-11323.70
+83. hidden_layers:[256]+score:-11323.70
+84. hidden_layers:[256,256,256]+score:-11323.70
