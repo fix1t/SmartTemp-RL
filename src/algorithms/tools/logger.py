@@ -6,6 +6,7 @@
     and store the training information.
 """
 
+import math
 import os
 import matplotlib.pyplot as plt
 from env.environment import TempRegulationEnv
@@ -97,10 +98,14 @@ class Logger():
                 f.write("No episodes were run\n")
                 return
 
+
+            max_reward = float(max(self.all_scores))
+            average_reward = float(self.get_last_avg_score())
+
             summary = {
-                "Elapsed Time": elapsed_time,
-                "Max reward per episode": max(self.all_scores),
-                "Average over last 10 episodes": self.get_last_avg_score(),
+                "Elapsed Time (s)": math.trunc(elapsed_time),
+                "Max reward per episode": math.trunc(max_reward),
+                "Average over last 10 episodes": math.trunc(average_reward),
                 "Total episodes/iterations": len(self.all_scores),
                 "Total steps": len(self.all_scores) * agent.env.max_steps_per_episode,
             }
