@@ -5,6 +5,7 @@ SCRIPT := main.py
 SEED := 42
 
 # Path for the run configurations script
+EVAL_SCRIPT := run_evaluation.py
 CONFIG_SCRIPT := run_configurations.py
 CONFIG_GENERATE_SCRIPT := tools/config_generator.py
 CONFIG_SCRIPT_OUTPUT := out/results
@@ -60,6 +61,7 @@ run-configurations-ppo: generate-hp-ppo
 run-configurations-nn-dql: generate-nn
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
 	$(PYTHON) $(CONFIG_SCRIPT) --agent DQL --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/dql/$(TIMESTAMP)
+
 run-configurations-nn-ppo: generate-nn
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
 	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 28  --folder $(CONFIG_SCRIPT_FOLDER)/nn --output ${CONFIG_SCRIPT_OUTPUT}/nn/ppo/$(TIMESTAMP)
@@ -71,6 +73,14 @@ run-configurations-top-dql: generate-top-dql
 run-configurations-top-ppo: generate-top-ppo
 	@echo "Running ppo configurations with $(CONFIG_SCRIPT_TIMESTEPS) timesteps..."
 	$(PYTHON) $(CONFIG_SCRIPT) --agent PPO --timesteps $(CONFIG_SCRIPT_TIMESTEPS) --rpc 25 --folder $(CONFIG_SCRIPT_FOLDER)/top/ppo --output ${CONFIG_SCRIPT_OUTPUT}/top/ppo/$(TIMESTAMP) -s
+
+eval-ppo:
+	@echo "Evaluating PPO model..."
+	$(PYTHON) $(EVAL_SCRIPT) --algorithm PPO --config $(LATEST_PPO_CONFIG) --output ${CONFIG_SCRIPT_OUTPUT}/eval/ppo/$(TIMESTAMP)
+
+eval-dql:
+	@echo "Evaluating DQL model..."
+	$(PYTHON) $(EVAL_SCRIPT) --algorithm DQL --config $(LATEST_DQL_CONFIG) --output ${CONFIG_SCRIPT_OUTPUT}/eval/dql/$(TIMESTAMP)
 
 generate-nn:
 	@echo "Generating NN configurations..."
@@ -90,7 +100,6 @@ generate-hp-ppo:
 generate-top-dql:
 	@echo "Generating DQL configurations..."
 	rm -rf $(CONFIG_SCRIPT_FOLDER)/top/dql
-
 	$(PYTHON) $(CONFIG_GENERATE_SCRIPT) --top --agent DQL --output $(CONFIG_SCRIPT_FOLDER)/top/dql
 
 generate-top-ppo:	

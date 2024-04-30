@@ -5,6 +5,7 @@ import argparse
 def parse_configurations(data):
     # Pattern to exactly match lines starting with "1. Configuration:" and similar
     config_line_pattern = r"^\d+\.\sConfiguration:"
+    # config_line_pattern = r"^\d+\.\s"
     param_pattern = r"(\w+):(-?[\d\.]+|\[[-\d\.,\s]+\])"
     entries = []
 

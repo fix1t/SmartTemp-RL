@@ -43,6 +43,10 @@ class Agent:
         self.logger = Logger()
         self.logger.reset()
 
+    def save(self, path):
+        torch.save(self.actor.state_dict(), f"{path}/actor_model.pth")
+        torch.save(self.critic.state_dict(), f"{path}/critic_model.pth")
+
     # Main training loop
     def train(self, total_timesteps):
         t_so_far = 0
