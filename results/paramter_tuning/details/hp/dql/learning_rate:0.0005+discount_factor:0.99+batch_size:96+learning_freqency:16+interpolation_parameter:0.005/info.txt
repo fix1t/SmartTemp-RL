@@ -16,12 +16,12 @@ Average over last 10 episodes: !!python/object/apply:numpy.core.multiarray.scala
   - -1
   - 0
 - !!binary |
-  PiKUeu4lo8A=
-Elapsed Time: 362.8919425010681
+  1jbsXhc4pcA=
+Elapsed Time: 347.08310651779175
 Max reward per episode: !!python/object/apply:numpy.core.multiarray.scalar
 - *id001
 - !!binary |
-  7oYix096iMA=
+  KDECxETmksA=
 Total episodes/iterations: 392
 Total steps: 526848
 
@@ -29,9 +29,9 @@ Total steps: 526848
 ---------------Agent's configuration----------------
 
 hyperparameters:
-  batch_size: 128
+  batch_size: 96
   discount_factor: 0.99
-  interpolation_parameter: 0.025
+  interpolation_parameter: 0.005
   learning_freqency: 16
   learning_rate: 0.0005
   replay_buffer_size: 100000

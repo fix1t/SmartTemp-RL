@@ -17,7 +17,7 @@ Average over last 10 episodes: !!python/object/apply:numpy.core.multiarray.scala
   - 0
 - !!binary |
   OP/1LtgqlsA=
-Elapsed Time: 357.82503366470337
+Elapsed Time: 372.10531854629517
 Max reward per episode: !!python/object/apply:numpy.core.multiarray.scalar
 - *id001
 - !!binary |
