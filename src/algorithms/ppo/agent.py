@@ -241,7 +241,6 @@ class Agent:
     # Logs summary of training progress
     def _log_episode(self, batch_rews):
         reward = np.sum(batch_rews)
-        print(f'\rEpisode: {self.logger.iter}\tAverage Reward: {reward:.2f}', end="")
         self.logger.log_reward(reward, name='Episode')
 
     def load_actor(self, path):

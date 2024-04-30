@@ -23,42 +23,42 @@ ppo_parameters = {
 }
 
 dql_top_parameters = {
-    "hidden_layers": [[128,32,128],[128,32],[128,256,32],[128,32,32],[128,256,64]],
+    "hidden_layers": [[32,256],[32,32,128],[256,128,256],[32,64,32],[32,64]],
     "hyperparametrs": [
         {
         "learning_rate": 0.0015,
-        "batch_size": 128,
-        "discount_factor": 0.99,
-        "learning_freqency": 20,
-        "interpolation_parameter": 0.025,
-    },
-        {
-        "learning_rate": 0.0005,
-        "batch_size": 128,
-        "discount_factor": 0.95,
-        "learning_freqency": 20,
-        "interpolation_parameter": 0.025,
-    },
-        {
-        "learning_rate": 0.0005,
         "batch_size": 96,
         "discount_factor": 0.95,
-        "learning_freqency": 10,
+        "learning_freqency": 16,
+        "interpolation_parameter": 0.005,
+    },
+        {
+        "learning_rate": 0.0005,
+        "batch_size": 128,
+        "discount_factor": 0.95,
+        "learning_freqency": 16,
         "interpolation_parameter": 0.001,
     },
         {
         "learning_rate": 0.0005,
         "batch_size": 96,
-        "discount_factor": 0.90,
-        "learning_freqency": 5,
-        "interpolation_parameter": 0.005,
+        "discount_factor": 0.95,
+        "learning_freqency": 4,
+        "interpolation_parameter": 0.001,
+    },
+        {
+        "learning_rate": 0.0005,
+        "batch_size": 96,
+        "discount_factor": 0.95,
+        "learning_freqency": 4,
+        "interpolation_parameter": 0.025,
     },
         {
         "learning_rate": 0.0005,
         "batch_size": 128,
-        "discount_factor": 0.95,
-        "learning_freqency": 10,
-        "interpolation_parameter": 0.005,
+        "discount_factor": 0.99,
+        "learning_freqency": 4,
+        "interpolation_parameter": 0.025,
     }
     ]
 }
