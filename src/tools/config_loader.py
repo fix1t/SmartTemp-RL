@@ -5,7 +5,7 @@ import copy
 DQL_DEFAULT_CONFIG = {
     'network': {
         'seed': 42,
-        'hidden_layers': [128, 32, 128],
+        'hidden_layers': [32,256], # Best perfoming nn configuration
         'activation': 'ReLU',
         'output_activation': 'Softmax'
     },
@@ -22,7 +22,7 @@ DQL_DEFAULT_CONFIG = {
 PPO_DEFAULT_CONFIG = {
     'network': {
         'seed': 42,
-        'hidden_layers': [32, 128, 256],
+        'hidden_layers': [32, 128, 256], # Best perfoming nn configuration
         'activation': 'ReLU',
         'output_activation': 'Softmax'
     },
