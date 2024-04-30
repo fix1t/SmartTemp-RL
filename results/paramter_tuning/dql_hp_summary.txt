@@ -1,167 +1,165 @@
 Summary:
-Total time: 2 days, 10:05:14.400000
-Total configurations run 162 of 162
+Total time: 1 day, 0:43:31.620000
+Total configurations run: 160
 
 Configurations results from best to worst:
-1. Configuration: lr:0.0015+bs:128+df:0.99+freq:20+int:0.025+score:93.82
-2. Configuration: lr:0.0005+bs:128+df:0.95+freq:20+int:0.025+score:-104.28
-3. Configuration: lr:0.0005+bs:96+df:0.95+freq:10+int:0.001+score:-209.94
-4. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.005+score:-233.19
-5. Configuration: lr:0.0005+bs:128+df:0.95+freq:10+int:0.005+score:-420.48
-6. Configuration: lr:0.0005+bs:64+df:0.95+freq:20+int:0.005+score:-444.62
-7. Configuration: lr:0.0005+bs:128+df:0.95+freq:10+int:0.001+score:-556.39
-8. Configuration: lr:0.0005+bs:128+df:0.99+freq:10+int:0.025+score:-561.41
-9. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.005+score:-844.20
-10. Configuration: lr:0.0005+bs:128+df:0.90+freq:20+int:0.005+score:-875.26
-11. Configuration: lr:0.0005+bs:128+df:0.99+freq:20+int:0.025+score:-940.67
-12. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.005+score:-1056.03
-13. Configuration: lr:0.0005+bs:96+df:0.95+freq:10+int:0.025+score:-1143.06
-14. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.025+score:-1224.92
-15. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.025+score:-1237.49
-16. Configuration: lr:0.0005+bs:128+df:0.90+freq:10+int:0.001+score:-1263.50
-17. Configuration: lr:0.0005+bs:64+df:0.90+freq:20+int:0.005+score:-1268.41
-18. Configuration: lr:0.0005+bs:96+df:0.95+freq:20+int:0.005+score:-1402.07
-19. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.025+score:-1413.01
-20. Configuration: lr:0.0005+bs:96+df:0.99+freq:20+int:0.001+score:-1483.45
-21. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.025+score:-1545.55
-22. Configuration: lr:0.0015+bs:128+df:0.95+freq:20+int:0.005+score:-1576.91
-23. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.005+score:-1580.62
-24. Configuration: lr:0.0005+bs:128+df:0.95+freq:20+int:0.005+score:-1621.71
-25. Configuration: lr:0.0005+bs:96+df:0.90+freq:20+int:0.025+score:-1640.16
-26. Configuration: lr:0.0005+bs:96+df:0.95+freq:10+int:0.005+score:-1654.38
-27. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.001+score:-1654.77
-28. Configuration: lr:0.0005+bs:128+df:0.90+freq:10+int:0.005+score:-1677.54
-29. Configuration: lr:0.0005+bs:64+df:0.95+freq:20+int:0.001+score:-1741.66
-30. Configuration: lr:0.0015+bs:96+df:0.95+freq:20+int:0.005+score:-1846.45
-31. Configuration: lr:0.0015+bs:64+df:0.99+freq:20+int:0.025+score:-1873.08
-32. Configuration: lr:0.0015+bs:128+df:0.95+freq:20+int:0.001+score:-1910.75
-33. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.025+score:-1932.62
-34. Configuration: lr:0.0005+bs:64+df:0.99+freq:10+int:0.025+score:-2117.35
-35. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.025+score:-2126.16
-36. Configuration: lr:0.0005+bs:64+df:0.90+freq:20+int:0.001+score:-2188.23
-37. Configuration: lr:0.0005+bs:64+df:0.99+freq:20+int:0.001+score:-2213.71
-38. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.025+score:-2240.35
-39. Configuration: lr:0.0005+bs:96+df:0.90+freq:20+int:0.001+score:-2242.89
-40. Configuration: lr:0.0005+bs:96+df:0.90+freq:10+int:0.001+score:-2245.16
-41. Configuration: lr:0.0015+bs:64+df:0.99+freq:20+int:0.001+score:-2247.17
-42. Configuration: lr:0.0005+bs:128+df:0.90+freq:20+int:0.001+score:-2314.06
-43. Configuration: lr:0.0005+bs:64+df:0.90+freq:10+int:0.001+score:-2323.90
-44. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.001+score:-2439.78
-45. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.005+score:-2440.75
-46. Configuration: lr:0.0015+bs:64+df:0.90+freq:20+int:0.001+score:-2471.76
-47. Configuration: lr:0.0015+bs:128+df:0.95+freq:20+int:0.025+score:-2487.84
-48. Configuration: lr:0.0005+bs:96+df:0.99+freq:20+int:0.005+score:-2487.88
-49. Configuration: lr:0.0005+bs:64+df:0.95+freq:10+int:0.001+score:-2515.90
-50. Configuration: lr:0.0015+bs:64+df:0.90+freq:20+int:0.005+score:-2529.08
-51. Configuration: lr:0.0005+bs:64+df:0.99+freq:10+int:0.005+score:-2616.63
-52. Configuration: lr:0.0005+bs:128+df:0.99+freq:20+int:0.005+score:-2689.49
-53. Configuration: lr:0.0005+bs:96+df:0.99+freq:10+int:0.001+score:-2737.68
-54. Configuration: lr:0.0005+bs:64+df:0.90+freq:10+int:0.025+score:-2774.08
-55. Configuration: lr:0.0005+bs:96+df:0.90+freq:10+int:0.005+score:-2808.52
-56. Configuration: lr:0.0005+bs:96+df:0.95+freq:20+int:0.025+score:-2822.59
-57. Configuration: lr:0.0005+bs:128+df:0.99+freq:10+int:0.001+score:-2863.70
-58. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.005+score:-2928.68
-59. Configuration: lr:0.0005+bs:64+df:0.95+freq:10+int:0.025+score:-2973.73
-60. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.001+score:-3043.41
-61. Configuration: lr:0.0005+bs:96+df:0.99+freq:10+int:0.025+score:-3072.05
-62. Configuration: lr:0.0005+bs:96+df:0.95+freq:20+int:0.001+score:-3074.36
-63. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.001+score:-3142.88
-64. Configuration: lr:0.0005+bs:128+df:0.95+freq:20+int:0.001+score:-3340.80
-65. Configuration: lr:0.0005+bs:96+df:0.99+freq:20+int:0.025+score:-3764.18
-66. Configuration: lr:0.0005+bs:64+df:0.99+freq:10+int:0.001+score:-3831.07
-67. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.005+score:-3839.77
-68. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.001+score:-3924.94
-69. Configuration: lr:0.0005+bs:64+df:0.95+freq:20+int:0.025+score:-3991.99
-70. Configuration: lr:0.0005+bs:64+df:0.90+freq:20+int:0.025+score:-4195.46
-71. Configuration: lr:0.0005+bs:64+df:0.90+freq:10+int:0.005+score:-4375.59
-72. Configuration: lr:0.0005+bs:96+df:0.90+freq:10+int:0.025+score:-4480.21
-73. Configuration: lr:0.0005+bs:64+df:0.99+freq:20+int:0.025+score:-4694.18
-74. Configuration: lr:0.0015+bs:128+df:0.90+freq:20+int:0.005+score:-4841.76
-75. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.001+score:-4847.50
-76. Configuration: lr:0.0005+bs:128+df:0.99+freq:20+int:0.001+score:-4898.58
-77. Configuration: lr:0.0005+bs:128+df:0.90+freq:10+int:0.025+score:-4947.40
-78. Configuration: lr:0.0005+bs:64+df:0.95+freq:10+int:0.005+score:-5022.15
-79. Configuration: lr:0.0015+bs:64+df:0.95+freq:20+int:0.005+score:-5413.66
-80. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.005+score:-5442.81
-81. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.001+score:-5638.40
-82. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.005+score:-5741.27
-83. Configuration: lr:0.0005+bs:128+df:0.99+freq:10+int:0.005+score:-5743.45
-84. Configuration: lr:0.0005+bs:64+df:0.99+freq:20+int:0.005+score:-5770.53
-85. Configuration: lr:0.0005+bs:128+df:0.90+freq:20+int:0.025+score:-5866.66
-86. Configuration: lr:0.0015+bs:96+df:0.99+freq:20+int:0.025+score:-5879.49
-87. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.025+score:-6032.73
-88. Configuration: lr:0.0015+bs:64+df:0.99+freq:10+int:0.001+score:-6109.74
-89. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.001+score:-6137.25
-90. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.001+score:-6137.25
-91. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.025+score:-6137.25
-92. Configuration: lr:0.0015+bs:96+df:0.90+freq:10+int:0.005+score:-6137.25
-93. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.005+score:-6149.05
-94. Configuration: lr:0.0015+bs:128+df:0.99+freq:10+int:0.001+score:-6149.05
-95. Configuration: lr:0.0005+bs:96+df:0.9+freq:5+int:0.001+score:-6410.70
-96. Configuration: lr:0.0005+bs:96+df:0.90+freq:20+int:0.005+score:-6590.53
-97. Configuration: lr:0.0015+bs:128+df:0.90+freq:10+int:0.005+score:-7996.06
-98. Configuration: lr:0.0005+bs:128+df:0.95+freq:10+int:0.025+score:-8712.33
-99. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.025+score:-9453.63
-100. Configuration: lr:0.0005+bs:64+df:0.9+freq:5+int:0.001+score:-9680.17
-101. Configuration: lr:0.0015+bs:64+df:0.90+freq:10+int:0.005+score:-9680.17
-102. Configuration: lr:0.0015+bs:64+df:0.90+freq:10+int:0.025+score:-9680.17
-103. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.025+score:-9680.17
-104. Configuration: lr:0.0015+bs:64+df:0.95+freq:20+int:0.025+score:-9680.17
-105. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.005+score:-9680.17
-106. Configuration: lr:0.0015+bs:64+df:0.99+freq:20+int:0.005+score:-9680.17
-107. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.005+score:-9680.17
-108. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.005+score:-9836.52
-109. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.025+score:-9836.52
-110. Configuration: lr:0.0015+bs:128+df:0.99+freq:10+int:0.025+score:-9836.52
-111. Configuration: lr:0.0015+bs:128+df:0.99+freq:20+int:0.005+score:-9836.52
-112. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.025+score:-9836.52
-113. Configuration: lr:0.0015+bs:96+df:0.95+freq:10+int:0.001+score:-9844.50
-114. Configuration: lr:0.0015+bs:96+df:0.95+freq:20+int:0.025+score:-9844.50
-115. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.005+score:-9844.50
-116. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.025+score:-9844.50
-117. Configuration: lr:0.0015+bs:96+df:0.99+freq:20+int:0.005+score:-9844.50
-118. Configuration: lr:0.0005+bs:96+df:0.99+freq:10+int:0.005+score:-9844.50
-119. Configuration: lr:0.0015+bs:96+df:0.99+freq:20+int:0.001+score:-10732.43
-120. Configuration: lr:0.0015+bs:64+df:0.90+freq:10+int:0.001+score:-11270.13
-// 121. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.005+score:-11270.13
-// 122. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.001+score:-11270.13
-// 123. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.025+score:-11270.13
-// 124. Configuration: lr:0.0015+bs:64+df:0.99+freq:10+int:0.005+score:-11270.13
-// 125. Configuration: lr:0.0015+bs:64+df:0.99+freq:10+int:0.025+score:-11270.13
-// 126. Configuration: lr:0.0015+bs:128+df:0.90+freq:10+int:0.001+score:-11277.23
-// 127. Configuration: lr:0.0015+bs:128+df:0.90+freq:10+int:0.025+score:-11277.23
-// 128. Configuration: lr:0.0015+bs:128+df:0.90+freq:20+int:0.025+score:-11277.23
-// 129. Configuration: lr:0.0015+bs:128+df:0.95+freq:10+int:0.005+score:-11277.23
-// 130. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.001+score:-11277.23
-// 131. Configuration: lr:0.0015+bs:128+df:0.99+freq:20+int:0.001+score:-11277.23
-// 132. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.001+score:-11277.23
-// 133. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.005+score:-11284.49
-// 134. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.001+score:-11284.49
-// 135. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.025+score:-11284.49
-// 136. Configuration: lr:0.0015+bs:96+df:0.95+freq:10+int:0.025+score:-11284.49
-// 137. Configuration: lr:0.0015+bs:96+df:0.95+freq:20+int:0.001+score:-11284.49
-// 138. Configuration: lr:0.0015+bs:96+df:0.99+freq:10+int:0.005+score:-11284.49
-// 139. Configuration: lr:0.0015+bs:96+df:0.99+freq:10+int:0.025+score:-11284.49
-// 140. Configuration: lr:0.0015+bs:96+df:0.90+freq:10+int:0.025+score:-11284.49
-// 141. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.001+score:-11284.49
-// 142. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.005+score:-11284.49
-// 143. Configuration: lr:0.0015+bs:64+df:0.90+freq:20+int:0.025+score:-11314.70
-// 144. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.001+score:-11314.70
-// 145. Configuration: lr:0.0015+bs:64+df:0.95+freq:10+int:0.025+score:-11314.70
-// 146. Configuration: lr:0.0005+bs:128+df:0.9+freq:5+int:0.025+score:-11317.02
-// 147. Configuration: lr:0.0015+bs:128+df:0.90+freq:20+int:0.001+score:-11317.02
-// 148. Configuration: lr:0.0015+bs:128+df:0.95+freq:10+int:0.025+score:-11317.02
-// 149. Configuration: lr:0.0015+bs:128+df:0.99+freq:10+int:0.005+score:-11317.02
-// 150. Configuration: lr:0.0015+bs:64+df:0.95+freq:10+int:0.001+score:-11320.28
-// 151. Configuration: lr:0.0015+bs:64+df:0.95+freq:10+int:0.005+score:-11320.28
-// 152. Configuration: lr:0.0015+bs:64+df:0.95+freq:20+int:0.001+score:-11320.28
-// 153. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.001+score:-11320.28
-// 154. Configuration: lr:0.0015+bs:64+df:0.9+freq:5+int:0.025+score:-11320.28
-// 155. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.001+score:-11321.65
-// 156. Configuration: lr:0.0015+bs:128+df:0.9+freq:5+int:0.025+score:-11321.65
-// 157. Configuration: lr:0.0015+bs:128+df:0.95+freq:10+int:0.001+score:-11321.65
-// 158. Configuration: lr:0.0015+bs:96+df:0.90+freq:20+int:0.025+score:-11324.42
-// 159. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.005+score:-11324.42
-// 160. Configuration: lr:0.0015+bs:96+df:0.99+freq:10+int:0.001+score:-11324.42
-// 161. Configuration: lr:0.0015+bs:96+df:0.9+freq:5+int:0.005+score:-11324.42
-// 162. Configuration: lr:0.0015+bs:96+df:0.95+freq:10+int:0.005+score:-11328.69
+1. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:4+interpolation_parameter:0.025+score:-260.12
+2. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:4+interpolation_parameter:0.025+score:-418.97
+3. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:4+interpolation_parameter:0.001+score:-700.79
+4. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:16+interpolation_parameter:0.001+score:-1002.38
+5. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-1064.18
+6. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:8+interpolation_parameter:0.025+score:-1226.27
+7. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:8+interpolation_parameter:0.001+score:-1229.17
+8. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:4+interpolation_parameter:0.001+score:-1306.59
+9. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:4+interpolation_parameter:0.005+score:-1395.87
+10. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:16+interpolation_parameter:0.005+score:-1418.71
+11. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:4+interpolation_parameter:0.025+score:-1421.88
+12. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:8+interpolation_parameter:0.001+score:-1428.38
+13. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:4+interpolation_parameter:0.025+score:-1451.40
+14. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:4+interpolation_parameter:0.001+score:-1476.92
+15. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:8+interpolation_parameter:0.005+score:-1495.36
+16. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:4+interpolation_parameter:0.005+score:-1500.14
+17. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-1565.59
+18. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:16+interpolation_parameter:0.001+score:-1595.65
+19. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:4+interpolation_parameter:0.005+score:-1597.13
+20. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:4+interpolation_parameter:0.005+score:-1656.34
+21. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:16+interpolation_parameter:0.025+score:-1702.33
+22. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:8+interpolation_parameter:0.001+score:-1715.28
+23. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:8+interpolation_parameter:0.005+score:-1715.98
+24. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:8+interpolation_parameter:0.025+score:-1788.68
+25. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:8+interpolation_parameter:0.005+score:-1821.67
+26. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:4+interpolation_parameter:0.001+score:-1854.06
+27. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:8+interpolation_parameter:0.025+score:-1889.98
+28. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:8+interpolation_parameter:0.005+score:-1918.44
+29. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:8+interpolation_parameter:0.005+score:-1920.99
+30. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:8+interpolation_parameter:0.025+score:-1933.57
+31. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:8+interpolation_parameter:0.005+score:-1952.89
+32. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:16+interpolation_parameter:0.025+score:-1985.45
+33. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:8+interpolation_parameter:0.001+score:-2031.12
+34. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:16+interpolation_parameter:0.025+score:-2035.58
+35. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:16+interpolation_parameter:0.025+score:-2075.77
+36. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:16+interpolation_parameter:0.005+score:-2084.16
+37. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:4+interpolation_parameter:0.025+score:-2161.72
+38. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:16+interpolation_parameter:0.025+score:-2187.70
+39. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:16+interpolation_parameter:0.001+score:-2198.58
+40. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.025+score:-2212.64
+41. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:4+interpolation_parameter:0.001+score:-2295.56
+42. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-2303.49
+43. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:8+interpolation_parameter:0.025+score:-2330.19
+44. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:16+interpolation_parameter:0.025+score:-2363.23
+45. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:4+interpolation_parameter:0.005+score:-2397.18
+46. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:8+interpolation_parameter:0.005+score:-2441.56
+47. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:16+interpolation_parameter:0.025+score:-2450.97
+48. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:8+interpolation_parameter:0.001+score:-2478.13
+49. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:4+interpolation_parameter:0.025+score:-2488.60
+50. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:16+interpolation_parameter:0.025+score:-2500.31
+51. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:16+interpolation_parameter:0.005+score:-2520.98
+52. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:4+interpolation_parameter:0.001+score:-2601.80
+53. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:8+interpolation_parameter:0.001+score:-2611.13
+54. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:4+interpolation_parameter:0.025+score:-2625.59
+55. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:16+interpolation_parameter:0.005+score:-2628.20
+56. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:16+interpolation_parameter:0.001+score:-2640.31
+57. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:8+interpolation_parameter:0.005+score:-2706.44
+58. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-2716.05
+59. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:8+interpolation_parameter:0.001+score:-2746.18
+60. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:16+interpolation_parameter:0.001+score:-2895.92
+61. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:8+interpolation_parameter:0.001+score:-3003.31
+62. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:8+interpolation_parameter:0.025+score:-3010.72
+63. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-3037.06
+64. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:8+interpolation_parameter:0.025+score:-3049.64
+65. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:8+interpolation_parameter:0.001+score:-3134.56
+66. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:8+interpolation_parameter:0.005+score:-3355.13
+67. learning_rate:0.0005+discount_factor:0.95+batch_size:128+learning_freqency:8+interpolation_parameter:0.025+score:-3368.69
+68. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:16+interpolation_parameter:0.005+score:-3486.28
+69. learning_rate:0.0005+discount_factor:0.95+batch_size:96+learning_freqency:16+interpolation_parameter:0.001+score:-3515.83
+70. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:4+interpolation_parameter:0.005+score:-3588.06
+71. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:4+interpolation_parameter:0.025+score:-3821.88
+72. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:4+interpolation_parameter:0.025+score:-4026.09
+73. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:16+interpolation_parameter:0.001+score:-4071.46
+74. learning_rate:0.0005+discount_factor:0.9+batch_size:128+learning_freqency:4+interpolation_parameter:0.001+score:-4302.36
+75. learning_rate:0.0005+discount_factor:0.9+batch_size:64+learning_freqency:4+interpolation_parameter:0.005+score:-4345.98
+76. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:4+interpolation_parameter:0.001+score:-4363.60
+77. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-4618.48
+78. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:4+interpolation_parameter:0.005+score:-4642.17
+79. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.005+score:-4686.47
+80. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:4+interpolation_parameter:0.005+score:-4701.66
+81. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:8+interpolation_parameter:0.025+score:-4874.83
+82. learning_rate:0.0005+discount_factor:0.99+batch_size:96+learning_freqency:4+interpolation_parameter:0.001+score:-4907.78
+83. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:16+interpolation_parameter:0.001+score:-5073.61
+84. learning_rate:0.0005+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.001+score:-5196.79
+85. learning_rate:0.0005+discount_factor:0.99+batch_size:128+learning_freqency:4+interpolation_parameter:0.005+score:-5439.61
+86. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:8+interpolation_parameter:0.001+score:-5448.86
+87. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:16+interpolation_parameter:0.005+score:-9204.97
+88. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:16+interpolation_parameter:0.005+score:-9204.97
+89. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:8+interpolation_parameter:0.005+score:-9360.28
+90. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:8+interpolation_parameter:0.025+score:-9360.28
+91. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.025+score:-9466.78
+92. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:8+interpolation_parameter:0.025+score:-9521.85
+93. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:8+interpolation_parameter:0.001+score:-9580.78
+94. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:8+interpolation_parameter:0.005+score:-9580.78
+95. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:4+interpolation_parameter:0.001+score:-9595.74
+96. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:4+interpolation_parameter:0.001+score:-9604.80
+97. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:4+interpolation_parameter:0.005+score:-9604.80
+98. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:4+interpolation_parameter:0.005+score:-9604.80
+99. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:4+interpolation_parameter:0.005+score:-9682.71
+100. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:8+interpolation_parameter:0.025+score:-11274.54
+101. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:4+interpolation_parameter:0.005+score:-11277.43
+102. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:4+interpolation_parameter:0.025+score:-11277.43
+103. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:4+interpolation_parameter:0.005+score:-11277.43
+104. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:16+interpolation_parameter:0.001+score:-11280.63
+105. learning_rate:0.0005+discount_factor:0.95+batch_size:64+learning_freqency:16+interpolation_parameter:0.001+score:-11280.63
+106. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:16+interpolation_parameter:0.001+score:-11280.63
+107. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:8+interpolation_parameter:0.025+score:-11281.99
+108. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:8+interpolation_parameter:0.001+score:-11281.99
+109. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:16+interpolation_parameter:0.005+score:-11285.04
+110. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:16+interpolation_parameter:0.025+score:-11285.04
+111. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:4+interpolation_parameter:0.025+score:-11286.18
+112. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:4+interpolation_parameter:0.001+score:-11286.18
+113. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:16+interpolation_parameter:0.001+score:-11290.24
+114. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:16+interpolation_parameter:0.025+score:-11290.24
+115. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:4+interpolation_parameter:0.001+score:-11303.02
+116. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:8+interpolation_parameter:0.005+score:-11319.05
+117. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:8+interpolation_parameter:0.025+score:-11319.05
+118. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:8+interpolation_parameter:0.001+score:-11319.05
+119. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:8+interpolation_parameter:0.005+score:-11319.05
+120. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:4+interpolation_parameter:0.001+score:-11321.49
+121. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:4+interpolation_parameter:0.001+score:-11321.49
+122. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:4+interpolation_parameter:0.025+score:-11321.49
+123. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:4+interpolation_parameter:0.005+score:-11321.49
+124. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:4+interpolation_parameter:0.025+score:-11321.49
+125. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:8+interpolation_parameter:0.001+score:-11323.31
+126. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:8+interpolation_parameter:0.001+score:-11323.31
+127. learning_rate:0.0015+discount_factor:0.99+batch_size:96+learning_freqency:8+interpolation_parameter:0.005+score:-11323.86
+128. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:16+interpolation_parameter:0.025+score:-11324.66
+129. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:16+interpolation_parameter:0.025+score:-11324.66
+130. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:16+interpolation_parameter:0.001+score:-11328.71
+131. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:16+interpolation_parameter:0.025+score:-11328.71
+132. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:16+interpolation_parameter:0.005+score:-11328.71
+133. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:16+interpolation_parameter:0.025+score:-11328.71
+134. learning_rate:0.0005+discount_factor:0.99+batch_size:64+learning_freqency:16+interpolation_parameter:0.025+score:-11328.85
+135. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:16+interpolation_parameter:0.001+score:-11328.85
+136. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:16+interpolation_parameter:0.005+score:-11328.85
+137. learning_rate:0.0015+discount_factor:0.99+batch_size:64+learning_freqency:16+interpolation_parameter:0.001+score:-11328.85
+138. learning_rate:0.0015+discount_factor:0.99+batch_size:64+learning_freqency:16+interpolation_parameter:0.005+score:-11328.85
+139. learning_rate:0.0015+discount_factor:0.99+batch_size:64+learning_freqency:16+interpolation_parameter:0.025+score:-11328.85
+140. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:8+interpolation_parameter:0.005+score:-11329.03
+141. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:8+interpolation_parameter:0.025+score:-11329.03
+142. learning_rate:0.0015+discount_factor:0.95+batch_size:96+learning_freqency:8+interpolation_parameter:0.025+score:-11329.03
+143. learning_rate:0.0015+discount_factor:0.9+batch_size:96+learning_freqency:16+interpolation_parameter:0.001+score:-11330.94
+144. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:16+interpolation_parameter:0.001+score:-11333.08
+145. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:16+interpolation_parameter:0.005+score:-11333.08
+146. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:4+interpolation_parameter:0.001+score:-11333.81
+147. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:4+interpolation_parameter:0.005+score:-11333.81
+148. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:4+interpolation_parameter:0.025+score:-11333.81
+149. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:8+interpolation_parameter:0.025+score:-11346.10
+150. learning_rate:0.0015+discount_factor:0.99+batch_size:64+learning_freqency:8+interpolation_parameter:0.005+score:-11346.10
+151. learning_rate:0.0015+discount_factor:0.99+batch_size:64+learning_freqency:8+interpolation_parameter:0.025+score:-11346.10
+152. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:8+interpolation_parameter:0.001+score:-11346.10
+153. learning_rate:0.0015+discount_factor:0.95+batch_size:64+learning_freqency:8+interpolation_parameter:0.005+score:-11346.10
+154. learning_rate:0.0015+discount_factor:0.9+batch_size:128+learning_freqency:4+interpolation_parameter:0.025+score:-11346.99
+155. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:4+interpolation_parameter:0.001+score:-11346.99
+156. learning_rate:0.0015+discount_factor:0.95+batch_size:128+learning_freqency:4+interpolation_parameter:0.025+score:-11346.99
+157. learning_rate:0.0015+discount_factor:0.99+batch_size:128+learning_freqency:4+interpolation_parameter:0.025+score:-11346.99
+158. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:8+interpolation_parameter:0.001+score:-11349.69
+159. learning_rate:0.0015+discount_factor:0.9+batch_size:64+learning_freqency:8+interpolation_parameter:0.005+score:-11349.69
+160. learning_rate:0.0015+discount_factor:0.99+batch_size:64+learning_freqency:8+interpolation_parameter:0.001+score:-11349.69
