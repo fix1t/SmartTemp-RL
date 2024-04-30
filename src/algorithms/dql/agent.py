@@ -84,12 +84,12 @@ class Agent():
         with torch.no_grad():
             action_values = self.local_qnetwork(state)
         self.local_qnetwork.train()  # Set network back to train mode
-
         # Epsilon-greedy action selection
         if random.random() > epsilon:
-            return np.argmax(action_values.cpu().data.numpy())  # Exploit
+            action=  np.argmax(action_values.cpu().data.numpy()) # Exploit
         else:
-            return random.choice(np.arange(self.env.action_space.n))  # Explore
+            action=  random.choice(np.arange(self.env.action_space.n)) # Explore
+        return action, None # None is for compatibility with other agents (PPO returns the log probability of the action taken)
 
     def update_policy(self, experiences, discount_factor):
         """
@@ -179,7 +179,7 @@ class Agent():
             acc_reward = 0
             done = False
             while not done:
-                action = self.get_action(state, epsilon)
+                action, _ = self.get_action(state, epsilon)
                 next_state, reward, done, _, _ = self.env.step(action)
                 self.step(state, action, reward, next_state, done)
                 state = next_state
@@ -203,7 +203,7 @@ class Agent():
         while not done:
             if render:
                 self.env.render()
-            action = self.get_action(obs)
+            action, _ = self.get_action(obs)
             obs, _, done, _, _ = self.env.step(action)
             t_so_far += 1
             sleep(0.01)
