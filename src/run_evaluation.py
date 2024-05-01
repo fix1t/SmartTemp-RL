@@ -37,9 +37,9 @@ def main():
     print(f"Running evaluation for {args.algorithm}", flush=True)
 
     seeds = [1, 2, 3, 4, 5]
-    year_duration_in_timesteps = 4 * 24 * 30
-    checkpoint_every_n_steps = 1 * year_duration_in_timesteps
-    total_learning_duration = 3 * year_duration_in_timesteps
+    year_duration_in_timesteps = 4 * 24 * 365
+    checkpoint_every_n_steps = 20 * year_duration_in_timesteps
+    total_learning_duration = 100 * year_duration_in_timesteps
 
     results = {}
     env, agent = None, None

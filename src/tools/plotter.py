@@ -63,6 +63,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     # Save and show
     os.makedirs(output_dir, exist_ok=True)
     plt.savefig(f'{output_dir}/all_in_one_plot.png')
+    plt.close()
 
 
 def plot_variance(all_data):
@@ -100,3 +101,4 @@ def plot_variance(all_data):
     plt.grid(True, linestyle='--', alpha=0.6)  # Adding a styled grid
     plt.tight_layout()
     plt.show()
+    plt.close()

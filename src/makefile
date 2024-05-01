@@ -15,7 +15,7 @@ TRAINING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 365 * 15)))))
 TESTING_TIMESTEPS := $(shell echo $$(($$((4 * 24 * 7)))))
 
 # Paths for the latest model files
-LATEST_DQL_MODEL := $(shell find ./out/dql -type f -name 'local_qnetwork.pth' | xargs ls -t | head -n 1)
+LATEST_DQL_MODEL := $(shell find ./out/dql -type f -name 'target_qnetwork.pth' | xargs ls -t | head -n 1)
 LATEST_PPO_ACTOR_MODEL := $(shell find ./out/ppo -type f -name 'actor_model.pth' | xargs ls -t | head -n 1)
 LATEST_PPO_CRITIC_MODEL := $(shell find ./out/ppo -type f -name 'critic_model.pth' | xargs ls -t | head -n 1)
 
@@ -26,7 +26,7 @@ TIMESTAMP := $(shell date +'%Y-%m-%d_%H-%M')
 
 .PHONY: all clean install run dql dql-test ppo ppo-test
 
-all: clean install dql
+all: clean install
 
 install:
 	@echo "Creating virtual environment..."

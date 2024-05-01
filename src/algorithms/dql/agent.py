@@ -45,6 +45,11 @@ class Agent():
             'learning_freqency': self.learning_freqency
         }
 
+        self.epsilon_starting_value  = 1.0
+        self.epsilon_ending_value  = 0.01
+        self.epsilon_decay_value  = 0.995
+        self.epsilon = self.epsilon_starting_value
+
         print(f"AGENT COFIGURATION HYPERPARAMETERS:\n{hyperparameters}")
 
 
@@ -168,10 +173,9 @@ class Agent():
             self.target_qnetwork.load_state_dict(self.local_qnetwork.state_dict())
 
     def train(self, total_timesteps=4*24*365*10):
-        epsilon_starting_value  = 1.0
-        epsilon_ending_value  = 0.01
-        epsilon_decay_value  = 0.995
-        epsilon = epsilon_starting_value
+        # For retraining the agent, motivate to explore more - learn possibly more
+        if self.epsilon <= self.epsilon_ending_value:
+            self.epsilon = 5 * self.epsilon_ending_value
 
         t_so_far = 0
         while t_so_far < total_timesteps:
@@ -179,14 +183,14 @@ class Agent():
             acc_reward = 0
             done = False
             while not done:
-                action, _ = self.get_action(state, epsilon)
+                action, _ = self.get_action(state, self.epsilon)
                 next_state, reward, done, _, _ = self.env.step(action)
                 self.step(state, action, reward, next_state, done)
                 state = next_state
                 acc_reward += reward
                 t_so_far += 1
 
-            epsilon = max(epsilon_ending_value, epsilon_decay_value * epsilon)
+            self.epsilon = max(self.epsilon_ending_value, self.epsilon_decay_value * self.epsilon)
             Logger().log_reward(acc_reward)
 
     def load_local_qnetwork(self, path):
