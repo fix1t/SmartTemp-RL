@@ -1,0 +1,59 @@
+---------------Training summary---------------------
+
+Average over last 10 episodes: -3972
+Elapsed Time (s): 511
+Max reward per episode: 168
+Total episodes/iterations: 392
+Total steps: 526848
+
+
+---------------Agent's configuration----------------
+
+hyperparameters:
+  batch_size: 96
+  discount_factor: 0.95
+  interpolation_parameter: 0.001
+  learning_freqency: 4
+  learning_rate: 0.0005
+  replay_buffer_size: 100000
+network:
+  activation: !!python/name:torch.nn.modules.activation.ReLU ''
+  hidden_layers:
+  - 32
+  - 64
+  - 32
+  output_activation: !!python/name:tools.config_loader.%3Clambda%3E ''
+  seed: 42
+
+
+---------------Agent's network----------------------
+
+Local Q-network:
+Network(
+  (layers): Sequential(
+    (0): Linear(in_features=6, out_features=32, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=32, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=32, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=32, out_features=5, bias=True)
+    (7): Softmax(dim=-1)
+  )
+)
+
+Target Q-network:
+Network(
+  (layers): Sequential(
+    (0): Linear(in_features=6, out_features=32, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=32, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=32, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=32, out_features=5, bias=True)
+    (7): Softmax(dim=-1)
+  )
+)
+
+

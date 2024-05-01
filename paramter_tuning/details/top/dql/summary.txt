@@ -1,11 +1,30 @@
 Summary:
-Total time: 3 hours, 47 minutes, 36.33 seconds
-Total configurations run 6 of 25
+Total time: 3 hours, 7 minutes, 58.61 seconds
+Total configurations run 25 of 25
 
 Configurations results from best to worst:
-1. Configuration: layers:[128,256,32]+learning_rate:0.0015+batch_size:128+discount_factor:0.99+target_update_frequency:20+interpolation_parameter:0.025+score:-2307.42
-2. Configuration: layers:[128,256,64]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+target_update_frequency:20+interpolation_parameter:0.025+score:-2683.30
-3. Configuration: layers:[128,256,64]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+target_update_frequency:10+interpolation_parameter:0.005+score:-3428.50
-4. Configuration: layers:[128,256,32]+learning_rate:0.0005+batch_size:96+discount_factor:0.9+target_update_frequency:5+interpolation_parameter:0.005+score:-6563.50
-5. Configuration: layers:[128,256,64]+learning_rate:0.0005+batch_size:96+discount_factor:0.9+target_update_frequency:5+interpolation_parameter:0.005+score:-11282.90
-6. Configuration: layers:[128,256,32]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+target_update_frequency:10+interpolation_parameter:0.001+score:-11284.49
+1. Configuration: layers:[32,64,32]+learning_rate:0.0005+batch_size:128+discount_factor:0.99+learning_freqency:4+interpolation_parameter:0.025+score:-438.49
+2. Configuration: layers:[32,32,128]+learning_rate:0.0015+batch_size:96+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.005+score:-540.74
+3. Configuration: layers:[32,64]+learning_rate:0.0005+batch_size:128+discount_factor:0.99+learning_freqency:4+interpolation_parameter:0.025+score:-716.26
+4. Configuration: layers:[32,256]+learning_rate:0.0015+batch_size:96+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.005+score:-1064.18
+5. Configuration: layers:[32,64]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.001+score:-1383.55
+6. Configuration: layers:[32,256]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.001+score:-1681.65
+7. Configuration: layers:[32,256]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.025+score:-1860.71
+8. Configuration: layers:[256,128,256]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.001+score:-2368.71
+9. Configuration: layers:[32,64]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.001+score:-2762.79
+10. Configuration: layers:[32,64,32]+learning_rate:0.0015+batch_size:96+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.005+score:-2961.09
+11. Configuration: layers:[32,64,32]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.025+score:-3045.01
+12. Configuration: layers:[32,32,128]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.001+score:-3481.06
+13. Configuration: layers:[32,32,128]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.025+score:-3687.24
+14. Configuration: layers:[32,64,32]+learning_rate:0.0005+batch_size:128+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.001+score:-3696.90
+15. Configuration: layers:[32,64,32]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.001+score:-3972.55
+16. Configuration: layers:[32,32,128]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.001+score:-4274.40
+17. Configuration: layers:[32,64]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.025+score:-4649.27
+18. Configuration: layers:[32,256]+learning_rate:0.0005+batch_size:128+discount_factor:0.99+learning_freqency:4+interpolation_parameter:0.025+score:-4665.71
+19. Configuration: layers:[32,32,128]+learning_rate:0.0005+batch_size:128+discount_factor:0.99+learning_freqency:4+interpolation_parameter:0.025+score:-5978.72
+20. Configuration: layers:[32,64]+learning_rate:0.0015+batch_size:96+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.005+score:-6005.56
+21. Configuration: layers:[256,128,256]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.025+score:-9595.74
+22. Configuration: layers:[256,128,256]+learning_rate:0.0005+batch_size:128+discount_factor:0.99+learning_freqency:4+interpolation_parameter:0.025+score:-9604.80
+23. Configuration: layers:[256,128,256]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.001+score:-11321.49
+24. Configuration: layers:[32,256]+learning_rate:0.0005+batch_size:96+discount_factor:0.95+learning_freqency:4+interpolation_parameter:0.001+score:-11321.49
+25. Configuration: layers:[256,128,256]+learning_rate:0.0015+batch_size:96+discount_factor:0.95+learning_freqency:16+interpolation_parameter:0.005+score:-11334.81
