@@ -265,7 +265,5 @@ class Agent:
         print("Done testing.")
         print("--------------------------------")
 
-        self.logger.save_all_aio_plots(self, 'out/plots')
-
         time.sleep(5*60)
         self.env.close()

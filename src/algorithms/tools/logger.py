@@ -183,7 +183,60 @@ class Logger():
         plotter.plot_all_in_one(outdoor_temp, indoor_temp, occupancy,
                                 heating, time, output_dir=folder, name=file_name)
 
+    def plot_all_in_one_rewards(self, agent, folder='out/plots', seed = 42,
+                        atypical=False, winter=True, name=None, threshold=0):
+        atypical_config ='env/environment_configuration_atypic_enhanced.json'
+        typical_config = 'env/environment_configuration.json'
+
+        winter_data = 'data/feb_2020.csv'
+        summer_data = 'data/june_2020.csv'
+
+        env_configuration_path = atypical_config if atypical else typical_config
+        temp_data = winter_data if winter else summer_data
+
+        env = TempRegulationEnv(
+            start_from_random_day=False,
+            seed=int(seed),
+            max_steps_per_episode=4*24*7,
+            config_file=env_configuration_path,
+            temp_data_file=temp_data
+        )
+
+        # Simulate the agent in the environment for a week
+        obs, _ = env.reset()
+        done = False
+
+        while not done:
+            action, _ = agent.get_action(obs)
+            obs, _, done, _, _ = env.step(action)
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        time, reward_data = env.get_reward_data()
+        rewards = reward_data['step_reward']
+        _, heating = env.get_heating_data()
+        _, occupancy = env.get_occupancy_data()
+        occupancy = occupancy['father']
+
+        target_length = min(len(rewards), len(occupancy), len(heating), len(time))
+
+        # Truncate arrays to the shortest length among them
+        rewards = rewards[:target_length]
+        occupancy = occupancy[:target_length]
+        heating = heating[:target_length]
+        time = time[:target_length]
+
+        file_name = 'typical_aio' if not atypical else 'atypical_aio'
+        if name is not None:
+            file_name = name
+
+        plotter.plot_all_in_one_rewards(time, occupancy, heating, rewards, output_dir=folder,
+                                        name=file_name, threshold=threshold)
+
     def save_all_aio_plots(self, agent, folder='out/plots'):
         self.plot_all_in_one(agent, f"{folder}", winter=False, seed=42,  atypical=False, name='summer')
         self.plot_all_in_one(agent, f"{folder}", winter=True, seed=42,  atypical=False, name='winter')
         self.plot_all_in_one(agent, f"{folder}", winter=True, seed=22, atypical=True, name='atypical')
+        self.plot_all_in_one_rewards(agent, folder=folder, name='rewards', threshold=0)
+        print(f"Plots saved in {folder}")
