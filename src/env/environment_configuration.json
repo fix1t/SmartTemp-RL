@@ -1,0 +1,71 @@
+{
+  "settings": {
+    "minutes_per_step": 15,
+    "outside_temperature_record_step": 60,
+    "temperature_data_file": "data/basel_10_years_hourly.csv"
+  },
+
+  "temperature": {
+    "starting_temperature": 20,
+    "target_temperature": 22,
+    "insulation_quality": 0.95,
+    "heater_at_max": 40,
+    "heating_meter_at_max": 5,
+    "cooler_at_max": 5,
+    "hvac_efficiency": 0.05,
+    "meter_step": 0.25
+  },
+
+  "schedule": {
+    "people": ["father"],
+    "weekly_schedule": {
+      "Monday": {
+        "father": { "leave": "08:00", "return": "18:00", "variance": 15 },
+        "mother": { "leave": "07:00", "return": "16:00", "variance": 15 },
+        "child": { "leave": "07:00", "return": "13:30", "variance": 10 }
+      },
+      "Tuesday": {
+        "father": { "leave": "08:00", "return": "18:00", "variance": 15 },
+        "mother": { "leave": "07:00", "return": "16:00", "variance": 15 },
+        "child": { "leave": "07:00", "return": "13:30", "variance": 10 }
+      },
+      "Wednesday": {
+        "father": { "leave": "08:00", "return": "18:00", "variance": 15 },
+        "mother": { "leave": "07:00", "return": "16:00", "variance": 15 },
+        "child": { "leave": "07:00", "return": "13:30", "variance": 10 }
+      },
+      "Thursday": {
+        "father": { "leave": "08:00", "return": "18:00", "variance": 15 },
+        "mother": { "leave": "07:00", "return": "16:00", "variance": 15 },
+        "child": { "leave": "07:00", "return": "16:00", "variance": 10 }
+      },
+      "Friday": {
+        "father": { "leave": "08:00", "return": "18:00", "variance": 15 },
+        "mother": { "leave": "07:00", "return": "16:00", "variance": 15 },
+        "child": { "leave": "07:00", "return": "12:30", "variance": 10 }
+      },
+      "Saturday": {
+        "father": { "at_home": "true" },
+        "mother": { "at_home": "true" },
+        "child": { "at_home": "true" }
+      },
+      "Sunday": {
+        "father": { "at_home": "true" },
+        "mother": { "at_home": "true" },
+        "child": { "at_home": "true" }
+      }
+    },
+    "random_event_chance": 0.1,
+    "random_event": {
+      "sick-day": 0.05,
+      "vacation": 0.05,
+      "early-return": 0.2,
+      "late-return": 0.2,
+      "early-leave": 0.2,
+      "late-leave": 0.2,
+      "out-of-town": 0.05,
+      "holiday": 0.05
+    },
+    "random_event_max_duration": 180
+  }
+}

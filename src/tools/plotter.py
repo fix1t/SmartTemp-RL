@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 
 def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
-                    target_min=21, target_max=23, output_dir='out/plots'):
+                    target_min=21, target_max=23, output_dir='out/plots', name='all_in_one_plot'):
     # Convertions:
     target_min = float(target_min)
     target_max = float(target_max)
@@ -24,7 +24,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     fig, ax = plt.subplots(figsize=(12, 6))
 
     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%a %y-%m-%d'))
 
     # Plotting temperature data
     ax.plot(time, outside_temp, label='Outside Temperature', color='grey')
@@ -62,7 +62,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
 
     # Save and show
     os.makedirs(output_dir, exist_ok=True)
-    plt.savefig(f'{output_dir}/all_in_one_plot.png')
+    plt.savefig(f'{output_dir}/{name}.png')
     plt.close()
 
 

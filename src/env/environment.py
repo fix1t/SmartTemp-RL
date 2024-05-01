@@ -16,7 +16,8 @@ from env.tools.csv_line_reader import CSVLineReader
 class TempRegulationEnv(gym.Env):
     metadata = {'render.modes': ['console']}
 
-    def __init__(self, start_from_random_day=True, max_steps_per_episode=7 * 24 * 4, seed=None):
+    def __init__(self, start_from_random_day=True, max_steps_per_episode=7 * 24 * 4, seed=None,
+                 config_file='env/environment_configuration.json', temp_data_file='data/basel_10_years_hourly.csv'):
         super(TempRegulationEnv, self).__init__()
         self.action_space = spaces.Discrete(5)
 
@@ -39,6 +40,10 @@ class TempRegulationEnv(gym.Env):
         self.total_reward = 0
         self.max_steps_per_episode = max_steps_per_episode
         self.start_from_random_day = start_from_random_day
+
+        ConfigurationManager().load_configuration(config_file)
+        ConfigurationManager().set_config(temp_data_file, "settings", "temperature_data_file")
+
         self.reset(start_from_random_day)
 
 

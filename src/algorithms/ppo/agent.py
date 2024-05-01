@@ -260,12 +260,12 @@ class Agent:
             action, _ = self.get_action(obs)
             obs, _, done, _, _ = self.env.step(action)
             t_so_far += 1
-            time.sleep(0.01)
+            time.sleep(0.001)
         print(f"Total timesteps: {t_so_far}")
         print("Done testing.")
         print("--------------------------------")
 
-        self.logger.plot_all_in_one(self, folder='out/plots')
+        self.logger.save_all_aio_plots(self, 'out/plots')
 
         time.sleep(5*60)
         self.env.close()

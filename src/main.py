@@ -120,7 +120,7 @@ def print_training_summary(agent, folder_path, elapsed_time, CONFIG):
     Logger().save_agent_info(folder_path, agent, CONFIG, elapsed_time)
     Logger().save_trained_agent(agent, folder_path)
     Logger().plot_scores(folder_path)
-    Logger().plot_all_in_one(agent, f"{folder_path}")
+    Logger().save_all_aio_plots(agent, folder_path)
     print(f'Trained model and summary available in {folder_path} folder.')
     print('--------------------------------')
     agent.env.close()
@@ -176,6 +176,10 @@ def main():
             # Copy config file to the output folder
             config_to_yaml(CONFIG, f"{folder_path}/config.yaml")
             print_training_summary(agent, folder_path, elapsed_time, CONFIG)
+        if args.mode == 'test':
+            folder_path = f"out/testing/{args.algorithm.lower()}/{time.strftime('%Y-%m-%d_%H-%M-%S')}"
+            os.makedirs(folder_path, exist_ok=True)
+            Logger().save_all_aio_plots(agent, folder_path)
 
 if __name__ == '__main__':
     main()

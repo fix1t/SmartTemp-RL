@@ -132,17 +132,30 @@ class Logger():
             f.write(extra_text)
 
     @staticmethod
-    def plot_all_in_one(agent, folder='out/plots'):
-        # Regular environment with good seed: mon - sunday at May
+    def plot_all_in_one(agent, folder='out/plots', seed = 42,
+                        atypical=False, winter=True, name=None):
+
+        atypical_config ='env/environment_configuration_atypic_enhanced.json'
+        typical_config = 'env/environment_configuration.json'
+
+        winter_data = 'data/feb_2020.csv'
+        summer_data = 'data/june_2020.csv'
+
+        env_configuration_path = atypical_config if atypical else typical_config
+        temp_data = winter_data if winter else summer_data
+
         env = TempRegulationEnv(
-        start_from_random_day=True,
-        seed=int(42),
-        max_steps_per_episode=4*24*7,
+            start_from_random_day=False,
+            seed=int(seed),
+            max_steps_per_episode=4*24*7,
+            config_file=env_configuration_path,
+            temp_data_file=temp_data
         )
 
         # Simulate the agent in the environment for a week
         obs, _ = env.reset()
         done = False
+
         while not done:
             action, _ = agent.get_action(obs)
             obs, _, done, _, _ = env.step(action)
@@ -156,6 +169,7 @@ class Logger():
         occupancy = occupancy['father']
 
         target_length = min(len(outdoor_temp), len(indoor_temp), len(occupancy), len(heating), len(time))
+
         # Truncate arrays to the shortest length among them
         outdoor_temp = outdoor_temp[:target_length]
         indoor_temp = indoor_temp[:target_length]
@@ -163,4 +177,13 @@ class Logger():
         heating = heating[:target_length]
         time = time[:target_length]
 
-        plotter.plot_all_in_one(outdoor_temp, indoor_temp, occupancy, heating, time, output_dir=folder)
+        file_name = 'typical_aio' if not atypical else 'atypical_aio'
+        if name is not None:
+            file_name = name
+        plotter.plot_all_in_one(outdoor_temp, indoor_temp, occupancy,
+                                heating, time, output_dir=folder, name=file_name)
+
+    def save_all_aio_plots(self, agent, folder='out/plots'):
+        self.plot_all_in_one(agent, f"{folder}", winter=False, seed=42,  atypical=False, name='summer')
+        self.plot_all_in_one(agent, f"{folder}", winter=True, seed=42,  atypical=False, name='winter')
+        self.plot_all_in_one(agent, f"{folder}", winter=True, seed=22, atypical=True, name='atypical')

@@ -2,6 +2,7 @@
 """
 Singleton class to manage configuration settings
 """
+import json
 class ConfigurationManager:
     _instance = None
 
@@ -11,9 +12,10 @@ class ConfigurationManager:
             cls._instance.load_configuration()
         return cls._instance
 
-    def load_configuration(self):
-        from env.environment_configuration import CONFIG
-        self.config = CONFIG
+    def load_configuration(self, path='env/environment_configuration.json'):
+        with open(path, 'r') as file:
+            self.config = json.load(file)
+        return self.config
 
     def get_temp_config(self, key):
         return self.config.get('temperature').get(key)
@@ -28,17 +30,15 @@ class ConfigurationManager:
         return self.config.get('schedule').get('weekly_schedule').get(day).get(person)
 
 
-    def set_config(self, value, key, key2=None, key3=None, key4=None, key5=None):
-        if key2:
-            if key3:
-                if key4:
-                    if key5:
-                        self.config[key][key2][key3][key4][key5] = value
-                    else:
-                        self.config[key][key2][key3][key4] = value
-                else:
-                    self.config[key][key2][key3] = value
-            else:
-                self.config[key][key2] = value
-        else:
-            self.config[key] = value
+    def set_config(self, value, *keys):
+        config = self.config
+        # Traverse through the keys, going deeper into the dictionary
+        # until we reach the last key.
+        for key in keys[:-1]:
+            if key not in config:
+                config[key] = {}  # Create a new dictionary if the key does not exist
+            config = config[key]
+
+        # The last key in the sequence is where to set the value.
+        last_key = keys[-1]
+        config[last_key] = value

@@ -90,7 +90,7 @@ def save_agent_info(folder_path, agent, config, elapsed_time, extra_text=""):
     Logger().save_agent_info(folder_path, agent, config, elapsed_time, extra_text)
     Logger().save_trained_agent(agent, folder_path)
     Logger().plot_scores(folder_path)
-    Logger().plot_all_in_one(agent, folder_path)
+    Logger().save_all_aio_plots(agent, folder_path)
     config_to_yaml(config, os.path.join(folder_path, "config.yaml"))
 
 if __name__ == '__main__':
