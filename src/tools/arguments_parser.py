@@ -1,3 +1,9 @@
+"""
+    File: arguments_parser.py
+    Author: Gabriel Biel
+
+    Description: Module to parse command line arguments for the main script.
+"""
 import argparse
 
 def get_args():

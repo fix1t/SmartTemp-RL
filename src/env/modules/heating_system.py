@@ -1,3 +1,13 @@
+"""
+    File: heating_system.py
+    Author: Gabriel Biel
+
+    Description: Module to simulate a heating system that accumulates heat energy
+    and transfers it to the environment to regulate the temperature. The system
+    has a maximum heat energy capacity and efficiency of heat transfer, and it
+    cools off when not actively heating. Behaves like radiator unit.
+"""
+
 import math
 
 class HeatingSystem:

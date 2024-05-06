@@ -1,3 +1,12 @@
+"""
+    File: time_manager.py
+    Author: Gabriel Biel
+
+    Description: Singleton class to manage simulation time. It keeps track of the current time,
+    the final time, and the history of time steps. It can update the time and check if the
+    simulation is over.
+"""
+
 import datetime as dt
 
 from env.modules.configuration_manager import ConfigurationManager

@@ -26,7 +26,7 @@ TIMESTAMP := $(shell date +'%Y-%m-%d_%H-%M')
 
 .PHONY: all clean install run dql dql-test ppo ppo-test
 
-all: clean install
+all: install
 
 install:
 	@echo "Creating virtual environment..."

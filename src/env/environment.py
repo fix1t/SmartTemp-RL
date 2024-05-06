@@ -1,3 +1,19 @@
+"""
+    File: environment.py
+    Author: Gabriel Biel
+
+    Description: Custom environment for the temperature regulation simulation. It uses the
+    Gym API to create a reinforcement learning environment. The environment consists of
+    the following modules: OccupancyManager, TemperatureManager, ConfigurationManager,
+    TimeManager, and HeatingSystem. The environment has the following observation space:
+    [current_temperature, outside_temperature, occupancy, heat_energy, hour, weekday].
+    The environment has the following action space: [0, 1, 2, 3, 4], where 0 is no action,
+    1-3 are heating actions, and 4 is cooling off. The environment calculates the reward
+    based on the energy consumption and the temperature difference from the target temperature.
+
+    The environment can simulate the regulation process and visualize the results.
+"""
+
 import math
 import time
 import gym

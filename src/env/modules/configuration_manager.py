@@ -1,6 +1,9 @@
-
 """
-Singleton class to manage configuration settings
+    File: coonfiguration_manager.py
+    Author: Gabriel Biel
+
+    Description: Configuration manager singleton class to load the configuration
+    file and provide methods to access the configuration values.
 """
 import json
 class ConfigurationManager:

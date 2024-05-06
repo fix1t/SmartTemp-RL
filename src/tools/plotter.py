@@ -1,3 +1,12 @@
+"""
+    File: plotter.py
+    Author: Gabriel Biel
+
+    Description: Functions to plot the data from the environment and the agent.
+    It provides functions to plot the temperature, occupancy, heater status, and rewards
+    in a single plot. It also provides a function to plot the variance of the rewards
+    across multiple environments.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime

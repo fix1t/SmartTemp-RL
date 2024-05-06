@@ -1,3 +1,10 @@
+"""
+    File: csv_line_reader.py
+    Author: Gabriel Biel
+
+    Description: CSV line reader class to read a CSV file line by line. It can start from the beginning
+    or from a random line. It can also reset the file pointer to the beginning or a random line.
+"""
 import csv
 import random
 from env.tools.logger_manager import Logger

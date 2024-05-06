@@ -1,3 +1,13 @@
+"""
+    File: renderer.py
+    Author: Gabriel Biel
+
+    Description: Module to render the simulation results in real-time using Dash.
+    The renderer creates a Dash app with multiple graphs to visualize the simulation.
+    These graphs include the score over time, temperature over time, heating system
+    meter reading over time, and people's presence over time.
+"""
+
 import dash
 from dash import dcc, html
 from dash.dependencies import Output, Input

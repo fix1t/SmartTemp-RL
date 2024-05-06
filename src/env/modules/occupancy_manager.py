@@ -1,3 +1,13 @@
+"""
+    File: occupancy_manager.py
+    Author: Gabriel Biel
+
+    Description: Module to manage the occupancy of the house. It updates the occupancy
+    based on the schedule and random events, and tracks the history of occupancy.
+    Generates the schedule for the current day, applies variance and random events,
+    and updates the presence of people in the house.
+"""
+
 from env.tools.logger_manager import Logger
 from env.modules.configuration_manager import ConfigurationManager
 from datetime import datetime, timedelta

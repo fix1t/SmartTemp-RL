@@ -1,3 +1,12 @@
+"""
+    File: temperature_manager.py
+    Author: Gabriel Biel
+
+    Description: Module to manage the temperature of the house. It holds the current
+    temperature and the outside temperature, updates the temperature based on the
+    outside temperature and the heating system, Tracks the outside temperature over time.
+"""
+
 from env.tools.csv_line_reader import CSVLineReader
 from env.tools.logger_manager import Logger
 from env.modules.configuration_manager import ConfigurationManager

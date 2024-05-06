@@ -1,3 +1,11 @@
+"""
+    File: run_evaluation.py
+    Author: Gabriel Biel
+
+    Description: Script to evaluate the PPO/DQL model. It trains the agent for a specified duration
+    and saves the agent and results to the specified output directory. It also saves the training summary
+    and logs the training progress.
+"""
 import os
 import time
 import argparse

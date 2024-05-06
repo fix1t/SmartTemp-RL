@@ -1,3 +1,10 @@
+"""
+    File: config_loader.py
+    Author: Gabriel Biel
+
+    Description: Load configuration from a YAML file, validate completeness,
+    and set defaults for missing values.
+"""
 import yaml
 import torch
 import copy

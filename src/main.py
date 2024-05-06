@@ -1,3 +1,11 @@
+"""
+    File: main.py
+    Author: Gabriel Biel
+
+    Description: Main file to train and test the agents. It loads the configuration,
+    initializes the environment, and the agent. It trains the agent and saves the trained
+    model and logs the training summary. It also tests the agent and logs the testing summary.
+"""
 import os
 import torch
 import time

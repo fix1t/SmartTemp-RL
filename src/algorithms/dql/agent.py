@@ -1,3 +1,10 @@
+"""
+    File: dql/agent.py
+    Author: Gabriel Biel
+
+    Description: Agent class for the Deep Q-Learning (DQL) algorithm.
+"""
+
 import random
 from time import sleep
 import numpy as np

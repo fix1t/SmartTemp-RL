@@ -1,3 +1,12 @@
+"""
+    File: config_generator.py
+    Author: Gabriel Biel
+
+    Description: Generate configurations for DQL, PPO agents. These configurations
+    are used to train the agents with different hyperparameters and network configurations,
+    to find the best performing agent configuration.
+"""
+
 import argparse
 import yaml
 import itertools

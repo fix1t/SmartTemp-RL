@@ -3,7 +3,8 @@
     Author: Gabriel Biel
 
     Description: Logger singleton class to log the progress of the training
-    and store the training information.
+    and store the training information. It also provides methods to save the
+    trained agent and plot the scores.
 """
 
 import math

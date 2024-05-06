@@ -1,3 +1,10 @@
+"""
+    File: run_configurations.py
+    Author: Gabriel Biel
+
+    Description: Run configurations for DQL and PPO agents. It trains the agents with different
+    hyperparameters and network configurations, to find the best performing agent configuration.
+"""
 import argparse
 import os
 import time
