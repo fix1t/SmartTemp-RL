@@ -2,18 +2,13 @@ import os
 import torch
 import time
 
-from env.environment import TempRegulationEnv
-
 from algorithms.tools.logger import Logger
 from tools.config_loader import load_config, config_to_yaml
 from tools.arguments_parser import get_args
 
+from env.environment import TempRegulationEnv
 from algorithms.network import Network as Network
-
-# PPO imports
 from algorithms.ppo.agent import Agent as PPOAgent
-
-# DQL imports
 from algorithms.dql.agent import Agent as DQLAgent
 
 def train_ppo(agent:PPOAgent, actor_model, critic_model, total_timesteps=None):

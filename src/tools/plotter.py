@@ -22,7 +22,7 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
         time = mdates.date2num(time)
 
     # Prepare the figure and axes
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))
 
     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%a %y-%m-%d'))
@@ -35,8 +35,13 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     x_limit = [min(time), max(time)]
 
     # Highlighting occupancy and comfort range based on boolean array
-    ax.fill_between(time, y_limit[0], y_limit[1], where=occupancy, color='lightblue', alpha=0.8, label='Occupancy')
-    ax.fill_between(time, target_min, target_max, where=occupancy, color='moccasin', alpha=0.8, label='Target Temp (Occupied)')
+
+    # PPO
+    # ax.fill_between(time, y_limit[0], y_limit[1], where=occupancy, color='lightblue', alpha=0.8, label='Occupancy')
+    # ax.fill_between(time, target_min, target_max, where=occupancy, color='dodgerblue', alpha=0.8, label='Target Temp (Occupied)')
+    # DQL
+    ax.fill_between(time, y_limit[0], y_limit[1], where=occupancy, color='moccasin', alpha=0.8, label='Occupancy')
+    ax.fill_between(time, target_min, target_max, where=occupancy, color='darkorange', alpha=0.8, label='Target Temp (Occupied)')
 
     # Setting up heater status color gradient line
     cmap = LinearSegmentedColormap.from_list("heater_cmap", ["white", "red"])
@@ -50,15 +55,15 @@ def plot_all_in_one(outside_temp, inside_temp, occupancy, heater_status, time,
     ax.add_collection(lc)
 
     # Additional plot settings
-    ax.set_xlabel('Time')
-    ax.set_ylabel('Temperature (°C)')
-    ax.legend(bbox_to_anchor = (1.15, -0.01), loc='upper right')
+    ax.set_xlabel('Time',fontsize=14)
+    ax.set_ylabel('Temperature (°C)',fontsize=14)
+    ax.legend(bbox_to_anchor = (1, -0.01), loc='upper right', fontsize=12)
     ax.set_ylim(y_limit)
     ax.set_xlim(x_limit)
 
     plt.gcf().autofmt_xdate()  # Format date labels for readability
-    plt.colorbar(lc, ax=ax, label='Heater Status')
-    plt.title('Temperature Regulation Simulation')
+    cb = plt.colorbar(lc, ax=ax)
+    cb.set_label('Heater Status', fontsize=12)
     plt.tight_layout()
 
     # Save and show
@@ -79,7 +84,7 @@ def plot_all_in_one_rewards(time, occupancy, heater_status, rewards,
         time = mdates.date2num(time)
 
     # Prepare the figure and axes
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))
 
     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%a %y-%m-%d'))
@@ -90,7 +95,10 @@ def plot_all_in_one_rewards(time, occupancy, heater_status, rewards,
     y_limit = [min(rewards) - 1, max(rewards) + 1]
 
     # Highlighting occupancy based on boolean array
-    ax.fill_between(time, y_limit[0], y_limit[1], where=occupancy, color='lightblue', alpha=0.8, label='Occupancy')
+    # PPO
+    # ax.fill_between(time, y_limit[0], y_limit[1], where=occupancy, color='lightblue', alpha=0.8, label='Occupancy')
+    # DQL
+    ax.fill_between(time, y_limit[0], y_limit[1], where=occupancy, color='moccasin', alpha=0.8, label='Occupancy')
 
     # Heater status with a color gradient
     cmap = LinearSegmentedColormap.from_list("heater_cmap", ["white", "red"])
@@ -107,15 +115,15 @@ def plot_all_in_one_rewards(time, occupancy, heater_status, rewards,
     gradient_fill(ax, time, rewards, threshold, upper_color='green', lower_color='red')
 
     # Additional plot settings
-    ax.set_xlabel('Time')
-    ax.set_ylabel('Rewards')
-    ax.legend(bbox_to_anchor=(1.15, -0.01), loc='upper right')
+    ax.set_xlabel('Time',fontsize=14)
+    ax.set_ylabel('Rewards',fontsize=14)
+    ax.legend(bbox_to_anchor=(1, -0.01), loc='upper right', fontsize=12)
     ax.set_ylim(y_limit)  # Adjust y-limits based on reward range
     ax.set_xlim([min(time), max(time)])
 
     plt.gcf().autofmt_xdate()  # Format date labels for readability
-    plt.colorbar(lc, ax=ax, label='Heater Status')
-    plt.title('Reward Monitoring Over Time')
+    cb = plt.colorbar(lc, ax=ax)
+    cb.set_label('Heater Status', fontsize=12)
     plt.tight_layout()
 
     # Save and show
@@ -164,10 +172,10 @@ def plot_variance(all_data):
     plt.plot(mean_scores, color='darkorange', label='Average Score', linestyle='-', linewidth=2.5)
 
     # Shading the area between the min and max score with a gradient
-    plt.fill_between(range(len(min_scores)), min_scores, max_scores, color='moccasin', alpha=0.8, label='Min-Max Range')
+    plt.fill_between(range(len(min_scores)), min_scores, max_scores, color='royalblue', alpha=0.8, label='Min-Max Range')
 
     # Enhancing the graph aesthetics
-    plt.title('Score Variability Across Environments Per Episode', fontsize=16, fontweight='bold')
+    # plt.title('Score Variability Across Environments Per Episode', fontsize=16, fontweight='bold')
     plt.xlabel('Episode', fontsize=14)
     plt.ylabel('Score', fontsize=14)
     plt.xticks(fontsize=12)

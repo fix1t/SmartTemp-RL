@@ -5,3 +5,4 @@ venv
 out
 .vscode
 **/*generated*
+results

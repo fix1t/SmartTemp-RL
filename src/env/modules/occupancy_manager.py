@@ -21,7 +21,6 @@ class OccupancyManager:
         self.people_presence_history = {}       # history of people's presence - {person: [True, False, ...]}
         self.people_presence = {}               # current presence of people - {person: True/False}
 
-
     def generate_schedule(self):
         """Generate the schedule for the current day - apply variance and random events"""
         for person in self.people:
@@ -29,7 +28,6 @@ class OccupancyManager:
                 self.todays_schedule[person] = {}
             Logger().info(f"Generating schedule for {person}")
             self.generate_schedule_for_person(person)
-
 
 
     def generate_schedule_for_person(self, persons_name):
