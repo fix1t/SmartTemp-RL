@@ -17,12 +17,12 @@ hyperparameters:
   learning_rate: 0.0015
   replay_buffer_size: 100000
 network:
-  activation: Custom
+  activation: ReLU
   hidden_layers:
   - 32
   - 32
   - 128
-  output_activation: Custom
+  output_activation: Softmax
   seed: 42
 
 
