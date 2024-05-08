@@ -1,0 +1,26 @@
+Results:
+Seed: 1, Duration: 20 years.Score: -1473.86993638779
+Seed: 1, Duration: 40 years.Score: -4593.00479196907
+Seed: 1, Duration: 60 years.Score: -4544.837520715164
+Seed: 1, Duration: 80 years.Score: -2571.2041804134383
+Seed: 1, Duration: 100 years.Score: -2571.2041804134383
+Seed: 2, Duration: 20 years.Score: -2469.422730889948
+Seed: 2, Duration: 40 years.Score: -1155.9332305275134
+Seed: 2, Duration: 60 years.Score: -3831.0911373089048
+Seed: 2, Duration: 80 years.Score: -683.5506168647167
+Seed: 2, Duration: 100 years.Score: -683.5506168647167
+Seed: 3, Duration: 20 years.Score: -3684.6001819575476
+Seed: 3, Duration: 40 years.Score: -5465.59271306488
+Seed: 3, Duration: 60 years.Score: -5952.232480186003
+Seed: 3, Duration: 80 years.Score: -4109.544987649611
+Seed: 3, Duration: 100 years.Score: -4109.544987649611
+Seed: 4, Duration: 20 years.Score: -5293.439579724714
+Seed: 4, Duration: 40 years.Score: -2584.3509375762565
+Seed: 4, Duration: 60 years.Score: -2845.693635761617
+Seed: 4, Duration: 80 years.Score: -3418.443822018402
+Seed: 4, Duration: 100 years.Score: -3418.443822018402
+Seed: 5, Duration: 20 years.Score: -565.7519675669807
+Seed: 5, Duration: 40 years.Score: -4288.259917892869
+Seed: 5, Duration: 60 years.Score: -1830.6433775369246
+Seed: 5, Duration: 80 years.Score: -2267.1921400901288
+Seed: 5, Duration: 100 years.Score: -2267.1921400901288

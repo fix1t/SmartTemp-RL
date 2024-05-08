@@ -1,0 +1,14 @@
+hyperparameters:
+  batch_size: 4096
+  clip: 0.3
+  discount_factor: 0.95
+  learning_rate: 0.0005
+  n_updates_per_iteration: 20
+network:
+  activation: ReLU
+  hidden_layers:
+  - 32
+  - 128
+  - 256
+  output_activation: Softmax
+  seed: 42

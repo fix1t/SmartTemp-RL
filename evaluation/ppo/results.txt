@@ -1,16 +1,26 @@
 Results:
-Environment:1+Learning_time:25+Score:1767.09
-Environment:1+Learning_time:50+Score:2301.33
-Environment:1+Learning_time:100+Score:621.67
-Environment:2+Learning_time:25+Score:2484.09
-Environment:2+Learning_time:50+Score:1543.55
-Environment:2+Learning_time:100+Score:1917.62
-Environment:3+Learning_time:25+Score:2552.91
-Environment:3+Learning_time:50+Score:1818.44
-Environment:3+Learning_time:100+Score:1434.65
-Environment:4+Learning_time:25+Score:2136.72
-Environment:4+Learning_time:50+Score:1644.54
-Environment:4+Learning_time:100+Score:2587.33
-Environment:5+Learning_time:25+Score:1786.53
-Environment:5+Learning_time:50+Score:2425.59
-Environment:5+Learning_time:100+Score:1772.92
+Seed: 1, Duration: 20 years. Last average score: 2771.955218933212
+Seed: 1, Duration: 40 years. Last average score: 539.8398756181093
+Seed: 1, Duration: 60 years. Last average score: 671.7325509015429
+Seed: 1, Duration: 80 years. Last average score: 734.5904400265268
+Seed: 1, Duration: 100 years. Last average score: 734.5904400265268
+Seed: 2, Duration: 20 years. Last average score: 2151.242064530552
+Seed: 2, Duration: 40 years. Last average score: 423.38017873285696
+Seed: 2, Duration: 60 years. Last average score: 1022.4348817727448
+Seed: 2, Duration: 80 years. Last average score: 510.8448184250001
+Seed: 2, Duration: 100 years. Last average score: 510.8448184250001
+Seed: 3, Duration: 20 years. Last average score: 2153.624857554912
+Seed: 3, Duration: 40 years. Last average score: 148.0519006330543
+Seed: 3, Duration: 60 years. Last average score: 545.7476676791046
+Seed: 3, Duration: 80 years. Last average score: 747.3001823193752
+Seed: 3, Duration: 100 years. Last average score: 747.3001823193752
+Seed: 4, Duration: 20 years. Last average score: 1968.1508732112138
+Seed: 4, Duration: 40 years. Last average score: 505.9394113847253
+Seed: 4, Duration: 60 years. Last average score: 893.5319142305934
+Seed: 4, Duration: 80 years. Last average score: 824.6251160222421
+Seed: 4, Duration: 100 years. Last average score: 824.6251160222421
+Seed: 5, Duration: 20 years. Last average score: 1696.211107270568
+Seed: 5, Duration: 40 years. Last average score: -114.29946231189551
+Seed: 5, Duration: 60 years. Last average score: 848.7377237904296
+Seed: 5, Duration: 80 years. Last average score: 658.9275234232562
+Seed: 5, Duration: 100 years. Last average score: 658.9275234232562
