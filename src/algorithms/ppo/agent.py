@@ -32,6 +32,15 @@ class Agent:
         self.clip = hyperparameters.get('clip', 0.2)
         self.batch_size = hyperparameters.get('batch_size', 4800)
         self.n_updates_per_iteration = hyperparameters.get('n_updates_per_iteration', 5)
+        hyperparameters = {
+            self.learning_rate,
+            self.discount_factor,
+            self.clip,
+            self.batch_size,
+            self.n_updates_per_iteration
+        }
+        print("--------------------------------")
+        print(f"PPO agent loaded with hyperparameters:\n{hyperparameters}")
 
     # Initializes optimizers for both actor and critic networks
     def _init_optimizers(self):

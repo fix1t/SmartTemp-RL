@@ -57,7 +57,8 @@ class Agent():
         self.epsilon_decay_value  = 0.995
         self.epsilon = self.epsilon_starting_value
 
-        print(f"AGENT COFIGURATION HYPERPARAMETERS:\n{hyperparameters}")
+        print("--------------------------------")
+        print(f"DQL agent loaded with hyperparameters:\n{hyperparameters}")
 
 
     def step(self, state, action, reward, next_state, done):

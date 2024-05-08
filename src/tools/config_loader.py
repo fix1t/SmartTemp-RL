@@ -42,7 +42,7 @@ PPO_DEFAULT_CONFIG = {
     }
 }
 
-def log_progress(message, silent=False):
+def log_progress(message, silent=True):
     """
     Log a progress message to the console.
 
@@ -60,7 +60,7 @@ def validate_yaml(file_path):
     except yaml.YAMLError as exc:
         print("Error in configuration file:", exc)
 
-def load_config(file_path, algorithm='DQL', silent=False):
+def load_config(file_path, algorithm='DQL', silent=True):
     """
     Load configuration from a YAML file, validate completeness, and set defaults for missing values.
 

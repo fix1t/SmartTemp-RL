@@ -53,7 +53,6 @@ def train_dql(agent:DQLAgent, local_qnetwork, target_qnetwork, total_timesteps=N
     if total_timesteps is None:
         total_timesteps = 4*24*360*15
     print('Training DQL', flush=True)
-    # TODO: Pass local and target Q networks
 
     if local_qnetwork != '' and target_qnetwork != '':
         try:

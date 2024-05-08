@@ -14,7 +14,7 @@ SmartTemp-RL is a research project focused on applying deep reinforcement learni
 
 ### Prerequisites
 
-Before running the scripts, ensure that you have Python and Make installed on your system. The project's dependencies are managed using a virtual environment.
+Before running the scripts, ensure that you have Pip (v21.2.3+), Python (v3.9.7+) and Make (v4.3+) installed on your system. The project's dependencies are managed using a virtual environment.
 
 ### Setup
 
@@ -30,7 +30,7 @@ Create a Python virtual environment and install the required dependencies:
 make install
 ```
 
-To activate the environment for running scripts directly run command:
+To activate the environment for running scripts directly run command inside `src` folder:
 
 ```shell
 source venv/bin/activate
@@ -45,7 +45,7 @@ make dql
 make ppo
 ```
 
-To test the latest learned models:
+To test the latest learned models (It takes the learned model from `out` folder):
 
 ```shell
 make dql-test
@@ -72,8 +72,8 @@ make run-configurations-top-ppo # configurations (Hyperparameters + NN)
 To run the final evaluation script for the DQL algorithm:
 
 ```shell
-make final-evaluation-dql
-make final-evaluation-ppo
+make eval-dql
+make eval-ppo
 ```
 
 ## Additional Information
